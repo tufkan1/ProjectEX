@@ -254,6 +254,30 @@ public final class ProjectEXRecipeProvider extends FabricRecipeProvider {
                     .unlockedBy("has_final_star", has(ProjectEXItems.FINAL_STAR.item()))
                     .save(output, id("compact_sun"));
 
+                net.minecraft.world.level.ItemLike previousLink = null;
+                for (var tier : io.github.tufkan1.projectex.machine.ExpansionMachineTier.values()) {
+                    var link = ProjectEXBlocks.EMC_LINKS.get(tier);
+                    net.minecraft.world.level.ItemLike relay = switch (tier) {
+                        case BASIC -> ProjectEXBlocks.RELAY_MK1;
+                        case DARK -> ProjectEXBlocks.RELAY_MK2;
+                        case RED -> ProjectEXBlocks.RELAY_MK3;
+                        default -> ProjectEXBlocks.EXPANSION_RELAYS.get(tier).block();
+                    };
+                    var recipe = shapeless(RecipeCategory.MISC, link.block()).requires(relay);
+                    if (previousLink == null) recipe.requires(ProjectEXBlocks.TRANSMUTATION_TABLE);
+                    else recipe.requires(previousLink);
+                    recipe.unlockedBy("has_tier_relay", has(relay))
+                        .save(output, id(tier.id() + "_emc_link"));
+                    previousLink = link.block();
+                }
+                shaped(RecipeCategory.MISC, ProjectEXBlocks.TRANSMUTATION_INTERFACE)
+                    .define('L', previousLink)
+                    .define('T', ProjectEXBlocks.TRANSMUTATION_TABLE)
+                    .define('S', ProjectEXItems.FINAL_STAR_SHARD.item())
+                    .pattern("SLS").pattern("LTL").pattern("SLS")
+                    .unlockedBy("has_final_emc_link", has(previousLink))
+                    .save(output, id("transmutation_interface"));
+
                 shaped(RecipeCategory.MISC, ProjectEXBlocks.ALCHEMICAL_CHEST)
                     .define('C', Items.CHEST).define('D', ProjectEXItems.HIGH_COVALENCE_DUST.item())
                     .define('M', ProjectEXItems.DARK_MATTER.item())

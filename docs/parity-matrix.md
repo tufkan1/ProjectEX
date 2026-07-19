@@ -18,7 +18,7 @@ not imply copied implementation or byte-for-byte behavior.
 | Dark/red matter blocks, tools, and armor | Implemented | ProjectE | Data-pack runtime balance, server-raycast area mining, exact EMC payment/refund, public claim hook, bounded cooldowns, vanilla-attribute armor |
 | Dark/red matter furnaces | Implemented | ProjectE | Atomic multi-slot output, component identity, exact fuel remainder, sided Fabric automation, narrated progress UI |
 | Expansion collectors, relays, power flowers, and Compact Sun | Implemented | ProjectExpansion | Exact fixed-point/BigInteger accounting, schema-v1 carry state, bounded multiplier, no chunk tickets, original vanilla-reference models |
-| EMC Links and Transmutation Interface | Core implemented | ProjectExpansion | Permission-aware links, bounded knowledge queries, server-priced atomic crafting; world blocks and storage adapters pending |
+| EMC Links and Transmutation Interface | Implemented | ProjectExpansion | 16 tiered links, sided transactional Fabric storage, bounded knowledge views, owner/member access, filters, persistence, and management UI |
 
 Collector/relay baseline rates and capacities follow ProjectE commit
 `15d4ce65bd06eb4222709b984255fbf5080e78bc`. All Fabric integration, persistence,

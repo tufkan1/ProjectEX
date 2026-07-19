@@ -68,6 +68,27 @@ failure. Production sinks should rate-limit log rendering while retaining aggreg
 - Query as a stranger and assert no knowledge identifiers are returned.
 - Fill the output inventory and assert neither EMC nor items change.
 
-The unit suite covers access, persistence corruption, replay/tick limits, filtered transfers,
-unauthorized knowledge, rejected destinations, and concurrent overspend. World adapters must
-add GameTests and optional storage-mod compatibility fixtures before issue #42 is complete.
+## Fabric world adapter
+
+ProjectEX registers 16 tiered EMC Link blocks and one final-tier Transmutation Interface.
+Their owner, member list, public-insert setting, and independent filters persist in world data
+and on the dropped block item. Unclaimed blocks expose no account.
+When the same owner or an operator replaces a dropped block, its binding is retained. Placement
+by another player resets the machine configuration and binds it to that placer, so a stolen
+block item can never act as a credential for the previous owner's offline account.
+
+The sided `ItemStorage` contract is:
+
+- bottom: valued componentless item insertion for EMC Links;
+- top: learned componentless item extraction;
+- horizontal: both operations on EMC Links and extraction on the Interface.
+
+Each outer Fabric transaction snapshots the bound account. An abort restores it; a final
+commit retains the exact credit or debit. Availability iteration is filtered and bounded by
+the tier, while direct extraction still validates knowledge, price revision, filters, and
+budget. The management menu lets the owner/operator toggle public insertion, filter modes,
+and the held componentless item in either filter.
+
+The test suite covers access, persistence corruption, replay/tick limits, filtered transfers,
+unauthorized knowledge, rejected destinations, concurrent overspend, sided lookup, transaction
+rollback/commit, knowledge-backed views, menu authorization, and break/place owner retention.

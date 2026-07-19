@@ -49,6 +49,12 @@ public final class ProjectEXEnglishLanguageProvider extends FabricLanguageProvid
             );
         }
         builder.add(io.github.tufkan1.projectex.content.ProjectEXBlocks.COMPACT_SUN, "Compact Sun");
+        for (var entry : io.github.tufkan1.projectex.content.ProjectEXBlocks.EMC_LINKS.entrySet()) {
+            builder.add(entry.getValue().block(), tierName(entry.getKey()) + " EMC Link [MK "
+                + entry.getKey().level() + "]");
+        }
+        builder.add(io.github.tufkan1.projectex.content.ProjectEXBlocks.TRANSMUTATION_INTERFACE,
+            "Transmutation Interface");
     }
 
     private static Path locateSource() {

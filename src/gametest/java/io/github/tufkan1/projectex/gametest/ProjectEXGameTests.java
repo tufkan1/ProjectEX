@@ -25,6 +25,8 @@ import io.github.tufkan1.projectex.content.recipe.KleinStarUpgradeRecipe;
 import io.github.tufkan1.projectex.content.machine.EmcMachineBlockEntity;
 import io.github.tufkan1.projectex.content.storage.AlchemyStorageBlockEntity;
 import io.github.tufkan1.projectex.content.matter.MatterFurnaceBlockEntity;
+import io.github.tufkan1.projectex.content.automation.AutomationBlockEntity;
+import io.github.tufkan1.projectex.internal.player.PlayerAlchemySavedData;
 import io.github.tufkan1.projectex.content.AlchemicalBagItem;
 import io.github.tufkan1.projectex.content.component.BagItemState;
 import io.github.tufkan1.projectex.menu.AlchemyStorageMenu;
@@ -34,8 +36,10 @@ import io.github.tufkan1.projectex.matter.MatterTierConfig;
 import io.github.tufkan1.projectex.menu.TransmutationMenu;
 import io.github.tufkan1.projectex.menu.EmcMachineMenu;
 import io.github.tufkan1.projectex.menu.MatterFurnaceMenu;
+import io.github.tufkan1.projectex.menu.AutomationMenu;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Optional;
 import net.fabricmc.fabric.api.gametest.v1.CustomTestMethodInvoker;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.BlockPos;
@@ -63,6 +67,111 @@ import net.minecraft.core.registries.BuiltInRegistries;
 /** Runtime registration, resource reload, and physical menu smoke tests. */
 @SuppressWarnings("removal")
 public final class ProjectEXGameTests implements CustomTestMethodInvoker {
+    @GameTest
+    public void emcLinkUsesClaimedSidedTransactionalAccountStorage(GameTestHelper helper) {
+        BlockPos relative = new BlockPos(19, 1, 6);
+        helper.setBlock(relative, ProjectEXBlocks.EMC_LINKS.get(
+            io.github.tufkan1.projectex.machine.ExpansionMachineTier.BASIC).block());
+        AutomationBlockEntity link = helper.getBlockEntity(relative, AutomationBlockEntity.class);
+        BlockPos absolute = helper.absolutePos(relative);
+        helper.assertTrue(ItemStorage.SIDED.find(helper.getLevel(), absolute, Direction.DOWN) == null,
+            "Unclaimed EMC Link exposed an offline account");
+
+        ServerPlayer owner = helper.makeMockServerPlayerInLevel();
+        link.claim(owner.getUUID());
+        PlayerAlchemySavedData data = PlayerAlchemySavedData.get(helper.getLevel().getServer());
+        EmcKey cobblestone = EmcKey.parse("minecraft:cobblestone");
+        data.update(owner.getUUID(), ignored ->
+            new io.github.tufkan1.projectex.player.PlayerAlchemyState(
+                EmcValue.of(100), new java.util.TreeSet<>(java.util.Set.of(cobblestone))
+            ));
+
+        var down = ItemStorage.SIDED.find(helper.getLevel(), absolute, Direction.DOWN);
+        var up = ItemStorage.SIDED.find(helper.getLevel(), absolute, Direction.UP);
+        helper.assertTrue(down != null && up != null, "Claimed EMC Link did not expose sided storage");
+        try (Transaction transaction = Transaction.openOuter()) {
+            helper.assertValueEqual(down.insert(ItemVariant.of(Items.COBBLESTONE), 10, transaction),
+                10L, "Down EMC Link insertion");
+            transaction.abort();
+        }
+        helper.assertValueEqual(data.state(owner.getUUID()).balance(), EmcValue.of(100),
+            "Aborted EMC Link insertion changed balance");
+        try (Transaction transaction = Transaction.openOuter()) {
+            helper.assertValueEqual(down.insert(ItemVariant.of(Items.COBBLESTONE), 10, transaction),
+                10L, "Committed EMC Link insertion");
+            transaction.commit();
+        }
+        helper.assertValueEqual(data.state(owner.getUUID()).balance(), EmcValue.of(110),
+            "Committed EMC Link insertion did not credit exact EMC");
+        try (Transaction transaction = Transaction.openOuter()) {
+            helper.assertValueEqual(up.extract(ItemVariant.of(Items.COBBLESTONE), 10, transaction),
+                10L, "Up EMC Link extraction");
+            transaction.commit();
+        }
+        helper.assertValueEqual(data.state(owner.getUUID()).balance(), EmcValue.of(100),
+            "Committed EMC Link extraction did not debit exact EMC");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void transmutationInterfaceEnumeratesOnlyBoundKnowledgeAndPersistsOwner(GameTestHelper helper) {
+        BlockPos relative = new BlockPos(20, 1, 6);
+        helper.setBlock(relative, ProjectEXBlocks.TRANSMUTATION_INTERFACE);
+        AutomationBlockEntity automation = helper.getBlockEntity(relative, AutomationBlockEntity.class);
+        ServerPlayer owner = helper.makeMockServerPlayerInLevel();
+        automation.claim(owner.getUUID());
+        BlockPos absolute = helper.absolutePos(relative);
+        owner.setPos(absolute.getX() + 0.5, absolute.getY() + 1.0, absolute.getZ() + 0.5);
+        helper.getBlockState(relative).useWithoutItem(helper.getLevel(), owner,
+            new BlockHitResult(Vec3.atCenterOf(absolute), Direction.UP, absolute, false));
+        helper.assertTrue(owner.containerMenu instanceof AutomationMenu,
+            "Transmutation Interface did not open its authorized management menu");
+        helper.assertTrue(owner.containerMenu.clickMenuButton(owner, 0),
+            "Owner could not update public-insert access setting");
+        owner.closeContainer();
+        PlayerAlchemySavedData data = PlayerAlchemySavedData.get(helper.getLevel().getServer());
+        EmcKey diamond = EmcKey.parse("minecraft:diamond");
+        data.update(owner.getUUID(), ignored ->
+            new io.github.tufkan1.projectex.player.PlayerAlchemyState(
+                EmcValue.of(8192), new java.util.TreeSet<>(java.util.Set.of(diamond))
+            ));
+        var storage = ItemStorage.SIDED.find(
+            helper.getLevel(), helper.absolutePos(relative), Direction.UP
+        );
+        helper.assertTrue(storage != null && !storage.supportsInsertion(),
+            "Transmutation Interface exposed an insertion path");
+        java.util.List<ItemVariant> available = new java.util.ArrayList<>();
+        storage.nonEmptyViews().forEach(view -> available.add(view.getResource()));
+        helper.assertValueEqual(available, java.util.List.of(ItemVariant.of(Items.DIAMOND)),
+            "Transmutation Interface knowledge availability");
+        try (Transaction transaction = Transaction.openOuter()) {
+            helper.assertValueEqual(storage.extract(ItemVariant.of(Items.DIAMOND), 1, transaction),
+                1L, "Transmutation Interface diamond extraction");
+            transaction.commit();
+        }
+        helper.assertValueEqual(data.state(owner.getUUID()).balance(), EmcValue.ZERO,
+            "Transmutation Interface did not spend server-priced EMC");
+
+        ItemStack drop = net.minecraft.world.level.block.Block.getDrops(
+            automation.getBlockState(), helper.getLevel(), helper.absolutePos(relative), automation
+        ).stream().filter(stack -> stack.is(ProjectEXBlocks.TRANSMUTATION_INTERFACE.asItem()))
+            .findFirst().orElseThrow();
+        BlockPos replacement = new BlockPos(21, 1, 6);
+        helper.setBlock(replacement, ProjectEXBlocks.TRANSMUTATION_INTERFACE);
+        AutomationBlockEntity restored = helper.getBlockEntity(replacement, AutomationBlockEntity.class);
+        restored.applyComponentsFromItemStack(drop);
+        helper.assertValueEqual(restored.automationState().owner(), Optional.of(owner.getUUID()),
+            "Automation owner was not retained through break/place");
+        ServerPlayer thief = helper.makeMockServerPlayerInLevel();
+        restored.placedBy(thief);
+        helper.assertValueEqual(restored.automationState().owner(), Optional.of(thief.getUUID()),
+            "Stolen automation block retained access to the previous offline account");
+        helper.assertTrue(restored.automationState().members().isEmpty()
+                && !restored.automationState().publicInsert(),
+            "Stolen automation block retained the previous access configuration");
+        helper.succeed();
+    }
+
     @GameTest
     public void tableOpensServerOwnedMenu(GameTestHelper helper) {
         BlockPos relative = new BlockPos(0, 0, 0);

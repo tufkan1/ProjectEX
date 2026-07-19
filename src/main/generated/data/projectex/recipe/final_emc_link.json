@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "projectex:final_relay",
+    "projectex:fading_emc_link"
+  ],
+  "result": {
+    "id": "projectex:final_emc_link"
+  }
+}

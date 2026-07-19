@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:block",
+  "functions": [
+    {
+      "function": "minecraft:copy_components",
+      "include": [
+        "projectex:automation_state"
+      ],
+      "source": "block_entity"
+    }
+  ],
+  "pools": [
+    {
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "projectex:yellow_emc_link"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}
