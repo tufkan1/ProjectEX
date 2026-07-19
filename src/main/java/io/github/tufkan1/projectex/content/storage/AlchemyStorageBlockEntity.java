@@ -70,7 +70,9 @@ public final class AlchemyStorageBlockEntity extends BlockEntity
     public AlchemyStorageState storageState() { return state; }
 
     public void claim(UUID owner) {
-        state = new AlchemyStorageState(state.version(), state.stored(), state.access().claim(owner));
+        state = new AlchemyStorageState(
+            state.version(), state.stored(), state.access().claim(owner), state.advancedConfig()
+        );
         changed();
     }
 
@@ -85,7 +87,7 @@ public final class AlchemyStorageBlockEntity extends BlockEntity
         if (!state.access().permits(actor.getUUID(), operator)) return false;
         state = new AlchemyStorageState(
             state.version(), state.stored(),
-            state.access().withPublicAccess(enabled, actor.getUUID(), operator)
+            state.access().withPublicAccess(enabled, actor.getUUID(), operator), state.advancedConfig()
         );
         changed();
         return true;
@@ -117,8 +119,45 @@ public final class AlchemyStorageBlockEntity extends BlockEntity
             if (consumed > 0) items.get(kind.inputStart() + index).shrink(consumed);
         }
         insertOutput(target, result.produced());
-        state = new AlchemyStorageState(state.version(), result.stored(), state.access());
+        state = new AlchemyStorageState(
+            state.version(), result.stored(), state.access(), state.advancedConfig()
+        );
         changed();
+    }
+
+    public boolean cycleAdvancedFilter(Player actor) {
+        if (kind != StorageKind.ADVANCED_ALCHEMICAL_CHEST || !canUse(actor)) return false;
+        state = new AlchemyStorageState(
+            state.version(), state.stored(), state.access(), state.advancedConfig().cycleMode()
+        );
+        changed();
+        return true;
+    }
+
+    public boolean toggleAdvancedFilter(ItemStack stack, Player actor) {
+        if (kind != StorageKind.ADVANCED_ALCHEMICAL_CHEST || stack.isEmpty() || !canUse(actor)) return false;
+        String itemId = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
+        var updated = state.advancedConfig().toggle(itemId);
+        if (updated.equals(state.advancedConfig())) return false;
+        state = new AlchemyStorageState(state.version(), state.stored(), state.access(), updated);
+        changed();
+        return true;
+    }
+
+    public void sortAdvanced() {
+        if (kind != StorageKind.ADVANCED_ALCHEMICAL_CHEST) return;
+        List<ItemStack> sorted = items.stream().filter(stack -> !stack.isEmpty()).map(ItemStack::copy)
+            .sorted(java.util.Comparator
+                .comparing((ItemStack stack) -> BuiltInRegistries.ITEM.getKey(stack.getItem()).toString())
+                .thenComparing(stack -> stack.getComponentsPatch().toString()))
+            .toList();
+        boolean changed = false;
+        for (int slot = 0; slot < items.size(); slot++) {
+            ItemStack replacement = slot < sorted.size() ? sorted.get(slot) : ItemStack.EMPTY;
+            if (!ItemStack.matches(items.get(slot), replacement)) changed = true;
+            items.set(slot, replacement);
+        }
+        if (changed) changed();
     }
 
     private int outputRoom(ItemStack target) {
@@ -241,6 +280,10 @@ public final class AlchemyStorageBlockEntity extends BlockEntity
     @Override public void clearContent() { items.clear(); changed(); }
 
     @Override public boolean canPlaceItem(int slot, ItemStack stack) {
+        if (kind == StorageKind.ADVANCED_ALCHEMICAL_CHEST) {
+            String itemId = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
+            return state.advancedConfig().allows(itemId);
+        }
         if (!kind.condenser()) return true;
         if (slot == TARGET_SLOT) return valueOf(stack) != null;
         return slot < kind.outputStart() && valueOf(stack) != null;

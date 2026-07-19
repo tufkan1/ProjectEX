@@ -7,6 +7,8 @@ import io.github.tufkan1.projectex.content.storage.AlchemyStorageBlockEntity;
 import io.github.tufkan1.projectex.storage.StorageKind;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -64,6 +66,27 @@ public final class AlchemyStorageBlock extends BaseEntityBlock {
     }
 
     @Override
+    protected InteractionResult useItemOn(
+        ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
+        InteractionHand hand, BlockHitResult hit
+    ) {
+        if (kind != StorageKind.ADVANCED_ALCHEMICAL_CHEST || !player.isSecondaryUseActive()) {
+            return InteractionResult.PASS;
+        }
+        if (!(level.getBlockEntity(pos) instanceof AlchemyStorageBlockEntity storage)) {
+            return InteractionResult.PASS;
+        }
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
+        if (!(player instanceof ServerPlayer serverPlayer)) return InteractionResult.FAIL;
+        if (!storage.toggleAdvancedFilter(stack, player)) return InteractionResult.FAIL;
+        serverPlayer.sendOverlayMessage(Component.translatable(
+            "block.projectex.advanced_alchemical_chest.filter_item",
+            stack.getHoverName(), storage.storageState().advancedConfig().itemIds().size()
+        ));
+        return InteractionResult.SUCCESS_SERVER;
+    }
+
+    @Override
     protected InteractionResult useWithoutItem(
         BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit
     ) {
@@ -74,6 +97,16 @@ public final class AlchemyStorageBlock extends BaseEntityBlock {
         if (!(player instanceof ServerPlayer serverPlayer) || !storage.canUse(player)) {
             return InteractionResult.FAIL;
         }
+        if (kind == StorageKind.ADVANCED_ALCHEMICAL_CHEST && player.isSecondaryUseActive()) {
+            if (!storage.cycleAdvancedFilter(player)) return InteractionResult.FAIL;
+            serverPlayer.sendOverlayMessage(Component.translatable(
+                "block.projectex.advanced_alchemical_chest.filter_mode",
+                Component.translatable("block.projectex.advanced_alchemical_chest.filter_mode."
+                    + storage.storageState().advancedConfig().filterMode().name().toLowerCase(java.util.Locale.ROOT))
+            ));
+            return InteractionResult.SUCCESS_SERVER;
+        }
+        storage.sortAdvanced();
         serverPlayer.openMenu(storage);
         return InteractionResult.SUCCESS_SERVER;
     }
