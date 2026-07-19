@@ -57,6 +57,7 @@ launch a development client with `./gradlew runClient`.
 - [Public EMC API](docs/emc-api.md) — query lifecycle, consumer examples, and compatibility policy
 - [EMC storage API](docs/emc-storage-api.md) — portable storage, exact transfers, automation, and migration
 - [EMC machine core](docs/machine-core.md) — fixed-point generation, ownership, budgets, and cycle safety
+- [EMC automation core](docs/emc-automation-core.md) — secure links, knowledge queries, and atomic crafting
 - [Behavior parity matrix](docs/parity-matrix.md) — implemented reference behavior and intentional differences
 - [Condenser/storage core](docs/condenser-storage-core.md) — exact output transactions, component identity, and bag nesting rules
 - [Matter progression safety core](docs/matter-progression-core.md) — bounded area actions, exact furnace plans, armor caps, and audit contracts
