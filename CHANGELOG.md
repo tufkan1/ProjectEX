@@ -13,6 +13,7 @@ the Minecraft version.
 - Public repository governance, contribution, security, issue, CI, and release scaffolding.
 - Versioned EMC data-pack schema, strict parser, safety limits, and fixture tests.
 - Deterministic priority/conflict/alias resolution and atomic server data reload.
+- Server-side EMC query, status, reload, and machine-readable diagnostics commands.
 
 ## [0.1.0-alpha.1] - Unreleased
 

@@ -28,14 +28,17 @@ dependencies {
 	testRuntimeOnly "org.junit.platform:junit-platform-launcher"
 }
 
+def modVersion = project.version
+def targetMinecraftVersion = project.minecraft_version
+
 processResources {
-	inputs.property "version", project.version
-	inputs.property "minecraft_version", project.minecraft_version
+	inputs.property "version", modVersion
+	inputs.property "minecraft_version", targetMinecraftVersion
 
 	filesMatching("fabric.mod.json") {
 		expand(
-			version: project.version,
-			minecraft_version: project.minecraft_version
+			version: modVersion,
+			minecraft_version: targetMinecraftVersion
 		)
 	}
 }

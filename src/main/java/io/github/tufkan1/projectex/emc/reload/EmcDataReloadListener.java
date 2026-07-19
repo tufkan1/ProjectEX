@@ -41,7 +41,7 @@ public final class EmcDataReloadListener extends SimpleReloadListener<ResolvedEm
 
     @Override
     protected void apply(ResolvedEmcData prepared, PreparableReloadListener.SharedState state) {
-        registry.replaceAll(prepared.values());
+        registry.replaceAll(prepared.values(), prepared.sources());
         ProjectEX.LOGGER.info("Loaded {} EMC values from {} winning data sources",
             prepared.values().size(), prepared.sources().values().stream().distinct().count());
     }

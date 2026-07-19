@@ -1,3 +1,9 @@
 {
-  "modmenu.descriptionTranslation.projectex": "A community-driven alchemy and EMC mod for modern Fabric."
+  "modmenu.descriptionTranslation.projectex": "A community-driven alchemy and EMC mod for modern Fabric.",
+  "commands.projectex.status": "ProjectEX has %s resolved EMC values.",
+  "commands.projectex.invalid_item": "Invalid item identifier: %s",
+  "commands.projectex.no_value": "No EMC value is registered for %s.",
+  "commands.projectex.value": "%s = %s EMC (source: %s)",
+  "commands.projectex.reload_started": "Reloading data packs and ProjectEX EMC values...",
+  "commands.projectex.dumped": "Wrote %s EMC values to the server log as JSON."
 }
