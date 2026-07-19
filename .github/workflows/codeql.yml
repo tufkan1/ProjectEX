@@ -29,5 +29,6 @@ jobs:
           java-version: "25"
       - uses: gradle/actions/setup-gradle@v6
       - run: chmod +x ./gradlew
-      - run: ./gradlew --no-daemon classes testClasses
+      # CodeQL manual mode must observe javac; cached class outputs produce an empty database.
+      - run: ./gradlew --no-daemon --no-build-cache clean classes testClasses
       - uses: github/codeql-action/analyze@v4
