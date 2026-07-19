@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": "projectex:aeternalis_fuel",
+    "N": "minecraft:netherite_block",
+    "R": "projectex:red_matter"
+  },
+  "pattern": [
+    "ARA",
+    "RNR",
+    "ARA"
+  ],
+  "result": {
+    "id": "projectex:condenser_mk2"
+  }
+}

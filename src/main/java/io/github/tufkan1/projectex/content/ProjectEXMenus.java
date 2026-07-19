@@ -3,6 +3,7 @@ package io.github.tufkan1.projectex.content;
 import io.github.tufkan1.projectex.ProjectEX;
 import io.github.tufkan1.projectex.menu.TransmutationMenu;
 import io.github.tufkan1.projectex.menu.EmcMachineMenu;
+import io.github.tufkan1.projectex.menu.AlchemyStorageMenu;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.flag.FeatureFlags;
@@ -19,6 +20,11 @@ public final class ProjectEXMenus {
         BuiltInRegistries.MENU,
         ProjectEX.id("emc_machine"),
         new MenuType<>(EmcMachineMenu::new, FeatureFlags.VANILLA_SET)
+    );
+    public static final MenuType<AlchemyStorageMenu> ALCHEMY_STORAGE = Registry.register(
+        BuiltInRegistries.MENU,
+        ProjectEX.id("alchemy_storage"),
+        new MenuType<>(AlchemyStorageMenu::new, FeatureFlags.VANILLA_SET)
     );
 
     private ProjectEXMenus() {

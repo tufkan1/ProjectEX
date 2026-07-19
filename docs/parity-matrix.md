@@ -13,7 +13,8 @@ not imply copied implementation or byte-for-byte behavior.
 | Klein Stars Ein–Omega | Implemented | ProjectE | Public Fabric item lookup and exact retained-EMC upgrade recipe |
 | Energy Collectors MK1–MK3 | Implemented | ProjectE | Integer/fixed-point budget, ownership, redstone modes, two-slot accessible UI |
 | Anti-Matter Relays MK1–MK3 | Implemented | ProjectE | Directed-cycle rejection, world tick budget, Fabric sided storage |
-| Condensers | Planned | ProjectE | Will use the same exact machine/storage transaction core |
+| Condensers MK1/MK2 | Implemented | ProjectE | Exact persistent buffer, component-safe targets, separated sided automation, server paging |
+| Alchemical Chest and Bags | Implemented | ProjectE | 104-slot chest and bags; copied bag identities mirror one UUID/world-backed inventory |
 | Advanced tiers and links | Planned | ProjectExpansion | No content or assets imported; scope will be reviewed per feature |
 
 Collector/relay baseline rates and capacities follow ProjectE commit

@@ -46,9 +46,10 @@ dependencies {
 }
 
 tasks.register("runProductionClientGameTest", net.fabricmc.loom.task.prod.ClientProductionRunTask) {
+	runDir.set(layout.buildDirectory.dir("productionClientGameTest"))
 	jvmArgs.add("-Dfabric.client.gametest")
 	jvmArgs.add("-Dfabric.client.gametest.disableNetworkSynchronizer=true")
-	useXVFB = true
+	useXVFB = System.getProperty("os.name").toLowerCase(java.util.Locale.ROOT).contains("linux")
 }
 
 def modVersion = project.version

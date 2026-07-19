@@ -13,6 +13,26 @@ import org.junit.jupiter.api.Test;
 
 final class CondenserTransactionTest {
     @Test
+    void persistentCondenserCanAccumulateSubTargetInputsExactly() {
+        CondenserVariant target = CondenserVariant.item("minecraft:diamond");
+        var result = CondenserTransaction.evaluate(
+            target,
+            EmcValue.of(8_192),
+            EmcValue.ZERO,
+            List.of(new CondenserTransaction.Input(
+                CondenserVariant.item("minecraft:coal"), EmcValue.of(128), 1
+            )),
+            64,
+            1,
+            true
+        );
+        assertEquals(EmcValue.of(128), result.stored());
+        assertEquals(List.of(1), result.consumedCounts());
+        assertEquals(0, result.produced());
+        assertTrue(result.changed());
+    }
+
+    @Test
     void producesExactOutputsAndRetainsRemainder() {
         CondenserVariant target = CondenserVariant.item("minecraft:diamond");
         var result = CondenserTransaction.evaluate(

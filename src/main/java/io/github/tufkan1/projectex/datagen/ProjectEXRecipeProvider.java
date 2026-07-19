@@ -149,6 +149,36 @@ public final class ProjectEXRecipeProvider extends FabricRecipeProvider {
                     .pattern("ORO").pattern("RLR").pattern("ORO")
                     .unlockedBy("has_relay_mk2", has(ProjectEXBlocks.RELAY_MK2))
                     .save(output, id("relay_mk3"));
+
+                shaped(RecipeCategory.MISC, ProjectEXBlocks.ALCHEMICAL_CHEST)
+                    .define('C', Items.CHEST).define('D', ProjectEXItems.HIGH_COVALENCE_DUST.item())
+                    .define('M', ProjectEXItems.DARK_MATTER.item())
+                    .pattern("DMD").pattern("MCM").pattern("DMD")
+                    .unlockedBy("has_dark_matter", has(ProjectEXItems.DARK_MATTER.item()))
+                    .save(output, id("alchemical_chest"));
+                shaped(RecipeCategory.MISC, ProjectEXBlocks.CONDENSER_MK1)
+                    .define('C', Items.CHEST)
+                    .define('D', Items.DIAMOND_BLOCK).define('O', Items.OBSIDIAN)
+                    .pattern("ODO").pattern("DCD").pattern("ODO")
+                    .unlockedBy("has_alchemical_chest", has(ProjectEXBlocks.ALCHEMICAL_CHEST))
+                    .save(output, id("condenser_mk1"));
+                shaped(RecipeCategory.MISC, ProjectEXBlocks.CONDENSER_MK2)
+                    .define('N', Items.NETHERITE_BLOCK)
+                    .define('R', ProjectEXItems.RED_MATTER.item()).define('A', ProjectEXItems.AETERNALIS_FUEL.item())
+                    .pattern("ARA").pattern("RNR").pattern("ARA")
+                    .unlockedBy("has_condenser_mk1", has(ProjectEXBlocks.CONDENSER_MK1))
+                    .save(output, id("condenser_mk2"));
+
+                java.util.List<net.minecraft.world.item.Item> colors = Items.DYE.asList();
+                for (int index = 0; index < ProjectEXItems.alchemicalBags().size(); index++) {
+                    var bag = ProjectEXItems.alchemicalBags().get(index);
+                    shaped(RecipeCategory.TOOLS, bag.item())
+                        .define('C', Items.CHEST).define('D', colors.get(index))
+                        .define('H', ProjectEXItems.HIGH_COVALENCE_DUST.item())
+                        .pattern("HDH").pattern("DCD").pattern("HDH")
+                        .unlockedBy("has_high_covalence_dust", has(ProjectEXItems.HIGH_COVALENCE_DUST.item()))
+                        .save(output, id(bag.id().getPath()));
+                }
             }
 
             private ResourceKey<Recipe<?>> id(String path) {

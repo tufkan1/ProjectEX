@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": "minecraft:chest",
+    "D": "projectex:high_covalence_dust",
+    "M": "projectex:dark_matter"
+  },
+  "pattern": [
+    "DMD",
+    "MCM",
+    "DMD"
+  ],
+  "result": {
+    "id": "projectex:alchemical_chest"
+  }
+}

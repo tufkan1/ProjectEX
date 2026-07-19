@@ -19,6 +19,22 @@ public final class CondenserTransaction {
         int outputSpace,
         int inputBudget
     ) {
+        return evaluate(target, targetValue, stored, inputs, outputSpace, inputBudget, false);
+    }
+
+    /**
+     * Evaluates a transaction, optionally retaining sub-target EMC in a machine-owned buffer.
+     * Portable/stateless callers keep the conservative default; persistent condensers opt in.
+     */
+    public static Result evaluate(
+        CondenserVariant target,
+        EmcValue targetValue,
+        EmcValue stored,
+        List<Input> inputs,
+        int outputSpace,
+        int inputBudget,
+        boolean allowPersistentBuffer
+    ) {
         Objects.requireNonNull(target, "target");
         Objects.requireNonNull(targetValue, "targetValue");
         Objects.requireNonNull(stored, "stored");
@@ -46,7 +62,7 @@ public final class CondenserTransaction {
 
         BigInteger possible = available.amount().divide(targetValue.amount());
         int produced = possible.min(BigInteger.valueOf(outputSpace)).intValueExact();
-        if (produced == 0 && stored.equals(EmcValue.ZERO)) {
+        if (produced == 0 && stored.equals(EmcValue.ZERO) && !allowPersistentBuffer) {
             // Avoid consuming inventory merely to strand sub-target EMC when no prior buffer exists.
             return unchanged(stored, safeInputs.size());
         }

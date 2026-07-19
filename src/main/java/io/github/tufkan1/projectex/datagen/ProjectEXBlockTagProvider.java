@@ -33,12 +33,16 @@ public final class ProjectEXBlockTagProvider extends FabricTagsProvider.BlockTag
             key(ProjectEXBlocks.COLLECTOR_MK1), key(ProjectEXBlocks.COLLECTOR_MK2),
             key(ProjectEXBlocks.COLLECTOR_MK3), key(ProjectEXBlocks.RELAY_MK1),
             key(ProjectEXBlocks.RELAY_MK2), key(ProjectEXBlocks.RELAY_MK3)
+            , key(ProjectEXBlocks.CONDENSER_MK1), key(ProjectEXBlocks.CONDENSER_MK2),
+            key(ProjectEXBlocks.ALCHEMICAL_CHEST)
         );
         builder(BlockTags.NEEDS_DIAMOND_TOOL).add(table);
         builder(BlockTags.NEEDS_DIAMOND_TOOL).add(
             key(ProjectEXBlocks.COLLECTOR_MK1), key(ProjectEXBlocks.COLLECTOR_MK2),
             key(ProjectEXBlocks.COLLECTOR_MK3), key(ProjectEXBlocks.RELAY_MK1),
             key(ProjectEXBlocks.RELAY_MK2), key(ProjectEXBlocks.RELAY_MK3)
+            , key(ProjectEXBlocks.CONDENSER_MK1), key(ProjectEXBlocks.CONDENSER_MK2),
+            key(ProjectEXBlocks.ALCHEMICAL_CHEST)
         );
         builder(ProjectEXTags.PHILOSOPHERS_STONE_ALLOWED).add(
             key(Blocks.STONE),

@@ -4,6 +4,8 @@ import io.github.tufkan1.projectex.ProjectEX;
 import io.github.tufkan1.projectex.content.component.ActiveItemState;
 import io.github.tufkan1.projectex.content.component.PortableEmcState;
 import io.github.tufkan1.projectex.content.component.MachineItemState;
+import io.github.tufkan1.projectex.content.component.AlchemyStorageState;
+import io.github.tufkan1.projectex.content.component.BagItemState;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -32,6 +34,22 @@ public final class ProjectEXComponents {
         DataComponentType.<MachineItemState>builder()
             .persistent(MachineItemState.CODEC)
             .networkSynchronized(MachineItemState.STREAM_CODEC)
+            .build()
+    );
+    public static final DataComponentType<AlchemyStorageState> ALCHEMY_STORAGE_STATE = Registry.register(
+        BuiltInRegistries.DATA_COMPONENT_TYPE,
+        ProjectEX.id("alchemy_storage_state"),
+        DataComponentType.<AlchemyStorageState>builder()
+            .persistent(AlchemyStorageState.CODEC)
+            .networkSynchronized(AlchemyStorageState.STREAM_CODEC)
+            .build()
+    );
+    public static final DataComponentType<BagItemState> BAG_IDENTITY = Registry.register(
+        BuiltInRegistries.DATA_COMPONENT_TYPE,
+        ProjectEX.id("bag_identity"),
+        DataComponentType.<BagItemState>builder()
+            .persistent(BagItemState.CODEC)
+            .networkSynchronized(BagItemState.STREAM_CODEC)
             .build()
     );
 

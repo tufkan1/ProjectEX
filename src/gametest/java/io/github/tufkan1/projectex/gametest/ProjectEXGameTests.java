@@ -16,6 +16,10 @@ import io.github.tufkan1.projectex.content.component.PortableEmcState;
 import io.github.tufkan1.projectex.content.component.MachineItemState;
 import io.github.tufkan1.projectex.content.recipe.KleinStarUpgradeRecipe;
 import io.github.tufkan1.projectex.content.machine.EmcMachineBlockEntity;
+import io.github.tufkan1.projectex.content.storage.AlchemyStorageBlockEntity;
+import io.github.tufkan1.projectex.content.AlchemicalBagItem;
+import io.github.tufkan1.projectex.content.component.BagItemState;
+import io.github.tufkan1.projectex.menu.AlchemyStorageMenu;
 import io.github.tufkan1.projectex.machine.MachineTier;
 import io.github.tufkan1.projectex.machine.MachineRedstoneMode;
 import io.github.tufkan1.projectex.menu.TransmutationMenu;
@@ -31,6 +35,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.block.Blocks;
@@ -42,6 +47,7 @@ import net.minecraft.world.level.gamerules.GameRules;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
+import net.minecraft.core.component.DataComponents;
 
 /** Runtime registration, resource reload, and physical menu smoke tests. */
 @SuppressWarnings("removal")
@@ -521,6 +527,155 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
         helper.assertTrue(replaced.getItem(EmcMachineBlockEntity.INPUT_SLOT).getCount()
                 == original.getItem(EmcMachineBlockEntity.INPUT_SLOT).getCount(),
             "Placed machine did not restore its carried inventory");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void condenserMk2ConservesExactEmcAndExposesSeparatedAutomation(GameTestHelper helper) {
+        BlockPos relative = new BlockPos(18, 1, 0);
+        helper.setBlock(relative, ProjectEXBlocks.CONDENSER_MK2);
+        AlchemyStorageBlockEntity condenser = helper.getBlockEntity(relative, AlchemyStorageBlockEntity.class);
+        condenser.setItem(AlchemyStorageBlockEntity.TARGET_SLOT, new ItemStack(Items.DIAMOND));
+        condenser.setItem(1, new ItemStack(Items.COAL, 64));
+
+        AlchemyStorageBlockEntity.tickServer(
+            helper.getLevel(), helper.absolutePos(relative), condenser.getBlockState(), condenser
+        );
+        helper.assertTrue(condenser.getItem(1).isEmpty(), "Condenser did not consume its exact input batch");
+        helper.assertTrue(condenser.getItem(43).is(Items.DIAMOND)
+                && condenser.getItem(43).getCount() == 1,
+            "Condenser did not produce exactly one diamond from 8192 EMC");
+        helper.assertTrue(condenser.storageState().stored().equals(EmcValue.ZERO),
+            "Condenser retained or generated EMC after an exact conversion");
+
+        var horizontal = ItemStorage.SIDED.find(
+            helper.getLevel(), helper.absolutePos(relative), Direction.NORTH);
+        var vertical = ItemStorage.SIDED.find(
+            helper.getLevel(), helper.absolutePos(relative), Direction.UP);
+        helper.assertTrue(horizontal != null && vertical != null,
+            "Condenser sided Fabric storage was not exposed");
+        try (Transaction transaction = Transaction.openOuter()) {
+            helper.assertTrue(horizontal.insert(ItemVariant.of(new ItemStack(Items.COAL)), 1, transaction) == 1,
+                "Horizontal automation could not insert condenser input");
+            helper.assertTrue(vertical.extract(ItemVariant.of(new ItemStack(Items.DIAMOND)), 1, transaction) == 1,
+                "Vertical automation could not extract condenser output");
+            transaction.commit();
+        }
+        helper.succeed();
+    }
+
+    @GameTest
+    public void fullCondenserOutputConsumesNothing(GameTestHelper helper) {
+        BlockPos relative = new BlockPos(21, 1, 0);
+        helper.setBlock(relative, ProjectEXBlocks.CONDENSER_MK1);
+        AlchemyStorageBlockEntity condenser = helper.getBlockEntity(relative, AlchemyStorageBlockEntity.class);
+        condenser.setItem(0, new ItemStack(Items.DIAMOND));
+        condenser.setItem(1, new ItemStack(Items.COAL, 4));
+        for (int slot = 43; slot < condenser.getContainerSize(); slot++) {
+            condenser.setItem(slot, new ItemStack(Items.DIAMOND, 64));
+        }
+        AlchemyStorageBlockEntity.tickServer(
+            helper.getLevel(), helper.absolutePos(relative), condenser.getBlockState(), condenser
+        );
+        helper.assertTrue(condenser.getItem(1).getCount() == 4,
+            "A full condenser output consumed input");
+        helper.assertTrue(condenser.storageState().stored().equals(EmcValue.ZERO),
+            "A full condenser output changed its EMC buffer");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void condenserRejectsStatefulTargetWithoutExactEmcDefinition(GameTestHelper helper) {
+        BlockPos relative = new BlockPos(27, 1, 0);
+        helper.setBlock(relative, ProjectEXBlocks.CONDENSER_MK2);
+        AlchemyStorageBlockEntity condenser = helper.getBlockEntity(relative, AlchemyStorageBlockEntity.class);
+        ItemStack namedDiamond = new ItemStack(Items.DIAMOND);
+        namedDiamond.set(DataComponents.CUSTOM_NAME, net.minecraft.network.chat.Component.literal("Do not clone"));
+        String exactComponents = io.github.tufkan1.projectex.api.fabric.MinecraftEmcAdapter
+            .exactMatch(namedDiamond, helper.getLevel().registryAccess()).orElseThrow().componentsJson();
+        helper.assertTrue(exactComponents != null && exactComponents.contains("minecraft:custom_name"),
+            "Stateful target did not serialize to canonical EMC component JSON");
+        condenser.setItem(0, namedDiamond);
+        condenser.setItem(1, new ItemStack(Items.COAL, 64));
+        AlchemyStorageBlockEntity.tickServer(
+            helper.getLevel(), helper.absolutePos(relative), condenser.getBlockState(), condenser
+        );
+        helper.assertTrue(condenser.getItem(1).getCount() == 64,
+            "Stateful target fell back to componentless EMC and consumed input");
+        helper.assertTrue(condenser.getItem(43).isEmpty(),
+            "Stateful target was cloned without an exact component EMC definition");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void alchemicalChestBreakPlacePreservesOwnerAndAllPages(GameTestHelper helper) {
+        BlockPos relative = new BlockPos(24, 1, 0);
+        helper.setBlock(relative, ProjectEXBlocks.ALCHEMICAL_CHEST);
+        AlchemyStorageBlockEntity chest = helper.getBlockEntity(relative, AlchemyStorageBlockEntity.class);
+        ServerPlayer owner = helper.makeMockServerPlayerInLevel();
+        chest.claim(owner.getUUID());
+        chest.setItem(0, new ItemStack(Items.DIAMOND, 3));
+        chest.setItem(103, new ItemStack(Items.COAL, 7));
+        BlockPos absolute = helper.absolutePos(relative);
+        owner.setPos(absolute.getX() + 0.5, absolute.getY() + 1.0, absolute.getZ() + 0.5);
+        helper.getBlockState(relative).useWithoutItem(
+            helper.getLevel(), owner,
+            new BlockHitResult(Vec3.atCenterOf(absolute), Direction.UP, absolute, false)
+        );
+        helper.assertTrue(owner.containerMenu instanceof AlchemyStorageMenu,
+            "Alchemical Chest did not open its server-owned paged menu");
+        AlchemyStorageMenu chestMenu = (AlchemyStorageMenu) owner.containerMenu;
+        helper.assertTrue(chestMenu.clickMenuButton(owner, 1) && chestMenu.page() == 1,
+            "Alchemical Chest page change was not applied by the server menu");
+        owner.closeContainer();
+
+        ItemStack drop = net.minecraft.world.level.block.Block.getDrops(
+            chest.getBlockState(), helper.getLevel(), helper.absolutePos(relative), chest
+        ).stream().filter(stack -> stack.is(ProjectEXBlocks.ALCHEMICAL_CHEST.asItem()))
+            .findFirst().orElseThrow();
+        BlockPos replacement = new BlockPos(25, 1, 0);
+        helper.setBlock(replacement, ProjectEXBlocks.ALCHEMICAL_CHEST);
+        AlchemyStorageBlockEntity restored = helper.getBlockEntity(replacement, AlchemyStorageBlockEntity.class);
+        restored.applyComponentsFromItemStack(drop);
+        helper.assertTrue(restored.getItem(0).getCount() == 3 && restored.getItem(103).getCount() == 7,
+            "Alchemical Chest lost a paged inventory entry during break/place");
+        helper.assertTrue(restored.storageState().access().owner().orElseThrow().equals(owner.getUUID()),
+            "Alchemical Chest lost ownership during break/place");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void copiedBagIdentitySharesOneServerInventoryAndRejectsNesting(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        AlchemicalBagItem bagItem = ProjectEXItems.alchemicalBags().getFirst().item();
+        ItemStack original = new ItemStack(bagItem);
+        player.setItemInHand(InteractionHand.MAIN_HAND, original);
+        bagItem.use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
+        helper.assertTrue(player.containerMenu instanceof AlchemyStorageMenu,
+            "Alchemical Bag did not open its server-owned menu");
+        AlchemyStorageMenu first = (AlchemyStorageMenu) player.containerMenu;
+        first.getSlot(1).set(new ItemStack(Items.DIAMOND, 5));
+        helper.assertTrue(first.clickMenuButton(player, 1) && first.page() == 1,
+            "Alchemical Bag page change was not server-owned");
+        first.getSlot(1).set(new ItemStack(Items.COAL, 9));
+        BagItemState identity = original.get(ProjectEXComponents.BAG_IDENTITY);
+        helper.assertTrue(identity != null, "Bag did not acquire a persistent UUID");
+        ItemStack copiedIdentity = original.copy();
+        player.closeContainer();
+
+        player.setItemInHand(InteractionHand.MAIN_HAND, copiedIdentity);
+        bagItem.use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
+        AlchemyStorageMenu mirrored = (AlchemyStorageMenu) player.containerMenu;
+        helper.assertTrue(mirrored.getSlot(1).getItem().is(Items.DIAMOND)
+                && mirrored.getSlot(1).getItem().getCount() == 5,
+            "Copied bag identity created a duplicating second inventory instead of a mirror");
+        helper.assertTrue(mirrored.clickMenuButton(player, 1)
+                && mirrored.getSlot(1).getItem().is(Items.COAL)
+                && mirrored.getSlot(1).getItem().getCount() == 9,
+            "Copied bag identity did not mirror its second inventory page");
+        helper.assertTrue(!mirrored.getSlot(2).mayPlace(new ItemStack(bagItem)),
+            "Portable bag nesting was accepted");
+        player.closeContainer();
         helper.succeed();
     }
 

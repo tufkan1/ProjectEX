@@ -3,6 +3,7 @@ package io.github.tufkan1.projectex.client;
 import io.github.tufkan1.projectex.ProjectEX;
 import io.github.tufkan1.projectex.client.screen.TransmutationScreen;
 import io.github.tufkan1.projectex.client.screen.EmcMachineScreen;
+import io.github.tufkan1.projectex.client.screen.AlchemyStorageScreen;
 import io.github.tufkan1.projectex.content.ProjectEXMenus;
 import io.github.tufkan1.projectex.network.AlchemyActionPayload;
 import io.github.tufkan1.projectex.network.AlchemyKnowledgePagePayload;
@@ -31,6 +32,7 @@ public final class ProjectEXClient implements ClientModInitializer {
         KNOWLEDGE.replaceFavorites(favoriteStore.load());
         MenuScreens.register(ProjectEXMenus.TRANSMUTATION, TransmutationScreen::new);
         MenuScreens.register(ProjectEXMenus.EMC_MACHINE, EmcMachineScreen::new);
+        MenuScreens.register(ProjectEXMenus.ALCHEMY_STORAGE, AlchemyStorageScreen::new);
         ClientPlayNetworking.registerGlobalReceiver(AlchemySessionPayload.TYPE, (payload, context) -> {
             if (!ALCHEMY.open(payload)) {
                 ProjectEX.LOGGER.warn("Discarded malformed ProjectEX alchemy session payload");
