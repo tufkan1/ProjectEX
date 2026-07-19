@@ -7,8 +7,8 @@ pages. Favorites are a client preference layered over authoritative page entries
 
 ## Keyboard and narration requirements
 
-1. Opening the screen focuses search, then Tab moves through result grid, previous,
-   next, favorites toggle, burn/create count, and close in visual order.
+1. Opening the screen focuses search, then Tab moves through the result grid, previous,
+   next, create, favorite, learn-held, and burn-held controls in visual order.
 2. Arrow keys move within the result grid without requiring a mouse.
 3. Enter selects a focused learned item; Tab reaches an explicit Create button whose
    activation remains server-authoritative and prevents accidental creation.

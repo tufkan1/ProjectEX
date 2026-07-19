@@ -26,6 +26,7 @@ the Minecraft version.
 - Versioned, bounded client-side persistence for transmutation favorites.
 - Craftable Transmutation Table with distance-bound server sessions and starter EMC data.
 - Automated server GameTests for physical menu access and runtime EMC reload.
+- Deterministic arrow-key result navigation and localized narrated server failures.
 
 ## [0.1.0-alpha.1] - Unreleased
 

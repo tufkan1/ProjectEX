@@ -15,10 +15,12 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import org.lwjgl.glfw.GLFW;
 
 /** Accessible button-based transmutation screen backed only by authoritative client caches. */
 @Environment(EnvType.CLIENT)
@@ -116,6 +118,14 @@ public final class TransmutationScreen extends AbstractContainerScreen<Transmuta
     }
 
     @Override
+    public boolean keyPressed(KeyEvent event) {
+        if (moveGridFocus(event.key())) {
+            return true;
+        }
+        return super.keyPressed(event);
+    }
+
+    @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
         graphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0xE0101010);
@@ -135,7 +145,7 @@ public final class TransmutationScreen extends AbstractContainerScreen<Transmuta
             browser.totalPages(), browser.totalEntries()), 8, 116, 0xFFE8D5A5, false);
         alchemy.lastFailure().or(() -> browser.lastFailure()).ifPresent(failure ->
             graphics.text(font, Component.translatable(
-                "screen.projectex.failure", failure.name().toLowerCase(Locale.ROOT)),
+                "screen.projectex.failure", failureMessage(failure)),
                 8, 128, 0xFFFF7070, false));
     }
 
@@ -157,8 +167,8 @@ public final class TransmutationScreen extends AbstractContainerScreen<Transmuta
             browser.totalPages(),
             browser.totalEntries(),
             alchemy.lastFailure().or(() -> browser.lastFailure())
-                .map(failure -> failure.name().toLowerCase(Locale.ROOT))
-                .orElse("none")
+                .<Component>map(TransmutationScreen::failureMessage)
+                .orElseGet(() -> Component.translatable("screen.projectex.status.ready"))
         );
     }
 
@@ -208,6 +218,32 @@ public final class TransmutationScreen extends AbstractContainerScreen<Transmuta
 
     private void requestPage(int page) {
         ProjectEXClient.requestKnowledge(search == null ? "" : search.getValue(), page, PAGE_SIZE);
+    }
+
+    private boolean moveGridFocus(int key) {
+        int current = resultButtons.indexOf(getFocused());
+        if (current < 0) {
+            return false;
+        }
+        int visible = ProjectEXClient.knowledge().snapshot().entries().size();
+        int target = switch (key) {
+            case GLFW.GLFW_KEY_LEFT -> current % 3 > 0 ? current - 1 : -1;
+            case GLFW.GLFW_KEY_RIGHT -> current % 3 < 2 && current + 1 < visible ? current + 1 : -1;
+            case GLFW.GLFW_KEY_UP -> current >= 3 ? current - 3 : -1;
+            case GLFW.GLFW_KEY_DOWN -> current + 3 < visible ? current + 3 : -1;
+            default -> -1;
+        };
+        if (target < 0) {
+            return false;
+        }
+        setFocused(resultButtons.get(target));
+        triggerImmediateNarration(true);
+        return true;
+    }
+
+    private static Component failureMessage(io.github.tufkan1.projectex.alchemy.AlchemyTransactionFailure failure) {
+        return Component.translatable(
+            "screen.projectex.failure." + failure.name().toLowerCase(Locale.ROOT));
     }
 
     private void refreshButtons() {
