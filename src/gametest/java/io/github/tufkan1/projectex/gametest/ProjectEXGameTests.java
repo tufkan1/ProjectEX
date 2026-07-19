@@ -314,6 +314,82 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
     }
 
     @GameTest
+    public void elementalAmuletsPlaceProtectedFluidsChargeExactlyAndControlWeather(
+        GameTestHelper helper
+    ) {
+        BlockPos waterSupport = new BlockPos(9, 1, 5);
+        BlockPos lavaSupport = new BlockPos(12, 1, 5);
+        BlockPos deniedSupport = new BlockPos(15, 1, 5);
+        helper.setBlock(waterSupport, Blocks.STONE);
+        helper.setBlock(lavaSupport, Blocks.STONE);
+        helper.setBlock(deniedSupport, Blocks.STONE);
+
+        ServerPlayer waterPlayer = helper.makeMockServerPlayerInLevel();
+        ServerPlayer lavaPlayer = helper.makeMockServerPlayerInLevel();
+        ServerPlayer deniedPlayer = helper.makeMockServerPlayerInLevel();
+        lavaPlayer.setGameMode(GameType.SURVIVAL);
+        deniedPlayer.setGameMode(GameType.SURVIVAL);
+        waterPlayer.setPos(Vec3.atCenterOf(helper.absolutePos(waterSupport)));
+        lavaPlayer.setPos(Vec3.atCenterOf(helper.absolutePos(lavaSupport)));
+        deniedPlayer.setPos(Vec3.atCenterOf(helper.absolutePos(deniedSupport)));
+        ItemStack evertide = new ItemStack(ProjectEXItems.EVERTIDE_AMULET.item());
+        ItemStack volcanite = new ItemStack(ProjectEXItems.VOLCANITE_AMULET.item());
+        ItemStack denied = new ItemStack(ProjectEXItems.VOLCANITE_AMULET.item());
+        waterPlayer.setItemInHand(InteractionHand.MAIN_HAND, evertide);
+        lavaPlayer.setItemInHand(InteractionHand.MAIN_HAND, volcanite);
+        deniedPlayer.setItemInHand(InteractionHand.MAIN_HAND, denied);
+
+        helper.assertTrue(useOnTop(helper, waterPlayer, waterSupport, evertide)
+                == net.minecraft.world.InteractionResult.SUCCESS_SERVER,
+            "Evertide Amulet did not place a protected water source");
+        helper.assertBlockPresent(Blocks.WATER, waterSupport.above());
+
+        MatterEmcPayment.credit(lavaPlayer, EmcValue.of(31));
+        helper.assertTrue(useOnTop(helper, lavaPlayer, lavaSupport, volcanite)
+                == net.minecraft.world.InteractionResult.FAIL,
+            "Volcanite Amulet placed lava without its exact EMC cost");
+        helper.assertBlockPresent(Blocks.AIR, lavaSupport.above());
+        MatterEmcPayment.credit(lavaPlayer, EmcValue.of(1));
+        helper.assertTrue(useOnTop(helper, lavaPlayer, lavaSupport, volcanite)
+                == net.minecraft.world.InteractionResult.SUCCESS_SERVER,
+            "Volcanite Amulet rejected an exactly funded placement");
+        helper.assertBlockPresent(Blocks.LAVA, lavaSupport.above());
+        helper.assertTrue(MatterEmcPayment.balance(lavaPlayer).equals(EmcValue.ZERO),
+            "Volcanite Amulet did not debit exactly 32 EMC");
+
+        io.github.tufkan1.projectex.api.utility.UtilityWorldActionProtection.EVENT.register(
+            context -> !context.player().getUUID().equals(deniedPlayer.getUUID()));
+        MatterEmcPayment.credit(deniedPlayer, EmcValue.of(32));
+        helper.assertTrue(useOnTop(helper, deniedPlayer, deniedSupport, denied)
+                == net.minecraft.world.InteractionResult.FAIL,
+            "Elemental amulet ignored the claim protection callback");
+        helper.assertBlockPresent(Blocks.AIR, deniedSupport.above());
+        helper.assertTrue(MatterEmcPayment.balance(deniedPlayer).equals(EmcValue.of(32)),
+            "Denied elemental action consumed EMC or left residual state");
+
+        var evertideItem = (io.github.tufkan1.projectex.content.ElementalAmuletItem)
+            ProjectEXItems.EVERTIDE_AMULET.item();
+        var volcaniteItem = (io.github.tufkan1.projectex.content.ElementalAmuletItem)
+            ProjectEXItems.VOLCANITE_AMULET.item();
+        evertideItem.applyPedestalEffect(helper.getLevel(), helper.absolutePos(waterSupport),
+            evertide, 4, 16);
+        helper.assertTrue(helper.getLevel().getWeatherData().isRaining(),
+            "Evertide pedestal effect did not start rain");
+        volcaniteItem.applyPedestalEffect(helper.getLevel(), helper.absolutePos(lavaSupport),
+            volcanite, 4, 16);
+        helper.assertTrue(!helper.getLevel().getWeatherData().isRaining()
+                && !helper.getLevel().getWeatherData().isThundering(),
+            "Volcanite pedestal effect did not clear weather");
+        for (String recipe : List.of("evertide_amulet", "volcanite_amulet")) {
+            helper.assertTrue(helper.getLevel().getServer().getRecipeManager().byKey(
+                net.minecraft.resources.ResourceKey.create(
+                    net.minecraft.core.registries.Registries.RECIPE, ProjectEX.id(recipe)))
+                .isPresent(), "Missing elemental amulet recipe: " + recipe);
+        }
+        helper.succeed();
+    }
+
+    @GameTest
     public void bundledEmcDataLoadsAtRuntime(GameTestHelper helper) {
         helper.assertValueEqual(
             ProjectEX.emc().find(EmcKey.parse("minecraft:diamond")).orElseThrow(),
@@ -1301,6 +1377,14 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
             new PortableEmcState(PortableEmcState.CURRENT_VERSION, EmcValue.of(stored))
         );
         return stack;
+    }
+
+    private static net.minecraft.world.InteractionResult useOnTop(
+        GameTestHelper helper, ServerPlayer player, BlockPos relativeSupport, ItemStack stack
+    ) {
+        BlockPos absolute = helper.absolutePos(relativeSupport);
+        return stack.getItem().useOn(new UseOnContext(player, InteractionHand.MAIN_HAND,
+            new BlockHitResult(Vec3.atCenterOf(absolute), Direction.UP, absolute, false)));
     }
 
     private static EmcValue stored(ItemStack stack) {

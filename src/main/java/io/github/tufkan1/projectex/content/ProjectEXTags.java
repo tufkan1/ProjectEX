@@ -32,6 +32,12 @@ public final class ProjectEXTags {
     public static final TagKey<Block> DIVINING_ROD_DENIED = TagKey.create(
         Registries.BLOCK, ProjectEX.id("divining_rod_denied")
     );
+    public static final TagKey<Block> ELEMENTAL_AMULET_ALLOWED = TagKey.create(
+        Registries.BLOCK, ProjectEX.id("elemental_amulet_allowed")
+    );
+    public static final TagKey<Block> ELEMENTAL_AMULET_DENIED = TagKey.create(
+        Registries.BLOCK, ProjectEX.id("elemental_amulet_denied")
+    );
     public static final TagKey<Block> INCORRECT_FOR_DARK_MATTER_TOOL = TagKey.create(
         Registries.BLOCK, ProjectEX.id("incorrect_for_dark_matter_tool")
     );

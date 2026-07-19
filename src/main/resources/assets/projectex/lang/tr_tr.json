@@ -294,5 +294,9 @@
   "block.projectex.dark_matter_pedestal": "Karanlık Madde Kaidesi",
   "block.projectex.dark_matter_pedestal.active": "Kaide etkinleştirildi",
   "block.projectex.dark_matter_pedestal.inactive": "Kaide devre dışı bırakıldı",
-  "block.projectex.dark_matter_pedestal.redstone": "Kaide redstone kipi: %s"
+  "block.projectex.dark_matter_pedestal.redstone": "Kaide redstone kipi: %s",
+  "item.projectex.evertide_amulet": "Evertide Tılsımı",
+  "item.projectex.volcanite_amulet": "Volcanite Tılsımı",
+  "tag.block.projectex.elemental_amulet_allowed": "Element Tılsımıyla değiştirilebilir bloklar",
+  "tag.block.projectex.elemental_amulet_denied": "Element Tılsımına kapalı bloklar"
 }

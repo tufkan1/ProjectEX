@@ -106,6 +106,18 @@ public final class ProjectEXItems {
             "repair_talisman", RepairTalismanItem::new,
             new Item.Properties().rarity(Rarity.UNCOMMON)
         );
+    public static final ProjectEXContentRegistry.RegisteredItem<ElementalAmuletItem> EVERTIDE_AMULET =
+        ProjectEXContentRegistry.registerItem(
+            "evertide_amulet", properties -> new ElementalAmuletItem(
+                properties, ElementalAmuletItem.Element.WATER),
+            new Item.Properties().rarity(Rarity.RARE).fireResistant()
+        );
+    public static final ProjectEXContentRegistry.RegisteredItem<ElementalAmuletItem> VOLCANITE_AMULET =
+        ProjectEXContentRegistry.registerItem(
+            "volcanite_amulet", properties -> new ElementalAmuletItem(
+                properties, ElementalAmuletItem.Element.LAVA),
+            new Item.Properties().rarity(Rarity.RARE).fireResistant()
+        );
     public static final List<ProjectEXContentRegistry.RegisteredItem<DiviningRodItem>> DIVINING_RODS =
         java.util.stream.IntStream.range(0, 3).mapToObj(tier ->
             ProjectEXContentRegistry.registerItem(
@@ -216,6 +228,8 @@ public final class ProjectEXItems {
                 entries.accept(PHILOSOPHERS_STONE.item());
                 entries.accept(TRANSMUTATION_TABLET.item());
                 entries.accept(REPAIR_TALISMAN.item());
+                entries.accept(EVERTIDE_AMULET.item());
+                entries.accept(VOLCANITE_AMULET.item());
                 DIVINING_RODS.forEach(entry -> entries.accept(entry.item()));
                 entries.accept(FINAL_STAR_SHARD.item());
                 entries.accept(FINAL_STAR.item());

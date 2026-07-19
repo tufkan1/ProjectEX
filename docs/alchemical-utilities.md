@@ -55,9 +55,21 @@ sorts targets deterministically, and skips players whose chunks are not already 
 never creates chunk tickets. Breaking the pedestal ejects its item before the block entity is
 removed.
 
+## Elemental amulets
+
+The Evertide Amulet places an infinite water source while the Volcanite Amulet places lava
+for exactly 32 player EMC. Both actions are server-authoritative, affect one already-loaded
+position, require normal edit permission, invoke the public utility protection callback, and
+require the destination in `projectex:elemental_amulet_allowed` but not
+`projectex:elemental_amulet_denied`. A denied or failed action consumes no EMC and leaves no
+fluid behind. Evertide does not place water in the Nether.
+
+On an active pedestal, Evertide starts a bounded rain period and Volcanite clears rain and
+thunder. Weather effects run every 1,200 ticks and do not scan chunks or entities.
+
 ## Remaining #39 families
 
-Additional pedestal effects, amulets, rings, knowledge tome policy, and
+Additional pedestal effects, rings, knowledge tome policy, and
 destructive catalysts will build on this state/network contract. Their world adapters must
 add per-target protection callbacks, allow/deny tags, chunk-loaded bounds, per-tick work caps,
 and exact EMC charging before #39 is closed.
