@@ -333,5 +333,6 @@
   "compat.projectex.jade.condenser_stored": "Condenser buffer: %s EMC",
   "compat.projectex.jade.automation": "%s tier: %s",
   "compat.projectex.jade.automation.emc_link": "EMC Link",
-  "compat.projectex.jade.automation.transmutation_interface": "Transmutation Interface"
+  "compat.projectex.jade.automation.transmutation_interface": "Transmutation Interface",
+  "tooltip.projectex.emc_value": "EMC: %s"
 }

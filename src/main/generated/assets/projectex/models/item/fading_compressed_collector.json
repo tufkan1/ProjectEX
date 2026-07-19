@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "minecraft:block/crying_obsidian"
-  }
+  "parent": "projectexpansion:block/collector/fading"
 }

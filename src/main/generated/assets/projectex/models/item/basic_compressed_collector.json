@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "minecraft:block/glowstone"
-  }
+  "parent": "projectexpansion:block/collector/basic"
 }

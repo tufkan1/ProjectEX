@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "minecraft:block/redstone_block"
-  }
+  "parent": "projectexpansion:block/power_flower/red"
 }

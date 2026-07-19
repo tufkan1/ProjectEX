@@ -409,5 +409,6 @@
   "tag.item.projectex.fuels": "Alchemical Fuels",
   "tag.item.projectex.klein_stars": "Klein Stars",
   "tag.item.projectex.matters": "Alchemical Matters",
-  "tag.item.projectex.red_matter_repair": "Red Matter Repair Materials"
+  "tag.item.projectex.red_matter_repair": "Red Matter Repair Materials",
+  "tooltip.projectex.emc_value": "EMC: %s"
 }

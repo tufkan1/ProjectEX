@@ -8,7 +8,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
-/** Texture-free, narrated matter furnace screen with visible cook and fuel progress. */
+/** Narrated furnace screen over the original ProjectE matter-furnace panel. */
 @Environment(EnvType.CLIENT)
 public final class MatterFurnaceScreen extends AbstractContainerScreen<MatterFurnaceMenu> {
     public MatterFurnaceScreen(MatterFurnaceMenu menu, Inventory inventory, Component title) {
@@ -23,7 +23,11 @@ public final class MatterFurnaceScreen extends AbstractContainerScreen<MatterFur
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
         int accent = menu.tier() == io.github.tufkan1.projectex.matter.MatterTier.RED
             ? 0xFFD34C4C : 0xFF6D5A86;
-        graphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0xE0121218);
+        ProjectEXGuiTextures.draw(graphics,
+            menu.tier() == io.github.tufkan1.projectex.matter.MatterTier.RED
+                ? ProjectEXGuiTextures.RED_FURNACE : ProjectEXGuiTextures.DARK_FURNACE,
+            leftPos, topPos, imageWidth, imageHeight);
+        graphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0x30121218);
         graphics.outline(leftPos, topPos, imageWidth, imageHeight, accent);
         graphics.fill(leftPos + 15, topPos + 26, leftPos + 35, topPos + 48, 0xFF29232F);
         graphics.fill(leftPos + 15, topPos + 53, leftPos + 35, topPos + 75, 0xFF29232F);

@@ -10,7 +10,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
-/** Accessible, texture-free paged inventory for storage blocks. */
+/** Accessible paged inventory over pinned original ProjectE/ProjectExpansion panels. */
 @Environment(EnvType.CLIENT)
 public final class AlchemyStorageScreen extends AbstractContainerScreen<AlchemyStorageMenu> {
     private Button previousPage;
@@ -43,7 +43,15 @@ public final class AlchemyStorageScreen extends AbstractContainerScreen<AlchemyS
         GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick
     ) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
-        graphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0xE0111518);
+        net.minecraft.resources.Identifier texture = switch (menu.kind()) {
+            case CONDENSER_MK1 -> ProjectEXGuiTextures.CONDENSER_1;
+            case CONDENSER_MK2 -> ProjectEXGuiTextures.CONDENSER_2;
+            case CONDENSER_MK3 -> menu.inputPage()
+                ? ProjectEXGuiTextures.CONDENSER_3_INPUT : ProjectEXGuiTextures.CONDENSER_3_OUTPUT;
+            default -> ProjectEXGuiTextures.ALCHEMICAL_CHEST;
+        };
+        ProjectEXGuiTextures.draw(graphics, texture, leftPos, topPos, imageWidth, imageHeight);
+        graphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0x30111518);
         graphics.outline(leftPos, topPos, imageWidth, imageHeight, 0xFF6A9A91);
         graphics.fill(leftPos + 7, topPos + 39, leftPos + 169, topPos + 148, 0xFF22292B);
         if (menu.kind().condenser()) {

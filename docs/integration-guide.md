@@ -7,7 +7,7 @@ dependency when it is required. Do not depend on a source checkout or implementa
 
 ```groovy
 dependencies {
-    modCompileOnly files("libs/projectex-fabric-<version>.jar")
+    modCompileOnly files("libs/projectex-fabric-<minecraft>-<mod-version>.jar")
 }
 ```
 

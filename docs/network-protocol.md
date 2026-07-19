@@ -60,6 +60,17 @@ value in the current authoritative EMC snapshot. Filtering and paging happen on 
 server; responses contain at most 54 identifier/value entries. Action and query replay
 sequences are independent so search latency cannot invalidate create/burn requests.
 
+## EMC tooltip snapshot
+
+`emc_tooltips_v1` is a clientbound-only, server-authoritative cache for item hover text.
+It carries the protocol version, monotonically increasing EMC revision, and at most
+65,536 positive componentless item/value entries. Values are transmitted as bounded
+decimal strings so arbitrary-precision EMC is preserved without client arithmetic.
+The server sends the current snapshot on join and atomically replaces it after datapack
+and recipe mapping reloads. Clients validate every identifier/value, reject malformed or
+older revisions, replace rather than merge the cache, and clear it on disconnect. The
+payload grants no gameplay authority; all transactions still query the server registry.
+
 ## Alchemical Book sessions
 
 `alchemical_book_action_v1` and `alchemical_book_view_v1` form a separate protocol.

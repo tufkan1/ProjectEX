@@ -409,5 +409,6 @@
   "item.projectex.body_stone": "Beden Taşı",
   "item.projectex.soul_stone": "Ruh Taşı",
   "item.projectex.life_stone": "Yaşam Taşı",
-  "item.projectex.vitality_stone.result": "%s EMC karşılığında canlılık yenilendi"
+  "item.projectex.vitality_stone.result": "%s EMC karşılığında canlılık yenilendi",
+  "tooltip.projectex.emc_value": "EMC: %s"
 }

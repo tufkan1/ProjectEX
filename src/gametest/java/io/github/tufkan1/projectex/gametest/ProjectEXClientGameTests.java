@@ -27,6 +27,8 @@ public final class ProjectEXClientGameTests implements FabricClientGameTest {
             singleplayer.getClientLevel().waitForChunksDownload();
             singleplayer.getServer().runCommand("give @a minecraft:diamond");
             context.waitFor(ProjectEXClientGameTests::clientHasDiamond);
+            context.waitFor(client -> ProjectEXClient.emcTooltips().find("minecraft:diamond")
+                .filter("8192"::equals).isPresent());
             singleplayer.getServer().runCommand(
                 "execute as @a run projectex transmutation");
             context.waitForScreen(TransmutationScreen.class);

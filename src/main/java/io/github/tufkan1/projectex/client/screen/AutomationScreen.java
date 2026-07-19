@@ -10,7 +10,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
-/** Accessible texture-free configuration screen for EMC automation blocks. */
+/** Accessible automation controls over the original ProjectExpansion EMC-link panel. */
 @Environment(EnvType.CLIENT)
 public final class AutomationScreen extends AbstractContainerScreen<AutomationMenu> {
     private Button publicInsert;
@@ -46,7 +46,9 @@ public final class AutomationScreen extends AbstractContainerScreen<AutomationMe
     @Override public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY,
                                               float partialTick) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
-        graphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0xE010151B);
+        ProjectEXGuiTextures.draw(graphics, ProjectEXGuiTextures.EMC_IMPORT,
+            leftPos, topPos, imageWidth, imageHeight);
+        graphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0x3810151B);
         graphics.outline(leftPos, topPos, imageWidth, imageHeight, 0xFF57B9C9);
     }
 

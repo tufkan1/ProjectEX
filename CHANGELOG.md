@@ -6,6 +6,22 @@ the Minecraft version.
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-07-19
+
+### Added
+
+- Server-authoritative EMC values beneath every unmodified valued item tooltip, refreshed
+  on connection and after datapack/recipe EMC reloads.
+- Original MIT-licensed ProjectE and ProjectExpansion item, block, and panel visuals with
+  pinned upstream provenance and licenses embedded in every release jar.
+
+### Changed
+
+- Release artifact names now include the Minecraft target before the mod version, such as
+  `projectex-fabric-26.2-1.1.0.jar`.
+- Accessible ProjectEX controls now render over the corresponding original source panels.
+- Documented the project's entirely AI-assisted development model and user risk notice.
+
 ## [1.0.0] - 2026-07-19
 
 ### Changed

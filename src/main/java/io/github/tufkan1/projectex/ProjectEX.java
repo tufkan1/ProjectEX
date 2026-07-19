@@ -17,6 +17,7 @@ import io.github.tufkan1.projectex.network.AlchemyNetworking;
 import io.github.tufkan1.projectex.network.UtilityNetworking;
 import io.github.tufkan1.projectex.network.KnowledgeSharingNetworking;
 import io.github.tufkan1.projectex.network.AlchemicalBookNetworking;
+import io.github.tufkan1.projectex.network.EmcTooltipNetworking;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.resources.Identifier;
@@ -62,6 +63,7 @@ public final class ProjectEX implements ModInitializer {
         UtilityNetworking.register();
         KnowledgeSharingNetworking.register();
         AlchemicalBookNetworking.register();
+        EmcTooltipNetworking.register();
         MinecraftRecipeMappingService.register(EMC_VALUES);
         LOGGER.info("ProjectEX {} is initializing with {} EMC values", version(), EMC_VALUES.snapshot().size());
     }

@@ -8,7 +8,7 @@ version = project.mod_version
 group = project.maven_group
 
 base {
-	archivesName = project.archives_base_name
+	archivesName = "${project.archives_base_name}-${project.minecraft_version}"
 }
 
 repositories {
@@ -217,6 +217,7 @@ tasks.named("sourcesJar") {
 	from("NOTICE") {
 		rename { "${it}_${projectName}" }
 	}
+	from("third_party") { into "META-INF/licenses/projectex" }
 }
 
 tasks.named("javadocJar") {
@@ -227,6 +228,7 @@ tasks.named("javadocJar") {
 	from("NOTICE") {
 		rename { "${it}_${projectName}" }
 	}
+	from("third_party") { into "META-INF/licenses/projectex" }
 }
 
 tasks.register("verifyReleaseArtifacts") {
@@ -244,7 +246,9 @@ tasks.register("verifyReleaseArtifacts") {
 			def zip = new java.util.zip.ZipFile(archive)
 			try {
 				def names = zip.entries().collect { it.name }
-				["LICENSE_ProjectEX", "NOTICE_ProjectEX"].each { required ->
+				["LICENSE_ProjectEX", "NOTICE_ProjectEX",
+				 "META-INF/licenses/projectex/ProjectE-LICENSE.txt",
+				 "META-INF/licenses/projectex/ProjectExpansion-LICENSE.txt"].each { required ->
 					if (!names.contains(required)) throw new GradleException("${archive.name} lacks ${required}")
 				}
 				if (!archive.name.endsWith("-sources.jar") && !archive.name.endsWith("-javadoc.jar")
@@ -265,7 +269,7 @@ tasks.register("verifyReleaseArtifacts") {
 
 tasks.register("releaseAudit") {
 	group = "verification"
-	description = "Runs every local 1.0 release audit, including the production client journey."
+	description = "Runs the complete local release audit, including the production client journey."
 	dependsOn tasks.named("check"), tasks.named("build"), tasks.named("verifyReleaseArtifacts"),
 		tasks.named("runProductionClientGameTest"), tasks.named("cyclonedxDirectBom")
 }
@@ -277,6 +281,7 @@ jar {
 	from("NOTICE") {
 		rename { "${it}_${projectName}" }
 	}
+	from("third_party") { into "META-INF/licenses/projectex" }
 }
 
 publishing {
