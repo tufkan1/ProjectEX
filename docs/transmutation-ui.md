@@ -27,8 +27,11 @@ pages. Favorites are a client preference layered over authoritative page entries
 - Disconnect clears session/pages immediately; reconnect requires a new server session.
 - Opening a second menu replaces the first nonce and resets both request sequences.
 
-The pure client models and payload tests cover these ordering rules. Minecraft screen
-GameTests and visual/narration verification are required before the M2 exit gate.
+Pure client models and payload tests cover these ordering rules. A headless client
+GameTest opens the real screen in singleplayer and completes learn, burn, and create
+over the production networking path. Manual visual and screen-reader review remains a
+release checklist item because automated narration text coverage cannot judge delivery
+quality.
 
 The server-owned menu is opened by using a Transmutation Table. During M2 development,
 `/projectex transmutation` remains available as a fallback.

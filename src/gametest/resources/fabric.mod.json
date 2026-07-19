@@ -7,6 +7,9 @@
   "entrypoints": {
     "fabric-gametest": [
       "io.github.tufkan1.projectex.gametest.ProjectEXGameTests"
+    ],
+    "fabric-client-gametest": [
+      "io.github.tufkan1.projectex.gametest.ProjectEXClientGameTests"
     ]
   },
   "depends": {

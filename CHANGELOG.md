@@ -27,6 +27,7 @@ the Minecraft version.
 - Craftable Transmutation Table with distance-bound server sessions and starter EMC data.
 - Automated server GameTests for physical menu access and runtime EMC reload.
 - Deterministic arrow-key result navigation and localized narrated server failures.
+- Headless client GameTest for the complete learn, burn, and create network journey.
 
 ## [0.1.0-alpha.1] - Unreleased
 
