@@ -35,7 +35,8 @@ public final class ProjectEXBlockTagProvider extends FabricTagsProvider.BlockTag
             key(ProjectEXBlocks.RELAY_MK2), key(ProjectEXBlocks.RELAY_MK3)
             , key(ProjectEXBlocks.CONDENSER_MK1), key(ProjectEXBlocks.CONDENSER_MK2),
             key(ProjectEXBlocks.ALCHEMICAL_CHEST)
-            , key(ProjectEXBlocks.DARK_MATTER_BLOCK), key(ProjectEXBlocks.RED_MATTER_BLOCK)
+            , key(ProjectEXBlocks.DARK_MATTER_BLOCK), key(ProjectEXBlocks.RED_MATTER_BLOCK),
+            key(ProjectEXBlocks.DARK_MATTER_FURNACE), key(ProjectEXBlocks.RED_MATTER_FURNACE)
         );
         builder(BlockTags.NEEDS_DIAMOND_TOOL).add(table);
         builder(BlockTags.NEEDS_DIAMOND_TOOL).add(
@@ -44,7 +45,8 @@ public final class ProjectEXBlockTagProvider extends FabricTagsProvider.BlockTag
             key(ProjectEXBlocks.RELAY_MK2), key(ProjectEXBlocks.RELAY_MK3)
             , key(ProjectEXBlocks.CONDENSER_MK1), key(ProjectEXBlocks.CONDENSER_MK2),
             key(ProjectEXBlocks.ALCHEMICAL_CHEST)
-            , key(ProjectEXBlocks.DARK_MATTER_BLOCK), key(ProjectEXBlocks.RED_MATTER_BLOCK)
+            , key(ProjectEXBlocks.DARK_MATTER_BLOCK), key(ProjectEXBlocks.RED_MATTER_BLOCK),
+            key(ProjectEXBlocks.DARK_MATTER_FURNACE), key(ProjectEXBlocks.RED_MATTER_FURNACE)
         );
         builder(ProjectEXTags.PHILOSOPHERS_STONE_ALLOWED).add(
             key(Blocks.STONE),

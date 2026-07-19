@@ -33,6 +33,8 @@ public final class ProjectEXBlockLootProvider extends FabricBlockLootSubProvider
         storage(ProjectEXBlocks.ALCHEMICAL_CHEST);
         dropSelf(ProjectEXBlocks.DARK_MATTER_BLOCK);
         dropSelf(ProjectEXBlocks.RED_MATTER_BLOCK);
+        container(ProjectEXBlocks.DARK_MATTER_FURNACE);
+        container(ProjectEXBlocks.RED_MATTER_FURNACE);
     }
 
     private void machine(net.minecraft.world.level.block.Block block) {
@@ -47,6 +49,13 @@ public final class ProjectEXBlockLootProvider extends FabricBlockLootSubProvider
         add(block, createSingleItemTable(block).apply(
             CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY)
                 .include(ProjectEXComponents.ALCHEMY_STORAGE_STATE)
+                .include(DataComponents.CONTAINER)
+        ));
+    }
+
+    private void container(net.minecraft.world.level.block.Block block) {
+        add(block, createSingleItemTable(block).apply(
+            CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY)
                 .include(DataComponents.CONTAINER)
         ));
     }

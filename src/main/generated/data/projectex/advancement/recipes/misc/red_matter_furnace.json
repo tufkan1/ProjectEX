@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_dark_matter_furnace": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projectex:dark_matter_furnace"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "projectex:red_matter_furnace"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_dark_matter_furnace"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "projectex:red_matter_furnace"
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "D": "projectex:dark_matter",
+    "F": "minecraft:furnace",
+    "O": "minecraft:obsidian"
+  },
+  "pattern": [
+    "ODO",
+    "DFD",
+    "ODO"
+  ],
+  "result": {
+    "id": "projectex:dark_matter_furnace"
+  }
+}

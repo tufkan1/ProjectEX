@@ -41,6 +41,12 @@ never merge with another variant. Bonus output is included before space validati
 the complete result does not fit, input is unchanged. Fuel is consumed only when burn
 time is positive and any crafting remainder has an already-reserved exact sink.
 
+The dark and red runtime furnaces use vanilla smelting recipes with 10/5 tick tier
+times, 9/18 dedicated output slots, and 50%/100% bonus-output rules. They refuse to
+ignite when the worst-case result cannot fit, preserve exact fuel remainders, expose
+top/input, side/fuel, and bottom/output Fabric automation, and retain inventory on
+save and break/place. A synchronized, narrated menu shows fuel and cooking progress.
+
 ## Armor contract
 
 `MatterArmorPolicy` calculates damage only on the server, honors bypass-armor damage,

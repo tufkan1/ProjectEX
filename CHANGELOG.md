@@ -38,6 +38,7 @@ the Minecraft version.
 - Sixteen color-keyed Alchemical Bags with owner-bound UUIDs, world-backed shared inventories, legacy component migration, and copy/nesting duplication defenses.
 - Data-ready dark/red matter safety core with bounded protection-aware area plans, all-or-nothing furnace output/fuel remainder accounting, armor caps, and audit contracts.
 - Craftable dark/red matter blocks, complete tool and armor families, chargeable pickaxe/hammer area mining with exact server EMC accounting, public claim protection, cooldowns, full-set maintenance effects, recipes, tags, models, and English/Turkish localization.
+- Dark/red matter furnaces with vanilla recipe compatibility, tier speed and bonus outputs, atomic component-safe output planning, exact fuel remainders, sided automation, retained inventory, and an accessible synchronized progress screen.
 
 ## [0.1.0-alpha.1] - Unreleased
 

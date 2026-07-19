@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "F": "projectex:dark_matter_furnace",
+    "O": "minecraft:obsidian",
+    "R": "projectex:red_matter"
+  },
+  "pattern": [
+    "ORO",
+    "RFR",
+    "ORO"
+  ],
+  "result": {
+    "id": "projectex:red_matter_furnace"
+  }
+}
