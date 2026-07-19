@@ -73,6 +73,8 @@ launch a development client with `./gradlew runClient`.
 - [Content and datagen](docs/datagen.md) — registration, generated resources, and verification
 - [Philosopher's Stone](docs/philosophers-stone.md) — controls, protection hooks, and transaction rules
 - [Alchemical utilities](docs/alchemical-utilities.md) — shared controls and portable tablet security
+- [Knowledge sharing](docs/knowledge-sharing.md) — signed snapshots, explicit confirmation, replay defense, and audit
+- [Alchemical Books](docs/alchemical-books.md) — destination persistence, EMC costs, binding, and teleport security
 - [Contributing](CONTRIBUTING.md) — development and pull request workflow
 - [Support](SUPPORT.md) — where questions and bug reports belong
 - [Security](SECURITY.md) — private vulnerability reporting policy

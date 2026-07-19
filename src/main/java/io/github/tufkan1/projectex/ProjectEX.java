@@ -17,6 +17,8 @@ import io.github.tufkan1.projectex.network.AlchemyNetworking;
 import io.github.tufkan1.projectex.network.UtilityNetworking;
 import io.github.tufkan1.projectex.network.KnowledgeSharingNetworking;
 import io.github.tufkan1.projectex.knowledge.KnowledgeSharingConfig;
+import io.github.tufkan1.projectex.network.AlchemicalBookNetworking;
+import io.github.tufkan1.projectex.teleport.AlchemicalBookConfig;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.resources.Identifier;
@@ -44,6 +46,7 @@ public final class ProjectEX implements ModInitializer {
         KnowledgeTomePolicy.reload();
         DestructiveCatalystPolicy.reload();
         KnowledgeSharingConfig.reload();
+        AlchemicalBookConfig.reload();
         ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(
             id("emc_values"),
             new EmcDataReloadListener(EMC_VALUES)
@@ -66,6 +69,7 @@ public final class ProjectEX implements ModInitializer {
         AlchemyNetworking.register();
         UtilityNetworking.register();
         KnowledgeSharingNetworking.register();
+        AlchemicalBookNetworking.register();
         MinecraftRecipeMappingService.register(EMC_VALUES);
         LOGGER.info("ProjectEX {} is initializing with {} EMC values", version(), EMC_VALUES.snapshot().size());
     }

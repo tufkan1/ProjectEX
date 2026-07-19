@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "B": "projectex:advanced_alchemical_book",
+    "E": "projectex:colossal_star_ein",
+    "O": "projectex:colossal_star_omega"
+  },
+  "pattern": [
+    "EOE",
+    "OBO",
+    "EOE"
+  ],
+  "result": {
+    "id": "projectex:master_alchemical_book"
+  }
+}

@@ -13,6 +13,10 @@ import org.lwjgl.glfw.GLFW;
 import io.github.tufkan1.projectex.network.KnowledgeSharePreviewPayload;
 import java.util.UUID;
 import net.minecraft.client.gui.screens.ConfirmScreen;
+import io.github.tufkan1.projectex.client.screen.AlchemicalBookScreen;
+import io.github.tufkan1.projectex.network.AlchemicalBookViewPayload;
+import java.util.List;
+import java.util.Optional;
 
 /** End-to-end client/server smoke test for the learn, burn, and create journey. */
 @SuppressWarnings("UnstableApiUsage")
@@ -49,6 +53,18 @@ public final class ProjectEXClientGameTests implements FabricClientGameTest {
             context.waitForScreen(ConfirmScreen.class);
             context.clickScreenButton("Cancel");
             context.waitForScreen(TransmutationScreen.class);
+
+            context.runOnClient(client -> {
+                ProjectEXClient.alchemicalBook().open(new AlchemicalBookViewPayload(
+                    UUID.randomUUID(), -1, 0, true, "10000", "", List.of(), Optional.empty()));
+                client.setScreenAndShow(new AlchemicalBookScreen());
+            });
+            context.waitForScreen(AlchemicalBookScreen.class);
+            context.runOnClient(client -> {
+                assertButtonContaining(client.gui.screen(), "Save here");
+                assertButtonContaining(client.gui.screen(), "Go back");
+                client.setScreenAndShow(null);
+            });
         }
     }
 
@@ -77,5 +93,13 @@ public final class ProjectEXClientGameTests implements FabricClientGameTest {
             .findFirst()
             .orElseThrow(() -> new AssertionError("No visible button contains: " + text))
             .onPress(new KeyEvent(GLFW.GLFW_KEY_ENTER, 0, 0));
+    }
+
+    private static void assertButtonContaining(Screen screen, String text) {
+        if (screen == null || screen.children().stream().filter(Button.class::isInstance)
+            .map(Button.class::cast).noneMatch(button -> button.visible
+                && button.getMessage().getString().contains(text))) {
+            throw new AssertionError("No visible button contains: " + text);
+        }
     }
 }

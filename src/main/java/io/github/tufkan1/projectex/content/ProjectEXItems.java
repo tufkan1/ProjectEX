@@ -133,6 +133,13 @@ public final class ProjectEXItems {
             "knowledge_sharing_book", KnowledgeSharingBookItem::new,
             new Item.Properties().rarity(Rarity.RARE)
         );
+    public static final List<ProjectEXContentRegistry.RegisteredItem<AlchemicalBookItem>> ALCHEMICAL_BOOKS =
+        java.util.Arrays.stream(io.github.tufkan1.projectex.teleport.AlchemicalBookTier.values())
+            .map(tier -> ProjectEXContentRegistry.registerItem(
+                tier.name().toLowerCase(java.util.Locale.ROOT) + "_alchemical_book",
+                properties -> new AlchemicalBookItem(properties, tier),
+                new Item.Properties().rarity(tier.rarity()).fireResistant()
+            )).toList();
     public static final ProjectEXContentRegistry.RegisteredItem<DestructiveCatalystItem> NOVA_CATALYST =
         ProjectEXContentRegistry.registerItem(
             "nova_catalyst", properties -> new DestructiveCatalystItem(
@@ -266,6 +273,7 @@ public final class ProjectEXItems {
                 entries.accept(VOLCANITE_AMULET.item());
                 entries.accept(KNOWLEDGE_TOME.item());
                 entries.accept(KNOWLEDGE_SHARING_BOOK.item());
+                ALCHEMICAL_BOOKS.forEach(entry -> entries.accept(entry.item()));
                 entries.accept(NOVA_CATALYST.item());
                 entries.accept(DESTRUCTION_CATALYST.item());
                 entries.accept(BODY_STONE.item());

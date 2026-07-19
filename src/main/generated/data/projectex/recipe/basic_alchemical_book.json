@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "B": "minecraft:book",
+    "E": "minecraft:ender_pearl",
+    "H": "projectex:high_covalence_dust",
+    "P": "projectex:philosophers_stone",
+    "R": "projectex:red_matter"
+  },
+  "pattern": [
+    "HRH",
+    "EBP",
+    "HRH"
+  ],
+  "result": {
+    "id": "projectex:basic_alchemical_book"
+  }
+}

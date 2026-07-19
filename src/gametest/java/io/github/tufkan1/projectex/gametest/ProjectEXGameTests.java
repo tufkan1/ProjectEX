@@ -40,6 +40,7 @@ import io.github.tufkan1.projectex.menu.AutomationMenu;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import net.fabricmc.fabric.api.gametest.v1.CustomTestMethodInvoker;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.core.BlockPos;
@@ -69,10 +70,104 @@ import io.github.tufkan1.projectex.internal.knowledge.KnowledgeSharingRuntime;
 import io.github.tufkan1.projectex.knowledge.KnowledgeShareWorkflow;
 import io.github.tufkan1.projectex.player.PlayerAlchemyState;
 import java.time.Instant;
+import io.github.tufkan1.projectex.network.AlchemicalBookAction;
+import io.github.tufkan1.projectex.network.AlchemicalBookActionPayload;
+import io.github.tufkan1.projectex.network.AlchemicalBookSessionRegistry;
+import io.github.tufkan1.projectex.content.component.AlchemicalBookState;
+import io.github.tufkan1.projectex.internal.teleport.AlchemicalBookSavedData;
+import io.github.tufkan1.projectex.teleport.AlchemicalBookTier;
 
 /** Runtime registration, resource reload, and physical menu smoke tests. */
 @SuppressWarnings("removal")
 public final class ProjectEXGameTests implements CustomTestMethodInvoker {
+    @GameTest
+    public void boundAlchemicalBookPersistsForOwnerAndIsReadOnlyForVisitor(GameTestHelper helper) {
+        ServerPlayer owner = helper.makeMockServerPlayerInLevel();
+        ServerPlayer visitor = helper.makeMockServerPlayerInLevel();
+        ItemStack ownerBook = new ItemStack(ProjectEXItems.ALCHEMICAL_BOOKS.get(1).item());
+        ownerBook.set(ProjectEXComponents.ALCHEMICAL_BOOK_STATE,
+            AlchemicalBookState.EMPTY.bind(owner.getUUID()));
+        owner.setItemInHand(InteractionHand.MAIN_HAND, ownerBook);
+
+        AlchemicalBookSessionRegistry sessions = new AlchemicalBookSessionRegistry();
+        var ownerView = sessions.open(owner, InteractionHand.MAIN_HAND, ownerBook, AlchemicalBookTier.ADVANCED);
+        var created = sessions.handle(owner, new AlchemicalBookActionPayload(1, ownerView.sessionId(), 0,
+            AlchemicalBookAction.CREATE.ordinal(), "Shared home"), 1);
+        helper.assertValueEqual(created.failure(), "", "Owner bound destination creation failure");
+        helper.assertValueEqual(AlchemicalBookSavedData.get(helper.getLevel().getServer())
+            .locations(owner.getUUID()).destinations().size(), 1, "Persisted owner destination count");
+
+        ItemStack visitorBook = new ItemStack(ProjectEXItems.ALCHEMICAL_BOOKS.get(1).item());
+        visitorBook.set(ProjectEXComponents.ALCHEMICAL_BOOK_STATE,
+            AlchemicalBookState.EMPTY.bind(owner.getUUID()));
+        visitor.setItemInHand(InteractionHand.MAIN_HAND, visitorBook);
+        var visitorView = sessions.open(visitor, InteractionHand.MAIN_HAND, visitorBook,
+            AlchemicalBookTier.ADVANCED);
+        helper.assertValueEqual(visitorView.entries().size(), 1, "Visitor shared destination count");
+        helper.assertTrue(!visitorView.editable(), "Visitor unexpectedly received edit permission");
+        var denied = sessions.handle(visitor, new AlchemicalBookActionPayload(1, visitorView.sessionId(), 0,
+            AlchemicalBookAction.CREATE.ordinal(), "Visitor target"), 2);
+        helper.assertValueEqual(denied.failure(), "edit_not_allowed", "Visitor edit denial reason");
+        helper.assertValueEqual(AlchemicalBookSavedData.get(helper.getLevel().getServer())
+            .locations(owner.getUUID()).destinations().size(), 1, "Denied visitor edit mutated owner storage");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void alchemicalBookChargesExactEmcSupportsBackAndInvalidatesMissingStack(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        player.setGameMode(GameType.SURVIVAL);
+        BlockPos home = helper.absolutePos(new BlockPos(1, 1, 1));
+        BlockPos away = helper.absolutePos(new BlockPos(4, 1, 5));
+        player.setPos(home.getX(), home.getY(), home.getZ());
+        PlayerAlchemySavedData data = PlayerAlchemySavedData.get(helper.getLevel().getServer());
+        data.update(player.getUUID(), ignored -> new PlayerAlchemyState(
+            EmcValue.of(10_000), new java.util.TreeSet<>()));
+        ItemStack book = new ItemStack(ProjectEXItems.ALCHEMICAL_BOOKS.get(0).item());
+        player.setItemInHand(InteractionHand.MAIN_HAND, book);
+        AlchemicalBookSessionRegistry sessions = new AlchemicalBookSessionRegistry();
+        var opened = sessions.open(player, InteractionHand.MAIN_HAND, book,
+            io.github.tufkan1.projectex.teleport.AlchemicalBookTier.BASIC);
+        var created = sessions.handle(player, new AlchemicalBookActionPayload(1, opened.sessionId(), 0,
+            AlchemicalBookAction.CREATE.ordinal(), "Home"), 1);
+        helper.assertValueEqual(created.entries().size(), 1, "Saved destination count");
+
+        player.setPos(away.getX(), away.getY(), away.getZ());
+        var teleported = sessions.handle(player, new AlchemicalBookActionPayload(1, opened.sessionId(), 1,
+            AlchemicalBookAction.TELEPORT.ordinal(), "Home"), 2);
+        helper.assertValueEqual(teleported.failure(), "", "Alchemical Book teleport failure");
+        helper.assertValueEqual(data.state(player.getUUID()).balance(), EmcValue.of(5_000),
+            "Five-block Basic teleport cost");
+        helper.assertTrue(player.blockPosition().closerThan(home, 2), "Player did not reach saved destination");
+        helper.assertTrue(teleported.back().isPresent(), "Successful teleport did not create a back target");
+
+        var replay = sessions.handle(player, new AlchemicalBookActionPayload(1, opened.sessionId(), 1,
+            AlchemicalBookAction.BACK.ordinal(), ""), 3);
+        helper.assertValueEqual(replay.failure(), "replayed_request", "Replayed request reason");
+        var returned = sessions.handle(player, new AlchemicalBookActionPayload(1, opened.sessionId(), 2,
+            AlchemicalBookAction.BACK.ordinal(), ""), 4);
+        helper.assertValueEqual(returned.failure(), "", "Back teleport failure");
+        helper.assertValueEqual(data.state(player.getUUID()).balance(), EmcValue.ZERO,
+            "Back teleport exact EMC cost");
+        helper.assertTrue(player.blockPosition().closerThan(away, 2), "Back did not return to previous position");
+        helper.assertTrue(returned.back().isEmpty(), "Back target was not consumed");
+
+        UUID deniedActor = player.getUUID();
+        io.github.tufkan1.projectex.api.teleport.AlchemicalTeleportProtection.EVENT.register(
+            context -> !context.player().getUUID().equals(deniedActor));
+        var protectedResult = sessions.handle(player, new AlchemicalBookActionPayload(1, opened.sessionId(), 3,
+            AlchemicalBookAction.TELEPORT.ordinal(), "Home"), 5);
+        helper.assertValueEqual(protectedResult.failure(), "protected_destination", "Protection veto reason");
+        helper.assertValueEqual(data.state(player.getUUID()).balance(), EmcValue.ZERO,
+            "Protection veto changed EMC");
+
+        player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        var missing = sessions.handle(player, new AlchemicalBookActionPayload(1, opened.sessionId(), 4,
+            AlchemicalBookAction.TELEPORT.ordinal(), "Home"), 6);
+        helper.assertValueEqual(missing.failure(), "session_invalid", "Missing stack session reason");
+        helper.succeed();
+    }
+
     @GameTest
     public void signedKnowledgeBookRequiresHeldExplicitConfirmationAndRejectsReplay(GameTestHelper helper) {
         ServerPlayer owner = helper.makeMockServerPlayerInLevel();

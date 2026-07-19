@@ -38,6 +38,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import io.github.tufkan1.projectex.client.screen.AlchemicalBookScreen;
+import io.github.tufkan1.projectex.network.AlchemicalBookAction;
+import io.github.tufkan1.projectex.network.AlchemicalBookActionPayload;
+import io.github.tufkan1.projectex.network.AlchemicalBookViewPayload;
 
 /** Client-only networking state; screens consume this instead of trusting local calculations. */
 @Environment(EnvType.CLIENT)
@@ -54,6 +58,7 @@ public final class ProjectEXClient implements ClientModInitializer {
         "key.projectex.utility_mode", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, UTILITY_CATEGORY
     ));
     private static UUID pendingKnowledgeConfirmation;
+    private static final ClientAlchemicalBookState ALCHEMICAL_BOOK = new ClientAlchemicalBookState();
 
     @Override
     @SuppressWarnings("deprecation") // Fabric's 26.2 registry remains the supported public hook.
@@ -96,15 +101,46 @@ public final class ProjectEXClient implements ClientModInitializer {
                     : Component.translatable("message.projectex.knowledge_share.failed", payload.reason()));
             }
         });
+        ClientPlayNetworking.registerGlobalReceiver(AlchemicalBookViewPayload.TYPE, (payload, context) -> {
+            Minecraft client = Minecraft.getInstance();
+            if (payload.requestId() == -1) {
+                if (!ALCHEMICAL_BOOK.open(payload)) return;
+                if (!payload.failure().isEmpty()) {
+                    if (client.player != null) client.player.sendSystemMessage(Component.translatable(
+                        "screen.projectex.alchemical_book.failure." + payload.failure()));
+                    ALCHEMICAL_BOOK.close();
+                    return;
+                }
+                client.setScreenAndShow(new AlchemicalBookScreen());
+            } else if (!ALCHEMICAL_BOOK.accept(payload)) {
+                ProjectEX.LOGGER.warn("Discarded unexpected Alchemical Book view payload");
+            }
+        });
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
             ALCHEMY.close();
             KNOWLEDGE.close();
             pendingKnowledgeConfirmation = null;
+            ALCHEMICAL_BOOK.close();
         });
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (CHARGE_KEY.consumeClick()) sendUtilityState(client, UtilityStateAction.CHARGE);
             while (MODE_KEY.consumeClick()) sendUtilityState(client, UtilityStateAction.MODE);
         });
+    }
+
+    public static ClientAlchemicalBookState alchemicalBook() { return ALCHEMICAL_BOOK; }
+
+    public static boolean sendAlchemicalBookAction(AlchemicalBookAction action, String name) {
+        return ALCHEMICAL_BOOK.action(action, name).map(payload -> {
+            try {
+                if (!ClientPlayNetworking.canSend(AlchemicalBookActionPayload.TYPE)) return false;
+                ClientPlayNetworking.send(payload);
+                return true;
+            } catch (IllegalStateException exception) {
+                ProjectEX.LOGGER.debug("Could not send Alchemical Book action", exception);
+                return false;
+            }
+        }).orElse(false);
     }
 
     public static void openKnowledgeConfirmation(KnowledgeSharePreviewPayload payload) {

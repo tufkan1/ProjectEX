@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_master_book": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projectex:master_alchemical_book"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "projectex:arcane_alchemical_book"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_master_book"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "projectex:arcane_alchemical_book"
+    ]
+  }
+}
