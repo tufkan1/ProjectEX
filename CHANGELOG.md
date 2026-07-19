@@ -32,6 +32,7 @@ the Minecraft version.
 - Core covalence dust, fuel, matter progression and a protected server-authoritative Philosopher's Stone.
 - Six-tier Klein Star progression with exact retained-EMC upgrades and synchronized tooltips.
 - Versioned Fabric item EMC storage API with simulation, automation policy, migration, and overflow safety.
+- Exploit-resistant machine core with exact fixed-point generation, ownership/redstone policy, bounded transfers, and cycle rejection.
 
 ## [0.1.0-alpha.1] - Unreleased
 

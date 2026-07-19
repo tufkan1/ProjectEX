@@ -9,6 +9,7 @@ same pull request that introduces any derived material.
 | Core material names and recipe progression | ProjectE content/recipes | `15d4ce65bd06eb4222709b984255fbf5080e78bc` | MIT | Behavior and compatibility research; original Fabric code and vanilla texture references |
 | `PhilosophersStoneItem` behavior | ProjectE `PhilosophersStone.java` | `15d4ce65bd06eb4222709b984255fbf5080e78bc` | MIT | Mode/charge concepts researched; transaction, protection, component, and interaction code are original |
 | Klein Star names and tier progression | ProjectE Klein Star content/recipes | `15d4ce65bd06eb4222709b984255fbf5080e78bc` | MIT | Behavior and naming reference only; storage API, codecs, recipe implementation, tests, and vanilla texture references are original ProjectEX work |
+| Collector/relay tier names, rates, and capacities | ProjectE `EnumCollectorTier` / `EnumRelayTier` | `15d4ce65bd06eb4222709b984255fbf5080e78bc` | MIT | Balance reference only; fixed-point arithmetic, persistence, access policy, budget, and cycle-safe routing code are original ProjectEX work |
 
 ## Rules
 
