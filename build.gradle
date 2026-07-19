@@ -79,13 +79,77 @@ tasks.withType(Test).configureEach {
 
 java {
 	withSourcesJar()
+	withJavadocJar()
 	sourceCompatibility = JavaVersion.VERSION_25
 	targetCompatibility = JavaVersion.VERSION_25
+}
+
+tasks.named("javadoc") {
+	group = "documentation"
+	description = "Generates the supported ProjectEX public API reference."
+	source = sourceSets.main.allJava.matching {
+		include "io/github/tufkan1/projectex/ProjectEX.java"
+		include "io/github/tufkan1/projectex/api/**"
+	}
+	options.addStringOption("Xdoclint:all,-missing", "-quiet")
+}
+
+tasks.register("compileApiExample", JavaCompile) {
+	group = "verification"
+	description = "Compiles the standalone example integration against the supported API."
+	dependsOn tasks.named("classes")
+	source = fileTree("examples/api-test-mod/src/main/java")
+	classpath = sourceSets.main.output + sourceSets.main.compileClasspath
+	destinationDirectory = layout.buildDirectory.dir("classes/apiExample")
+	options.encoding = "UTF-8"
+	options.release = 25
+}
+
+tasks.register("verifyApiExampleImports") {
+	group = "verification"
+	description = "Rejects unsupported ProjectEX implementation imports in the example mod."
+	doLast {
+		fileTree("examples/api-test-mod/src/main/java").matching { include "**/*.java" }.each { sourceFile ->
+			sourceFile.eachLine { line ->
+				def imported = line.trim()
+				if (imported.startsWith("import io.github.tufkan1.projectex.")
+					&& imported != "import io.github.tufkan1.projectex.ProjectEX;"
+					&& !imported.startsWith("import io.github.tufkan1.projectex.api.")) {
+					throw new GradleException("Unsupported example import in ${sourceFile}: ${imported}")
+				}
+			}
+		}
+	}
+}
+
+tasks.register("apiExampleJar", Jar) {
+	group = "verification"
+	description = "Assembles the compile-checked Fabric API example mod."
+	dependsOn tasks.named("compileApiExample"), tasks.named("verifyApiExampleImports")
+	archiveBaseName = "projectex-api-example"
+	archiveVersion = project.version
+	destinationDirectory = layout.buildDirectory.dir("examples")
+	from(tasks.named("compileApiExample").map { it.destinationDirectory })
+	from("examples/api-test-mod/src/main/resources")
+}
+
+tasks.named("check") {
+	dependsOn tasks.named("apiExampleJar"), tasks.named("javadoc")
 }
 
 def projectName = project.name
 
 tasks.named("sourcesJar") {
+	mustRunAfter tasks.named("runDatagen")
+	from("LICENSE") {
+		rename { "${it}_${projectName}" }
+	}
+	from("NOTICE") {
+		rename { "${it}_${projectName}" }
+	}
+}
+
+tasks.named("javadocJar") {
 	mustRunAfter tasks.named("runDatagen")
 	from("LICENSE") {
 		rename { "${it}_${projectName}" }
@@ -101,10 +165,11 @@ tasks.register("verifyReleaseArtifacts") {
 	dependsOn tasks.named("jar"), tasks.named("sourcesJar")
 	doLast {
 		def jars = fileTree(layout.buildDirectory.dir("libs")).matching { include "*.jar" }.files
-		if (jars.size() != 2) throw new GradleException("Expected runtime and sources jars, found ${jars*.name}")
+		if (jars.size() != 3) throw new GradleException("Expected runtime, sources, and Javadoc jars, found ${jars*.name}")
 		jars.each { archive ->
-			if (archive.length() > 4L * 1024 * 1024) {
-				throw new GradleException("Artifact exceeds 4 MiB budget: ${archive.name}")
+			def sizeLimit = archive.name.endsWith("-javadoc.jar") ? 8L * 1024 * 1024 : 4L * 1024 * 1024
+			if (archive.length() > sizeLimit) {
+				throw new GradleException("Artifact exceeds ${sizeLimit / 1024 / 1024} MiB budget: ${archive.name}")
 			}
 			def zip = new java.util.zip.ZipFile(archive)
 			try {
@@ -112,7 +177,8 @@ tasks.register("verifyReleaseArtifacts") {
 				["LICENSE_ProjectEX", "NOTICE_ProjectEX"].each { required ->
 					if (!names.contains(required)) throw new GradleException("${archive.name} lacks ${required}")
 				}
-				if (!archive.name.endsWith("-sources.jar") && !names.contains("fabric.mod.json")) {
+				if (!archive.name.endsWith("-sources.jar") && !archive.name.endsWith("-javadoc.jar")
+					&& !names.contains("fabric.mod.json")) {
 					throw new GradleException("Runtime jar lacks fabric.mod.json")
 				}
 				def forbidden = names.find { name ->

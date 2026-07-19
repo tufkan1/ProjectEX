@@ -50,4 +50,6 @@ does not guess how a consumer's component variants should fall back.
   types under `.api.emc` are the long-lived integration surface.
 
 Consumer compile coverage in CI imports only the public entry point and API packages.
-Runtime GameTests will be added when the first playable server interaction lands.
+Runtime GameTests exercise storage and protection callbacks on a dedicated server. The
+repository's [example integration mod](../examples/api-test-mod/README.md) is compiled by
+`check`; the [integration guide](integration-guide.md) documents every supported API family.

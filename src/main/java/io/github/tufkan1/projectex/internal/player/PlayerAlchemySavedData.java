@@ -6,6 +6,7 @@ import io.github.tufkan1.projectex.ProjectEX;
 import io.github.tufkan1.projectex.player.PlayerAlchemyState;
 import io.github.tufkan1.projectex.player.PlayerAlchemyStateCodec;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
@@ -21,11 +22,17 @@ import org.slf4j.LoggerFactory;
 /** Server-owned UUID-keyed persistence. UUID identity naturally survives clone and dimension changes. */
 public final class PlayerAlchemySavedData extends SavedData {
     private static final Logger LOGGER = LoggerFactory.getLogger(PlayerAlchemySavedData.class);
+    private static final int NBT_STRING_CHUNK_CHARACTERS = 16_000;
+    private static final int MAX_RECOVERY_ERROR_CHARACTERS = 4_096;
+    private static final Codec<List<String>> CHUNKED_STRING_CODEC = Codec.STRING.listOf()
+        .withAlternative(Codec.STRING, List::of);
     static final Codec<PlayerAlchemySavedData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-        Codec.STRING.fieldOf("payload").forGetter(PlayerAlchemySavedData::payload),
-        Codec.STRING.optionalFieldOf("recovery_payload").forGetter(data -> data.recoveryPayload),
-        Codec.STRING.optionalFieldOf("recovery_error").forGetter(data -> data.recoveryError)
-    ).apply(instance, PlayerAlchemySavedData::fromPayload));
+        CHUNKED_STRING_CODEC.fieldOf("payload").forGetter(data -> chunks(data.payload())),
+        CHUNKED_STRING_CODEC.optionalFieldOf("recovery_payload")
+            .forGetter(data -> data.recoveryPayload.map(PlayerAlchemySavedData::chunks)),
+        Codec.STRING.optionalFieldOf("recovery_error")
+            .forGetter(data -> data.recoveryError.map(PlayerAlchemySavedData::boundedError))
+    ).apply(instance, PlayerAlchemySavedData::fromChunks));
 
     private static final SavedDataType<PlayerAlchemySavedData> TYPE = new SavedDataType<>(
         ProjectEX.id("player_alchemy"),
@@ -165,8 +172,37 @@ public final class PlayerAlchemySavedData extends SavedData {
             return new PlayerAlchemySavedData(
                 Map.of(),
                 Optional.of(payload),
-                Optional.of(exception.getMessage() == null ? exception.getClass().getName() : exception.getMessage())
+                Optional.of(boundedError(
+                    exception.getMessage() == null ? exception.getClass().getName() : exception.getMessage()))
             );
         }
+    }
+
+    private static PlayerAlchemySavedData fromChunks(
+        List<String> payload,
+        Optional<List<String>> previousRecoveryPayload,
+        Optional<String> previousRecoveryError
+    ) {
+        return fromPayload(
+            String.join("", payload),
+            previousRecoveryPayload.map(chunks -> String.join("", chunks)),
+            previousRecoveryError.map(PlayerAlchemySavedData::boundedError)
+        );
+    }
+
+    private static List<String> chunks(String value) {
+        if (value.isEmpty()) return List.of("");
+        java.util.ArrayList<String> chunks = new java.util.ArrayList<>(
+            (value.length() + NBT_STRING_CHUNK_CHARACTERS - 1) / NBT_STRING_CHUNK_CHARACTERS);
+        for (int start = 0; start < value.length(); start += NBT_STRING_CHUNK_CHARACTERS) {
+            chunks.add(value.substring(start, Math.min(value.length(), start + NBT_STRING_CHUNK_CHARACTERS)));
+        }
+        return List.copyOf(chunks);
+    }
+
+    private static String boundedError(String error) {
+        return error.length() <= MAX_RECOVERY_ERROR_CHARACTERS
+            ? error
+            : error.substring(0, MAX_RECOVERY_ERROR_CHARACTERS);
     }
 }

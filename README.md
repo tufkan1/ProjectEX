@@ -81,6 +81,14 @@ launch a development client with `./gradlew runClient`.
 - [Support](SUPPORT.md) — where questions and bug reports belong
 - [Security](SECURITY.md) — private vulnerability reporting policy
 
+Additional release documentation:
+
+- [Player guide](docs/player-guide.md) - installation, controls, progression, machines, and troubleshooting
+- [Server operator guide](docs/server-guide.md) - deployment, backups, upgrades, diagnostics, and rollback
+- [Pack author guide](docs/pack-author-guide.md) - EMC overrides, validation, precedence, and examples
+- [Integration guide](docs/integration-guide.md) - public APIs, compatibility, Javadocs, and example mod
+- [Translation guide](docs/translating.md) - English/Turkish parity and community locale workflow
+
 ## Independence and attribution
 
 ProjectEX is not supported or endorsed by ProjectE or ProjectExpansion. Please

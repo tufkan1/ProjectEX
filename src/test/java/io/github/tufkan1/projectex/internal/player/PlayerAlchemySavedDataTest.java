@@ -44,6 +44,20 @@ class PlayerAlchemySavedDataTest {
             .getOrThrow();
 
         assertEquals(EmcValue.of(4096), reloaded.state(player).balance());
+        assertTrue(encoded.getAsJsonObject().getAsJsonArray("payload").size() >= 1);
+    }
+
+    @Test
+    void readsLegacySingleStringPayload() {
+        JsonObject encoded = new JsonObject();
+        encoded.addProperty("payload", "{\"schema_version\":1,\"players\":{}}");
+
+        PlayerAlchemySavedData reloaded = PlayerAlchemySavedData.CODEC
+            .parse(JsonOps.INSTANCE, encoded)
+            .getOrThrow();
+
+        assertTrue(reloaded.snapshot().isEmpty());
+        assertTrue(reloaded.recoveryPayload().isEmpty());
     }
 
     @Test

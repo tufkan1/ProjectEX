@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "projectex_api_example",
+  "version": "1.0.0",
+  "name": "ProjectEX API Example",
+  "environment": "*",
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "~26.2",
+    "projectex": ">=0.1.0-alpha.1"
+  }
+}
