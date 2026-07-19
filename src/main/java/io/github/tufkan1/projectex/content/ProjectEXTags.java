@@ -38,6 +38,12 @@ public final class ProjectEXTags {
     public static final TagKey<Block> ELEMENTAL_AMULET_DENIED = TagKey.create(
         Registries.BLOCK, ProjectEX.id("elemental_amulet_denied")
     );
+    public static final TagKey<Block> DESTRUCTIVE_CATALYST_ALLOWED = TagKey.create(
+        Registries.BLOCK, ProjectEX.id("destructive_catalyst_allowed")
+    );
+    public static final TagKey<Block> DESTRUCTIVE_CATALYST_DENIED = TagKey.create(
+        Registries.BLOCK, ProjectEX.id("destructive_catalyst_denied")
+    );
     public static final TagKey<Block> INCORRECT_FOR_DARK_MATTER_TOOL = TagKey.create(
         Registries.BLOCK, ProjectEX.id("incorrect_for_dark_matter_tool")
     );

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    "minecraft:tnt",
+    "projectex:mobius_fuel"
+  ],
+  "result": {
+    "id": "projectex:nova_catalyst"
+  }
+}

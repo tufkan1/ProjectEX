@@ -79,9 +79,23 @@ JVM property. The default is `consume` for recognizable survival progression. Un
 fail startup instead of silently enabling this high-impact power. The learned set is checked
 against the persistent 100,000-entry safety cap before mutation.
 
+## Destructive catalysts
+
+Nova Catalyst is a consumed, entity-safe 3x3x3 demolition charge. Destruction Catalyst is a
+reusable directional tool: charge selects depth 1, 4, or 8, while line/panel/cube mode selects
+a 1-, 3-, or 9-block cross-section. A request can therefore consider at most 72 positions.
+Destruction Catalyst pays exactly 8 EMC per block that is actually removed and refunds any
+planned work that fails during commit.
+
+Both tools operate only on already-loaded chunks, skip block entities and hardness 50+
+blocks, require normal player edit permission, and apply
+`projectex:destructive_catalyst_allowed`, `projectex:destructive_catalyst_denied`, and the
+public utility protection callback to every target. They never create an explosion entity or
+damage entities. `projectex.destructiveCatalysts.enabled=false` disables both before planning,
+payment, mutation, cooldown, or item consumption; malformed values fail startup.
+
 ## Remaining #39 families
 
-Additional pedestal effects, rings, and
-destructive catalysts will build on this state/network contract. Their world adapters must
+Additional pedestal effects and rings will build on this state/network contract. Their world adapters must
 add per-target protection callbacks, allow/deny tags, chunk-loaded bounds, per-tick work caps,
 and exact EMC charging before #39 is closed.

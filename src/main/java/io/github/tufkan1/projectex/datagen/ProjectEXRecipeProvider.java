@@ -88,6 +88,17 @@ public final class ProjectEXRecipeProvider extends FabricRecipeProvider {
                     .pattern("HML").pattern("KBK").pattern("LMH")
                     .unlockedBy("has_klein_star_omega", has(ProjectEXItems.KLEIN_STAR_OMEGA.item()))
                     .save(output, id("knowledge_tome"));
+                shapeless(RecipeCategory.REDSTONE, ProjectEXItems.NOVA_CATALYST.item())
+                    .requires(Items.TNT).requires(ProjectEXItems.MOBIUS_FUEL.item())
+                    .unlockedBy("has_tnt", has(Items.TNT))
+                    .save(output, id("nova_catalyst"));
+                shaped(RecipeCategory.TOOLS, ProjectEXItems.DESTRUCTION_CATALYST.item())
+                    .define('N', ProjectEXItems.NOVA_CATALYST.item())
+                    .define('M', ProjectEXItems.MOBIUS_FUEL.item())
+                    .define('F', Items.FLINT_AND_STEEL)
+                    .pattern("NMN").pattern("MFM").pattern("NMN")
+                    .unlockedBy("has_nova_catalyst", has(ProjectEXItems.NOVA_CATALYST.item()))
+                    .save(output, id("destruction_catalyst"));
                 shaped(RecipeCategory.MISC, ProjectEXBlocks.DARK_MATTER_PEDESTAL)
                     .define('D', ProjectEXBlocks.DARK_MATTER_BLOCK)
                     .define('R', ProjectEXItems.RED_MATTER.item())
