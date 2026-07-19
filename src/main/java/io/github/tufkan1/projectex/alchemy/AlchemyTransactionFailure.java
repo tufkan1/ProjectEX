@@ -6,6 +6,7 @@ public enum AlchemyTransactionFailure {
     SESSION_INVALID,
     TOO_FAR,
     RATE_LIMITED,
+    STATE_CHANGED,
     STALE_EMC_REVISION,
     INVALID_COUNT,
     UNKNOWN_EMC_VALUE,

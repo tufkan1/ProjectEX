@@ -20,6 +20,12 @@ state, a maximum squared distance of 64, and a per-player sliding limit of 20 re
 per second. Disconnect clears the player's limiter state. Networking must construct
 this context from server facts rather than payload fields.
 
+`ServerAlchemyTransactionExecutor` finishes the boundary with one target-owned
+compare-and-commit call. If player state or inventory changed after evaluation, the
+target returns false and the executor reports `STATE_CHANGED`. Every attempt emits a
+structured amount-free audit event; audit sink failures are logged and isolated from
+game state.
+
 Component-bearing item variants require an exact `EmcMatch`; componentless values are
 not silently used for arbitrary custom components. Knowledge is intentionally tracked
 by item identifier, while the exact match controls valuation and inventory identity.
