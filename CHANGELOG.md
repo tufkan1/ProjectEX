@@ -17,6 +17,7 @@ the Minecraft version.
 - Deterministic recipe-graph EMC mapping core with cycle and free-EMC protection.
 - Minecraft 26.2 recipe adapter with safe exclusions and post-reload derivation.
 - Versioned query-only EMC API with immutable snapshots and reload subscriptions.
+- Versioned UUID-keyed player EMC/knowledge persistence with migration and recovery backup.
 
 ## [0.1.0-alpha.1] - Unreleased
 

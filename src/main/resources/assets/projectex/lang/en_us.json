@@ -5,5 +5,10 @@
   "commands.projectex.no_value": "No EMC value is registered for %s.",
   "commands.projectex.value": "%s = %s EMC (source: %s)",
   "commands.projectex.reload_started": "Reloading data packs and ProjectEX EMC values...",
-  "commands.projectex.dumped": "Wrote %s EMC values to the server log as JSON."
+  "commands.projectex.dumped": "Wrote %s EMC values to the server log as JSON.",
+  "commands.projectex.player.inspect": "Player %s has %s EMC and %s learned items.",
+  "commands.projectex.player.reset": "Reset ProjectEX state for player %s.",
+  "commands.projectex.player.empty": "Player %s had no ProjectEX state.",
+  "commands.projectex.player.recovery_required": "Player data recovery backup is present: %s",
+  "commands.projectex.player.recovery_clean": "Player alchemy data has no pending recovery backup."
 }

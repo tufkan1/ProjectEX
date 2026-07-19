@@ -46,6 +46,7 @@ launch a development client with `./gradlew runClient`.
 - [Architecture](docs/architecture.md) — module boundaries and technical rules
 - [EMC data format](docs/emc-data-format.md) — versioned pack-author format and conflict rules
 - [Public EMC API](docs/emc-api.md) — query lifecycle, consumer examples, and compatibility policy
+- [Player data](docs/player-data.md) — persistence schema, lifecycle, and corruption recovery
 - [Contributing](CONTRIBUTING.md) — development and pull request workflow
 - [Support](SUPPORT.md) — where questions and bug reports belong
 - [Security](SECURITY.md) — private vulnerability reporting policy

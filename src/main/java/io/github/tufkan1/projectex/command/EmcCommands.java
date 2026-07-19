@@ -9,10 +9,14 @@ import io.github.tufkan1.projectex.api.emc.EmcApi;
 import io.github.tufkan1.projectex.api.emc.EmcKey;
 import io.github.tufkan1.projectex.api.emc.EmcMatch;
 import io.github.tufkan1.projectex.api.emc.EmcValue;
+import io.github.tufkan1.projectex.internal.player.PlayerAlchemySavedData;
+import io.github.tufkan1.projectex.player.PlayerAlchemyState;
 import java.util.Optional;
+import java.util.UUID;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.UuidArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.commands.ReloadCommand;
 
@@ -44,6 +48,19 @@ public final class EmcCommands {
                 .then(literal("dump")
                     .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                     .executes(context -> dump(context.getSource())))
+                .then(literal("player")
+                    .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                    .then(literal("inspect")
+                        .then(argument("uuid", UuidArgument.uuid())
+                            .executes(context -> inspectPlayer(
+                                context.getSource(), UuidArgument.getUuid(context, "uuid")))))
+                    .then(literal("reset")
+                        .then(argument("uuid", UuidArgument.uuid())
+                            .executes(context -> resetPlayer(
+                                context.getSource(), UuidArgument.getUuid(context, "uuid")))))
+                    .then(literal("recovery")
+                        .executes(context -> recoveryStatus(context.getSource())))
+                )
             )
         );
     }
@@ -95,5 +112,38 @@ public final class EmcCommands {
         int count = ProjectEX.emc().snapshot().size();
         source.sendSuccess(() -> Component.translatable("commands.projectex.dumped", count), false);
         return count;
+    }
+
+    private static int inspectPlayer(net.minecraft.commands.CommandSourceStack source, UUID playerId) {
+        PlayerAlchemyState state = PlayerAlchemySavedData.get(source.getServer()).state(playerId);
+        source.sendSuccess(() -> Component.translatable(
+            "commands.projectex.player.inspect",
+            playerId.toString(),
+            state.balance().amount().toString(),
+            state.knowledge().size()
+        ), false);
+        return state.knowledge().size();
+    }
+
+    private static int resetPlayer(net.minecraft.commands.CommandSourceStack source, UUID playerId) {
+        boolean removed = PlayerAlchemySavedData.get(source.getServer()).remove(playerId).isPresent();
+        ProjectEX.LOGGER.warn("Operator {} reset ProjectEX player state for {} (existed={})",
+            source.getTextName(), playerId, removed);
+        source.sendSuccess(() -> Component.translatable(
+            removed ? "commands.projectex.player.reset" : "commands.projectex.player.empty",
+            playerId.toString()
+        ), true);
+        return removed ? 1 : 0;
+    }
+
+    private static int recoveryStatus(net.minecraft.commands.CommandSourceStack source) {
+        PlayerAlchemySavedData data = PlayerAlchemySavedData.get(source.getServer());
+        if (data.recoveryPayload().isPresent()) {
+            String error = data.recoveryError().orElse("unknown");
+            source.sendFailure(Component.translatable("commands.projectex.player.recovery_required", error));
+            return 0;
+        }
+        source.sendSuccess(() -> Component.translatable("commands.projectex.player.recovery_clean"), false);
+        return 1;
     }
 }

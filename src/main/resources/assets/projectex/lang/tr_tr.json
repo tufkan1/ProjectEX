@@ -5,5 +5,10 @@
   "commands.projectex.no_value": "%s için kayıtlı EMC değeri yok.",
   "commands.projectex.value": "%s = %s EMC (kaynak: %s)",
   "commands.projectex.reload_started": "Veri paketleri ve ProjectEX EMC değerleri yenileniyor...",
-  "commands.projectex.dumped": "%s EMC değeri sunucu günlüğüne JSON olarak yazıldı."
+  "commands.projectex.dumped": "%s EMC değeri sunucu günlüğüne JSON olarak yazıldı.",
+  "commands.projectex.player.inspect": "%s oyuncusunun %s EMC'si ve %s öğrenilmiş eşyası var.",
+  "commands.projectex.player.reset": "%s oyuncusunun ProjectEX verisi sıfırlandı.",
+  "commands.projectex.player.empty": "%s oyuncusunun ProjectEX verisi yoktu.",
+  "commands.projectex.player.recovery_required": "Oyuncu verisi kurtarma yedeği mevcut: %s",
+  "commands.projectex.player.recovery_clean": "Oyuncu simya verisinde bekleyen kurtarma yedeği yok."
 }
