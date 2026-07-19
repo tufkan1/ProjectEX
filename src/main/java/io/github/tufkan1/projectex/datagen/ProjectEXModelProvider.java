@@ -50,7 +50,13 @@ public final class ProjectEXModelProvider implements DataProvider {
         Map.entry("aeternalis_fuel", "minecraft:item/echo_shard"),
         Map.entry("dark_matter", "minecraft:item/ender_pearl"),
         Map.entry("red_matter", "minecraft:item/nether_star"),
-        Map.entry("philosophers_stone", "minecraft:item/ender_eye")
+        Map.entry("philosophers_stone", "minecraft:item/ender_eye"),
+        Map.entry("klein_star_ein", "minecraft:item/amethyst_shard"),
+        Map.entry("klein_star_zwei", "minecraft:item/prismarine_crystals"),
+        Map.entry("klein_star_drei", "minecraft:item/diamond"),
+        Map.entry("klein_star_vier", "minecraft:item/emerald"),
+        Map.entry("klein_star_sphere", "minecraft:item/heart_of_the_sea"),
+        Map.entry("klein_star_omega", "minecraft:item/nether_star")
     );
 
     private final Path assetsRoot;

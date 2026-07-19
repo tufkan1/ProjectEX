@@ -22,6 +22,18 @@ public record EmcValue(BigInteger amount) implements Comparable<EmcValue> {
         return new EmcValue(amount.add(other.amount));
     }
 
+    public EmcValue subtract(EmcValue other) {
+        BigInteger result = amount.subtract(other.amount);
+        if (result.signum() < 0) {
+            throw new IllegalArgumentException("EMC subtraction cannot produce a negative value");
+        }
+        return new EmcValue(result);
+    }
+
+    public EmcValue min(EmcValue other) {
+        return compareTo(other) <= 0 ? this : other;
+    }
+
     public EmcValue multiply(long multiplier) {
         if (multiplier < 0) {
             throw new IllegalArgumentException("Multiplier cannot be negative");

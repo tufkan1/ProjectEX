@@ -1,0 +1,32 @@
+{
+  "parent": "projectex:philosophers_stone",
+  "criteria": {
+    "has_klein_star": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projectex:klein_star_ein"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projectex.klein_star.description"
+    },
+    "icon": {
+      "id": "projectex:klein_star_ein"
+    },
+    "title": {
+      "translate": "advancements.projectex.klein_star.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_klein_star"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

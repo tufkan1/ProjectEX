@@ -27,6 +27,9 @@ public final class ProjectEXItemTagProvider extends FabricTagsProvider.ItemTagsP
             key(ProjectEXItems.MEDIUM_COVALENCE_DUST),
             key(ProjectEXItems.HIGH_COVALENCE_DUST)
         );
+        builder(ProjectEXTags.KLEIN_STARS).addAll(
+            ProjectEXItems.kleinStars().stream().map(ProjectEXItemTagProvider::key).toList()
+        );
     }
 
     private static ResourceKey<Item> key(
