@@ -45,3 +45,6 @@ cycles are fatal.
 
 If parsing, registry validation, conflict resolution, or alias resolution fails, the
 entire reload fails and the last valid immutable EMC snapshot remains active.
+
+For a copy-ready pack layout, overrides, removals, safe deployment, and operator conflict
+diagnostics, see the [pack author guide](pack-author-guide.md).

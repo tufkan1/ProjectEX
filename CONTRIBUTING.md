@@ -14,6 +14,9 @@ Content changes must run `./gradlew runDatagen` and commit the resulting files i
 `src/main/generated`. See [the datagen guide](docs/datagen.md) for provider ownership
 and the reproducibility check used by CI.
 
+Translation changes start from generated `en_us.json`, follow
+[the translation guide](docs/translating.md), and must preserve exact key parity.
+
 Do not commit IDE files, `run/`, generated build output, downloaded mods, logs, or
 world saves. Never include secrets in configuration, fixtures, or screenshots.
 
@@ -36,7 +39,7 @@ another contributor.
 - No client classes in common/server initialization paths.
 - No client-provided EMC values or unvalidated state mutations.
 - Prefer immutable values, explicit failure results, and deterministic ordering.
-- Public APIs need Javadoc and compatibility consideration.
+- Public APIs need Javadoc, a compiled example update when relevant, and compatibility consideration.
 - A mixin needs a short justification, narrow target, and regression test.
 - Persistent or network formats require a version and migration/compatibility plan.
 - Do not edit `src/main/generated` by hand; update its provider or source template.

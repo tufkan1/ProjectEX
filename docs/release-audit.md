@@ -27,6 +27,7 @@ work remains additionally bounded by the server config tick limits.
 | Full 54-entry knowledge page | 72 KiB | 69,358 B |
 | Full 64-entry Alchemical Book view | 32 KiB | 16,867 B |
 | Runtime/source JAR | 4 MiB each | verifier enforced |
+| Public API Javadoc JAR | 8 MiB | verifier enforced |
 
 JUnit publishes the measured values into XML test evidence on every runner. Thresholds
 are intentionally above ordinary variance but low enough to fail accidental unbounded
@@ -60,8 +61,8 @@ digit persistence limit.
 The release gate includes wrapper validation, dependency review failing at moderate or
 higher severity, weekly/PR CodeQL, weekly/PR full-history secret scanning, and runtime and
 sources JAR inspection. The verifier requires `fabric.mod.json`, `LICENSE`, and `NOTICE`,
-rejects key/credential/environment/run-directory entries, limits each artifact to 4 MiB,
-and requires exactly the two expected JARs.
+rejects key/credential/environment/run-directory entries, limits runtime/source artifacts
+to 4 MiB and Javadocs to 8 MiB, and requires exactly the three expected JARs.
 
 Manual review on 2026-07-19 traced every client mutation packet to a server-created session,
 bounded decoder, authority check, replay/rate guard, and atomic domain commit. Persistence

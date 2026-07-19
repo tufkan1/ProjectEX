@@ -37,3 +37,12 @@ same pull request that introduces any derived material.
 - Never import branding or assets whose ownership/license is unclear.
 - Record the immutable upstream commit SHA, not only a moving branch name.
 - A reviewer must verify this ledger in every content or asset pull request.
+
+## Release notice audit
+
+The 1.0 documentation audit on 2026-07-19 verified that runtime, sources, and Javadoc
+artifacts include `LICENSE_ProjectEX` and `NOTICE_ProjectEX`; ProjectE and
+ProjectExpansion references identify immutable commits and their MIT licenses; generated
+models use runtime-provided vanilla texture identifiers and contain no copied upstream art.
+No additional bundled third-party code, binary, font, sound, or texture requires a separate
+notice. `verifyReleaseArtifacts` enforces notice presence on every release build.

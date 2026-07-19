@@ -8,6 +8,8 @@ the Minecraft version.
 
 ### Added
 
+- Complete player, server-operator, pack-author, integration, accessibility, and translation documentation with generated public-API Javadocs and a compiled example mod.
+- Changed player saved data to a backward-compatible chunked NBT representation so large knowledge sets cannot exceed the NBT UTF field limit.
 - Fabric 26.2 project foundation using Java 25, Loom 1.17, and Gradle 9.5.1.
 - Loader-neutral, arbitrary-precision EMC domain model and unit tests.
 - Public repository governance, contribution, security, issue, CI, and release scaffolding.
