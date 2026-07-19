@@ -55,12 +55,14 @@ java {
 	targetCompatibility = JavaVersion.VERSION_25
 }
 
+def projectName = project.name
+
 jar {
 	from("LICENSE") {
-		rename { "${it}_${project.name}" }
+		rename { "${it}_${projectName}" }
 	}
 	from("NOTICE") {
-		rename { "${it}_${project.name}" }
+		rename { "${it}_${projectName}" }
 	}
 }
 

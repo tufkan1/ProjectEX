@@ -44,6 +44,7 @@ launch a development client with `./gradlew runClient`.
 - [Roadmap](ROADMAP.md) — delivery phases and release gates
 - [Task backlog](TASKS.md) — issue-ready work packages and acceptance criteria
 - [Architecture](docs/architecture.md) — module boundaries and technical rules
+- [EMC data format](docs/emc-data-format.md) — versioned pack-author format and conflict rules
 - [Contributing](CONTRIBUTING.md) — development and pull request workflow
 - [Support](SUPPORT.md) — where questions and bug reports belong
 - [Security](SECURITY.md) — private vulnerability reporting policy

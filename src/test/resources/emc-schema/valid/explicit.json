@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "values": [
+    { "item": "minecraft:coal", "emc": "128" },
+    { "item": "minecraft:diamond", "emc": "8192" }
+  ]
+}

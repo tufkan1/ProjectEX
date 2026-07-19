@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "values": [
+    {
+      "item": "example:charged_crystal",
+      "components": { "example:charge": 100, "example:mode": "stable" },
+      "emc": "8192"
+    },
+    {
+      "item": "example:charged_crystal",
+      "components": { "example:mode": "stable", "example:charge": 100 },
+      "emc": "16384"
+    }
+  ]
+}
