@@ -26,6 +26,12 @@ public final class ProjectEXTags {
         Registries.BLOCK,
         ProjectEX.id("philosophers_stone_denied")
     );
+    public static final TagKey<Block> DIVINING_ROD_ALLOWED = TagKey.create(
+        Registries.BLOCK, ProjectEX.id("divining_rod_allowed")
+    );
+    public static final TagKey<Block> DIVINING_ROD_DENIED = TagKey.create(
+        Registries.BLOCK, ProjectEX.id("divining_rod_denied")
+    );
     public static final TagKey<Block> INCORRECT_FOR_DARK_MATTER_TOOL = TagKey.create(
         Registries.BLOCK, ProjectEX.id("incorrect_for_dark_matter_tool")
     );

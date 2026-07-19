@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "H": "projectex:high_covalence_dust",
+    "L": "projectex:low_covalence_dust",
+    "M": "projectex:medium_covalence_dust",
+    "P": "minecraft:paper",
+    "S": "minecraft:string"
+  },
+  "pattern": [
+    "LMH",
+    "SPS",
+    "HML"
+  ],
+  "result": {
+    "id": "projectex:repair_talisman"
+  }
+}

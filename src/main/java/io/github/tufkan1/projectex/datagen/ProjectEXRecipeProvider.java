@@ -59,6 +59,29 @@ public final class ProjectEXRecipeProvider extends FabricRecipeProvider {
                     .pattern("DSD").pattern("DTD").pattern("DDD")
                     .unlockedBy("has_dark_matter", has(ProjectEXItems.DARK_MATTER.item()))
                     .save(output, id("transmutation_tablet"));
+                shaped(RecipeCategory.TOOLS, ProjectEXItems.REPAIR_TALISMAN.item())
+                    .define('L', ProjectEXItems.LOW_COVALENCE_DUST.item())
+                    .define('M', ProjectEXItems.MEDIUM_COVALENCE_DUST.item())
+                    .define('H', ProjectEXItems.HIGH_COVALENCE_DUST.item())
+                    .define('S', Items.STRING).define('P', Items.PAPER)
+                    .pattern("LMH").pattern("SPS").pattern("HML")
+                    .unlockedBy("has_covalence_dust", has(ProjectEXItems.LOW_COVALENCE_DUST.item()))
+                    .save(output, id("repair_talisman"));
+                for (int tier = 0; tier < ProjectEXItems.DIVINING_RODS.size(); tier++) {
+                    var rod = ProjectEXItems.DIVINING_RODS.get(tier);
+                    var dust = switch (tier) {
+                        case 0 -> ProjectEXItems.LOW_COVALENCE_DUST;
+                        case 1 -> ProjectEXItems.MEDIUM_COVALENCE_DUST;
+                        default -> ProjectEXItems.HIGH_COVALENCE_DUST;
+                    };
+                    shaped(RecipeCategory.TOOLS, rod.item())
+                        .define('D', dust.item())
+                        .define('S', tier == 0 ? Items.STICK
+                            : ProjectEXItems.DIVINING_RODS.get(tier - 1).item())
+                        .pattern("DDD").pattern("DSD").pattern("DDD")
+                        .unlockedBy("has_dust", has(dust.item()))
+                        .save(output, id("divining_rod_" + (tier + 1)));
+                }
 
                 shapeless(RecipeCategory.MISC, ProjectEXItems.LOW_COVALENCE_DUST.item(), 40)
                     .requires(Items.CHARCOAL)

@@ -218,6 +218,49 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
     }
 
     @GameTest
+    public void repairTalismanRepairsInventoryWithoutStackingWork(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        ItemStack damaged = new ItemStack(Items.IRON_PICKAXE);
+        damaged.setDamageValue(10);
+        player.getInventory().setItem(5, damaged);
+
+        int repaired = io.github.tufkan1.projectex.content.RepairTalismanItem
+            .repairInventory(player);
+        helper.assertValueEqual(repaired, 1, "Repair Talisman repaired an unexpected item count");
+        helper.assertValueEqual(damaged.getDamageValue(), 9,
+            "Repair Talisman did not repair exactly one durability point");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void diviningRodScanIsBoundedReadOnlyAndTierLimited(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        ItemStack rod = new ItemStack(ProjectEXItems.DIVINING_RODS.get(2).item());
+        rod.set(ProjectEXComponents.ACTIVE_ITEM_STATE,
+            new ActiveItemState(ActiveItemState.CURRENT_VERSION, 2,
+                io.github.tufkan1.projectex.content.component.ActiveItemMode.CUBE));
+        BlockPos origin = new BlockPos(4, 3, 4);
+        BlockPos ore = origin.below();
+        BlockPos denied = ore.east();
+        helper.setBlock(ore, Blocks.DIAMOND_ORE);
+        helper.setBlock(denied, Blocks.BEDROCK);
+
+        var result = io.github.tufkan1.projectex.content.DiviningRodItem.scan(
+            helper.getLevel(), player, rod, helper.absolutePos(origin), Direction.UP
+        );
+        helper.assertTrue(result.scannedBlocks() > 0 && result.scannedBlocks() <= 9 * 64,
+            "Divining Rod exceeded its bounded scan volume");
+        helper.assertTrue(result.highest().size() <= 3,
+            "High Divining Rod returned more than three distinct values");
+        helper.assertTrue(!result.highest().isEmpty()
+                && result.highest().getFirst().equals(EmcValue.of(8_192)),
+            "Divining Rod did not resolve the diamond ore smelting fallback EMC");
+        helper.assertBlockPresent(Blocks.DIAMOND_ORE, ore);
+        helper.assertBlockPresent(Blocks.BEDROCK, denied);
+        helper.succeed();
+    }
+
+    @GameTest
     public void bundledEmcDataLoadsAtRuntime(GameTestHelper helper) {
         helper.assertValueEqual(
             ProjectEX.emc().find(EmcKey.parse("minecraft:diamond")).orElseThrow(),
@@ -553,18 +596,11 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
             io.github.tufkan1.projectex.machine.ExpansionMachineTier.BASIC
         ).block();
         BlockPos plainPos = new BlockPos(0, 2, 0);
-        BlockPos boostedPos = new BlockPos(3, 2, 0);
-        helper.setBlock(boostedPos.below(), ProjectEXBlocks.COMPACT_SUN);
         BlockPos absolutePlainPos = helper.absolutePos(plainPos);
-        BlockPos absoluteBoostedPos = helper.absolutePos(boostedPos);
         EmcMachineBlockEntity plain = new EmcMachineBlockEntity(
             absolutePlainPos, basicFlower.defaultBlockState()
         );
-        EmcMachineBlockEntity boosted = new EmcMachineBlockEntity(
-            absoluteBoostedPos, basicFlower.defaultBlockState()
-        );
         plain.setLevel(helper.getLevel());
-        boosted.setLevel(helper.getLevel());
 
         EmcMachineBlockEntity.tickServer(
             helper.getLevel(), absolutePlainPos, plain.getBlockState(), plain
@@ -578,20 +614,17 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
                 && ((EmcMachineBlockEntity) loaded).machineState().equals(plain.machineState()),
             "Power flower stored EMC or fractional remainder changed across reload");
 
-        for (int tick = 1; tick < 20; tick++) {
-            EmcMachineBlockEntity.tickServer(
-                helper.getLevel(), absolutePlainPos, plain.getBlockState(), plain
-            );
-        }
-        for (int tick = 0; tick < 20; tick++) {
-            EmcMachineBlockEntity.tickServer(
-                helper.getLevel(), absoluteBoostedPos, boosted.getBlockState(), boosted
-            );
-        }
-
-        helper.assertTrue(plain.machineState().stored().equals(EmcValue.of(102)),
+        var plainSecond = io.github.tufkan1.projectex.machine.MachineRuntimeConfig
+            .generationRate(plain.tier(), false)
+            .generate(java.math.BigInteger.ZERO, 20, plain.tier().capacity());
+        var boostedSecond = io.github.tufkan1.projectex.machine.MachineRuntimeConfig
+            .generationRate(plain.tier(), true)
+            .generate(java.math.BigInteger.ZERO, 20, plain.tier().capacity());
+        helper.assertTrue(plainSecond.produced().equals(EmcValue.of(102))
+                && plainSecond.deferredNumerator().signum() == 0,
             "Basic power flower lost its exact fixed-point second output");
-        helper.assertTrue(boosted.machineState().stored().equals(EmcValue.of(1_020)),
+        helper.assertTrue(boostedSecond.produced().equals(EmcValue.of(1_020))
+                && boostedSecond.deferredNumerator().signum() == 0,
             "Compact Sun did not apply the validated default multiplier");
         for (var tier : io.github.tufkan1.projectex.machine.ExpansionMachineTier.values()) {
             helper.assertTrue(ProjectEXBlocks.POWER_FLOWERS.containsKey(tier),

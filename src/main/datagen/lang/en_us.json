@@ -206,5 +206,13 @@
   "item.projectex.red_matter_leggings": "Red Matter Leggings",
   "item.projectex.red_matter_boots": "Red Matter Boots",
   "item.projectex.matter_tool.charge": "Matter tool charge: %s / %s",
-  "item.projectex.matter_tool.controls": "Use in air: charge · Sneak-use block: protected area mine"
+  "item.projectex.matter_tool.controls": "Use in air: charge · Sneak-use block: protected area mine",
+  "item.projectex.repair_talisman": "Repair Talisman",
+  "item.projectex.divining_rod_1": "Low Divining Rod",
+  "item.projectex.divining_rod_2": "Medium Divining Rod",
+  "item.projectex.divining_rod_3": "High Divining Rod",
+  "item.projectex.divining_rod.result": "Scanned %s blocks; average EMC: %s",
+  "item.projectex.divining_rod.highest": "Highest value #%s: %s EMC",
+  "tag.block.projectex.divining_rod_allowed": "Divining Rod scannable blocks",
+  "tag.block.projectex.divining_rod_denied": "Divining Rod denied blocks"
 }

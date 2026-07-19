@@ -33,11 +33,20 @@ public final class MachineRuntimeConfig {
     }
 
     public static FixedPointRate generationRate(MachineTier tier) {
-        return switch (tier.type()) {
+        return generationRate(tier, false);
+    }
+
+    public static FixedPointRate generationRate(MachineTier tier, boolean compactSun) {
+        FixedPointRate rate = switch (tier.type()) {
             case COLLECTOR -> settings.collectorRate.apply(tier.fixedRate());
             case POWER_FLOWER -> settings.powerFlowerRate.apply(tier.fixedRate());
             case RELAY -> tier.fixedRate();
         };
+        if (!compactSun || tier.type() != MachineTier.MachineType.POWER_FLOWER) return rate;
+        return new FixedPointRate(
+            rate.numerator().multiply(BigInteger.valueOf(settings.compactSunMultiplier)),
+            rate.denominator()
+        );
     }
 
     public static EmcValue transferLimit(MachineTier tier) {
