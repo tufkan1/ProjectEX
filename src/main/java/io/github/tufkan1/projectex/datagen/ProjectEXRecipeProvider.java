@@ -5,6 +5,7 @@ import io.github.tufkan1.projectex.content.ProjectEXBlocks;
 import io.github.tufkan1.projectex.content.ProjectEXItems;
 import io.github.tufkan1.projectex.content.ProjectEXContentRegistry;
 import io.github.tufkan1.projectex.content.recipe.KleinStarUpgradeRecipe;
+import io.github.tufkan1.projectex.content.ExpansionMaterialTier;
 import java.util.concurrent.CompletableFuture;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
@@ -100,6 +101,29 @@ public final class ProjectEXRecipeProvider extends FabricRecipeProvider {
                     .pattern("DDD")
                     .unlockedBy("has_dark_matter", has(ProjectEXItems.DARK_MATTER.item()))
                     .save(output, id("red_matter"));
+
+                net.minecraft.world.level.ItemLike previousFuel = ProjectEXItems.AETERNALIS_FUEL.item();
+                net.minecraft.world.level.ItemLike previousMatter = ProjectEXItems.RED_MATTER.item();
+                for (ExpansionMaterialTier tier : ExpansionMaterialTier.values()) {
+                    var fuel = ProjectEXItems.EXPANSION_FUELS.get(tier.ordinal());
+                    var matter = ProjectEXItems.EXPANSION_MATTERS.get(tier.ordinal());
+                    shapeless(RecipeCategory.MISC, fuel.item())
+                        .requires(previousFuel, 4)
+                        .unlockedBy("has_previous_fuel", has(previousFuel))
+                        .save(output, id(tier.fuelId()));
+                    shaped(RecipeCategory.MISC, matter.item())
+                        .define('F', fuel.item()).define('M', previousMatter)
+                        .pattern("FMF").pattern("FMF").pattern("FMF")
+                        .unlockedBy("has_tier_fuel", has(fuel.item()))
+                        .save(output, id(tier.matterId()));
+                    previousFuel = fuel.item();
+                    previousMatter = matter.item();
+                }
+                shaped(RecipeCategory.MISC, ProjectEXItems.FADING_MATTER.item())
+                    .define('F', previousFuel).define('M', previousMatter)
+                    .pattern("FMF").pattern("FMF").pattern("FMF")
+                    .unlockedBy("has_white_matter", has(previousMatter))
+                    .save(output, id("fading_matter"));
 
                 shaped(RecipeCategory.TOOLS, ProjectEXItems.KLEIN_STAR_EIN.item())
                     .define('A', ProjectEXItems.AETERNALIS_FUEL.item())

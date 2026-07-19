@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "projectex:aeternalis_fuel",
+    "projectex:aeternalis_fuel",
+    "projectex:aeternalis_fuel",
+    "projectex:aeternalis_fuel"
+  ],
+  "result": {
+    "id": "projectex:magenta_fuel"
+  }
+}

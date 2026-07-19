@@ -9,6 +9,7 @@ import io.github.tufkan1.projectex.api.storage.EmcTransferMode;
 import io.github.tufkan1.projectex.content.ProjectEXBlocks;
 import io.github.tufkan1.projectex.content.ProjectEXComponents;
 import io.github.tufkan1.projectex.content.ProjectEXItems;
+import io.github.tufkan1.projectex.content.ExpansionMaterialTier;
 import io.github.tufkan1.projectex.content.alchemy.WorldTransmutationService;
 import io.github.tufkan1.projectex.api.alchemy.WorldTransmutationProtection;
 import io.github.tufkan1.projectex.content.component.ActiveItemState;
@@ -103,7 +104,9 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
             "Philosopher's Stone did not receive its default active state"
         );
         helper.assertTrue(
-            ProjectEXItems.materials().size() == 8,
+            ProjectEXItems.materials().size() == 31
+                && ProjectEXItems.EXPANSION_FUELS.size() == 11
+                && ProjectEXItems.EXPANSION_MATTERS.size() == 11,
             "Core material family is incomplete"
         );
         helper.succeed();
@@ -874,6 +877,34 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
         helper.assertValueEqual(furnace.getItem(MatterFurnaceBlockEntity.FUEL_SLOT).getCount(), 2,
             "Blocked furnace fuel count");
         helper.assertValueEqual(furnace.burnRemaining(), 0, "Blocked furnace burn time");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void expandedFuelMatterChainIsMonotonicExactAndBurnable(GameTestHelper helper) {
+        EmcValue previousFuel = ProjectEX.emc().find(EmcKey.parse("projectex:aeternalis_fuel"))
+            .orElseThrow();
+        EmcValue previousMatter = ProjectEX.emc().find(EmcKey.parse("projectex:red_matter"))
+            .orElseThrow();
+        for (ExpansionMaterialTier tier : ExpansionMaterialTier.values()) {
+            var fuelItem = ProjectEXItems.EXPANSION_FUELS.get(tier.ordinal()).item();
+            var matterItem = ProjectEXItems.EXPANSION_MATTERS.get(tier.ordinal()).item();
+            EmcValue fuel = ProjectEX.emc().find(new EmcKey("projectex", tier.fuelId())).orElseThrow();
+            EmcValue matter = ProjectEX.emc().find(new EmcKey("projectex", tier.matterId())).orElseThrow();
+            helper.assertTrue(fuel.equals(previousFuel.multiply(4)),
+                tier.fuelId() + " did not resolve to exactly four previous fuels");
+            helper.assertTrue(matter.equals(fuel.multiply(6).add(previousMatter.multiply(3))),
+                tier.matterId() + " did not resolve to its exact forward-only recipe cost");
+            helper.assertValueEqual(helper.getLevel().fuelValues().burnDuration(new ItemStack(fuelItem)),
+                25_600, tier.fuelId() + " burn duration");
+            helper.assertTrue(matter.compareTo(previousMatter) > 0,
+                tier.matterId() + " was not strictly more valuable than its predecessor");
+            previousFuel = fuel;
+            previousMatter = matter;
+        }
+        EmcValue fading = ProjectEX.emc().find(EmcKey.parse("projectex:fading_matter")).orElseThrow();
+        helper.assertTrue(fading.equals(previousFuel.multiply(6).add(previousMatter.multiply(3))),
+            "Fading Matter did not resolve to its exact terminal recipe cost");
         helper.succeed();
     }
 
