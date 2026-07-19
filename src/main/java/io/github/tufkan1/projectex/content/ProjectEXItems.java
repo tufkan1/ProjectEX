@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.DyeColor;
 
 /** First survival progression materials and active items. */
 public final class ProjectEXItems {
@@ -54,6 +55,8 @@ public final class ProjectEXItems {
         star(KleinStarTier.SPHERE);
     public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> KLEIN_STAR_OMEGA =
         star(KleinStarTier.OMEGA);
+    public static final List<ProjectEXContentRegistry.RegisteredItem<AlchemicalBagItem>> ALCHEMICAL_BAGS =
+        java.util.Arrays.stream(DyeColor.values()).map(ProjectEXItems::bag).toList();
 
     private static final List<ProjectEXContentRegistry.RegisteredItem<? extends Item>> MATERIALS = List.of(
         LOW_COVALENCE_DUST,
@@ -85,6 +88,7 @@ public final class ProjectEXItems {
             .register(entries -> {
                 entries.accept(PHILOSOPHERS_STONE.item());
                 KLEIN_STARS.forEach(entry -> entries.accept(entry.item()));
+                ALCHEMICAL_BAGS.forEach(entry -> entries.accept(entry.item()));
             });
     }
 
@@ -96,6 +100,10 @@ public final class ProjectEXItems {
         return KLEIN_STARS;
     }
 
+    public static List<ProjectEXContentRegistry.RegisteredItem<AlchemicalBagItem>> alchemicalBags() {
+        return ALCHEMICAL_BAGS;
+    }
+
     private static ProjectEXContentRegistry.RegisteredItem<Item> simple(String path) {
         return ProjectEXContentRegistry.registerItem(path, Item::new, new Item.Properties());
     }
@@ -104,6 +112,14 @@ public final class ProjectEXItems {
         return ProjectEXContentRegistry.registerItem(
             "klein_star_" + tier.serializedName(),
             properties -> new KleinStarItem(properties, tier),
+            new Item.Properties().rarity(Rarity.UNCOMMON)
+        );
+    }
+
+    private static ProjectEXContentRegistry.RegisteredItem<AlchemicalBagItem> bag(DyeColor color) {
+        return ProjectEXContentRegistry.registerItem(
+            color.getName() + "_alchemical_bag",
+            properties -> new AlchemicalBagItem(properties, color),
             new Item.Properties().rarity(Rarity.UNCOMMON)
         );
     }

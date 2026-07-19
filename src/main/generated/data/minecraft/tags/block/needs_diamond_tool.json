@@ -6,6 +6,9 @@
     "projectex:collector_mk3",
     "projectex:relay_mk1",
     "projectex:relay_mk2",
-    "projectex:relay_mk3"
+    "projectex:relay_mk3",
+    "projectex:condenser_mk1",
+    "projectex:condenser_mk2",
+    "projectex:alchemical_chest"
   ]
 }

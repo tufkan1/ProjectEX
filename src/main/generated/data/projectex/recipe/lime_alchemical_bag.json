@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": "minecraft:chest",
+    "D": "minecraft:lime_dye",
+    "H": "projectex:high_covalence_dust"
+  },
+  "pattern": [
+    "HDH",
+    "DCD",
+    "HDH"
+  ],
+  "result": {
+    "id": "projectex:lime_alchemical_bag"
+  }
+}

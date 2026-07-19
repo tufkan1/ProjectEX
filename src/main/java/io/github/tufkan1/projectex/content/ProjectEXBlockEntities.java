@@ -2,6 +2,7 @@ package io.github.tufkan1.projectex.content;
 
 import io.github.tufkan1.projectex.ProjectEX;
 import io.github.tufkan1.projectex.content.machine.EmcMachineBlockEntity;
+import io.github.tufkan1.projectex.content.storage.AlchemyStorageBlockEntity;
 import java.util.Set;
 import net.fabricmc.fabric.api.transfer.v1.item.ContainerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
@@ -28,6 +29,15 @@ public final class ProjectEXBlockEntities {
         ResourceKey.create(Registries.BLOCK_ENTITY_TYPE, ProjectEX.id("emc_machine")),
         new BlockEntityType<>(EmcMachineBlockEntity::new, EMC_MACHINE_BLOCKS)
     );
+    public static final BlockEntityType<AlchemyStorageBlockEntity> ALCHEMY_STORAGE = Registry.register(
+        BuiltInRegistries.BLOCK_ENTITY_TYPE,
+        ResourceKey.create(Registries.BLOCK_ENTITY_TYPE, ProjectEX.id("alchemy_storage")),
+        new BlockEntityType<>(AlchemyStorageBlockEntity::new, Set.of(
+            ProjectEXBlocks.CONDENSER_MK1,
+            ProjectEXBlocks.CONDENSER_MK2,
+            ProjectEXBlocks.ALCHEMICAL_CHEST
+        ))
+    );
 
     private ProjectEXBlockEntities() {
     }
@@ -36,6 +46,10 @@ public final class ProjectEXBlockEntities {
         ItemStorage.SIDED.registerForBlockEntity(
             (machine, direction) -> ContainerStorage.of(machine, direction),
             EMC_MACHINE
+        );
+        ItemStorage.SIDED.registerForBlockEntity(
+            (storage, direction) -> ContainerStorage.of(storage, direction),
+            ALCHEMY_STORAGE
         );
     }
 }

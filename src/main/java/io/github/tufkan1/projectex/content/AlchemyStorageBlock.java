@@ -1,0 +1,90 @@
+package io.github.tufkan1.projectex.content;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.github.tufkan1.projectex.content.storage.AlchemyStorageBlockEntity;
+import io.github.tufkan1.projectex.storage.StorageKind;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+
+/** Server-authoritative shell shared by condensers and the alchemical chest. */
+public final class AlchemyStorageBlock extends BaseEntityBlock {
+    public static final MapCodec<AlchemyStorageBlock> CODEC = RecordCodecBuilder.mapCodec(instance ->
+        instance.group(
+            propertiesCodec(),
+            Codec.STRING.xmap(StorageKind::valueOf, StorageKind::name).fieldOf("kind")
+                .forGetter(AlchemyStorageBlock::kind)
+        ).apply(instance, AlchemyStorageBlock::new)
+    );
+
+    private final StorageKind kind;
+
+    public AlchemyStorageBlock(BlockBehaviour.Properties properties, StorageKind kind) {
+        super(properties);
+        this.kind = kind;
+    }
+
+    public StorageKind kind() { return kind; }
+
+    @Override protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
+
+    @Override public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new AlchemyStorageBlockEntity(pos, state);
+    }
+
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
+        Level level, BlockState state, BlockEntityType<T> type
+    ) {
+        return level.isClientSide() || !kind.condenser() ? null
+            : createTickerHelper(type, ProjectEXBlockEntities.ALCHEMY_STORAGE,
+                AlchemyStorageBlockEntity::tickServer);
+    }
+
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        if (!level.isClientSide() && placer instanceof ServerPlayer player
+            && level.getBlockEntity(pos) instanceof AlchemyStorageBlockEntity storage) {
+            storage.claim(player.getUUID());
+        }
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(
+        BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit
+    ) {
+        if (!(level.getBlockEntity(pos) instanceof AlchemyStorageBlockEntity storage)) {
+            return InteractionResult.PASS;
+        }
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
+        if (!(player instanceof ServerPlayer serverPlayer) || !storage.canUse(player)) {
+            return InteractionResult.FAIL;
+        }
+        serverPlayer.openMenu(storage);
+        return InteractionResult.SUCCESS_SERVER;
+    }
+
+    @Override protected boolean hasAnalogOutputSignal(BlockState state) { return true; }
+
+    @Override
+    protected int getAnalogOutputSignal(
+        BlockState state, Level level, BlockPos pos, net.minecraft.core.Direction direction
+    ) {
+        return level.getBlockEntity(pos) instanceof AlchemyStorageBlockEntity storage
+            ? storage.comparatorSignal() : 0;
+    }
+}

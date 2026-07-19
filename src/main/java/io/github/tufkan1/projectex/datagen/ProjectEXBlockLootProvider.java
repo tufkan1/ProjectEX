@@ -28,12 +28,23 @@ public final class ProjectEXBlockLootProvider extends FabricBlockLootSubProvider
         machine(ProjectEXBlocks.RELAY_MK1);
         machine(ProjectEXBlocks.RELAY_MK2);
         machine(ProjectEXBlocks.RELAY_MK3);
+        storage(ProjectEXBlocks.CONDENSER_MK1);
+        storage(ProjectEXBlocks.CONDENSER_MK2);
+        storage(ProjectEXBlocks.ALCHEMICAL_CHEST);
     }
 
     private void machine(net.minecraft.world.level.block.Block block) {
         add(block, createSingleItemTable(block).apply(
             CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY)
                 .include(ProjectEXComponents.MACHINE_STATE)
+                .include(DataComponents.CONTAINER)
+        ));
+    }
+
+    private void storage(net.minecraft.world.level.block.Block block) {
+        add(block, createSingleItemTable(block).apply(
+            CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY)
+                .include(ProjectEXComponents.ALCHEMY_STORAGE_STATE)
                 .include(DataComponents.CONTAINER)
         ));
     }

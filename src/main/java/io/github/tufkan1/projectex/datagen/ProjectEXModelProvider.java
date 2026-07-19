@@ -64,7 +64,10 @@ public final class ProjectEXModelProvider implements DataProvider {
         Map.entry("collector_mk3", "minecraft:block/emerald_block"),
         Map.entry("relay_mk1", "minecraft:block/obsidian"),
         Map.entry("relay_mk2", "minecraft:block/polished_blackstone"),
-        Map.entry("relay_mk3", "minecraft:block/crying_obsidian")
+        Map.entry("relay_mk3", "minecraft:block/crying_obsidian"),
+        Map.entry("condenser_mk1", "minecraft:block/diamond_block"),
+        Map.entry("condenser_mk2", "minecraft:block/netherite_block"),
+        Map.entry("alchemical_chest", "minecraft:block/obsidian")
     );
 
     private final Path assetsRoot;
@@ -130,6 +133,22 @@ public final class ProjectEXModelProvider implements DataProvider {
             writes.add(save(output, "models/item/" + item + ".json", baseModel));
             writes.add(save(output, "items/" + item + ".json", clientItem));
         });
+        for (net.minecraft.world.item.DyeColor color : net.minecraft.world.item.DyeColor.values()) {
+            String item = color.getName() + "_alchemical_bag";
+            String baseModel = """
+                {
+                  "parent": "minecraft:item/generated",
+                  "textures": { "layer0": "minecraft:block/%s_wool" }
+                }
+                """.formatted(color.getName());
+            String clientItem = """
+                {
+                  "model": { "type": "minecraft:model", "model": "projectex:item/%s" }
+                }
+                """.formatted(item);
+            writes.add(save(output, "models/item/" + item + ".json", baseModel));
+            writes.add(save(output, "items/" + item + ".json", clientItem));
+        }
         return CompletableFuture.allOf(writes.toArray(CompletableFuture[]::new));
     }
 

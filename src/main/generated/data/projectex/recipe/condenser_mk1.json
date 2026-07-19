@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": "minecraft:chest",
+    "D": "minecraft:diamond_block",
+    "O": "minecraft:obsidian"
+  },
+  "pattern": [
+    "ODO",
+    "DCD",
+    "ODO"
+  ],
+  "result": {
+    "id": "projectex:condenser_mk1"
+  }
+}

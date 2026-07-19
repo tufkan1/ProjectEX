@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_high_covalence_dust": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projectex:high_covalence_dust"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "projectex:purple_alchemical_bag"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_high_covalence_dust"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "projectex:purple_alchemical_bag"
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": "minecraft:chest",
+    "D": "minecraft:brown_dye",
+    "H": "projectex:high_covalence_dust"
+  },
+  "pattern": [
+    "HDH",
+    "DCD",
+    "HDH"
+  ],
+  "result": {
+    "id": "projectex:brown_alchemical_bag"
+  }
+}

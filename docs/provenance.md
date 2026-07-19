@@ -11,6 +11,7 @@ same pull request that introduces any derived material.
 | Klein Star names and tier progression | ProjectE Klein Star content/recipes | `15d4ce65bd06eb4222709b984255fbf5080e78bc` | MIT | Behavior and naming reference only; storage API, codecs, recipe implementation, tests, and vanilla texture references are original ProjectEX work |
 | Collector/relay tier names, rates, and capacities | ProjectE `EnumCollectorTier` / `EnumRelayTier` | `15d4ce65bd06eb4222709b984255fbf5080e78bc` | MIT | Balance reference only; fixed-point arithmetic, persistence, access policy, budget, and cycle-safe routing code are original ProjectEX work |
 | Condenser target/output and color-keyed bag concepts | ProjectE `CondenserBlockEntity` / `AlchemicalBag` | `15d4ce65bd06eb4222709b984255fbf5080e78bc` | MIT | Behavior research only; exact evaluator, component identity, ownership, nesting policy, and tests are original ProjectEX work |
+| Condenser/chest/bag generated models | ProjectEX datagen with vanilla texture identifiers | N/A | MIT / Minecraft EULA | Original JSON layout using runtime-provided vanilla textures; no ProjectE art imported |
 
 ## Rules
 
