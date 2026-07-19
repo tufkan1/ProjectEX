@@ -179,7 +179,7 @@ public final class TransmutationScreen extends AbstractContainerScreen<Transmuta
 
     private void favoriteSelected() {
         if (selectedItem != null) {
-            ProjectEXClient.knowledge().toggleFavorite(selectedItem);
+            ProjectEXClient.toggleFavorite(selectedItem);
             refreshButtons();
             triggerImmediateNarration(true);
         }

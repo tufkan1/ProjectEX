@@ -58,6 +58,15 @@ class ClientKnowledgeBrowserStateTest {
             state.snapshot().lastFailure().orElseThrow());
     }
 
+    @Test
+    void replacesFavoritesWithOnlyValidBoundedIdentifiers() {
+        ClientKnowledgeBrowserState state = new ClientKnowledgeBrowserState();
+        state.replaceFavorites(List.of("minecraft:diamond", "invalid", "minecraft:coal"));
+
+        assertEquals(new java.util.TreeSet<>(List.of("minecraft:coal", "minecraft:diamond")),
+            state.snapshot().favorites());
+    }
+
     private static AlchemyKnowledgePagePayload page(long session, long query, String item) {
         return new AlchemyKnowledgePagePayload(
             1,

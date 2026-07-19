@@ -35,3 +35,7 @@ This exercises real player inventory, persistence, networking, search, learn, bu
 create, favorites, and reconnect behavior before the physical table/tablet content is
 introduced. Component-bearing stacks are deliberately excluded from held-item actions
 until an exact canonical component adapter is available.
+
+Favorites are stored in `config/projectex-favorites.json`. The file is versioned,
+bounded to 10,000 valid item identifiers, written through a temporary file, and treated
+as an optional preference: a missing, newer, or damaged file never prevents startup.

@@ -6,6 +6,7 @@ import io.github.tufkan1.projectex.network.AlchemyKnowledgePagePayload;
 import io.github.tufkan1.projectex.network.AlchemyKnowledgeRequestPayload;
 import io.github.tufkan1.projectex.network.AlchemyNetworkProtocol;
 import java.util.Collections;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -88,6 +89,22 @@ public final class ClientKnowledgeBrowserState {
         }
         snapshot = snapshot.withFavorites(immutableFavorites());
         return true;
+    }
+
+    public synchronized void replaceFavorites(Collection<String> replacement) {
+        favorites.clear();
+        for (String itemId : replacement) {
+            if (favorites.size() == MAX_FAVORITES) {
+                break;
+            }
+            try {
+                EmcKey.parse(itemId);
+                favorites.add(itemId);
+            } catch (IllegalArgumentException ignored) {
+                // Preference files may contain stale or manually edited entries.
+            }
+        }
+        snapshot = snapshot.withFavorites(immutableFavorites());
     }
 
     public synchronized void close() {
