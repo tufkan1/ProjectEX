@@ -12,6 +12,7 @@
   "commands.projectex.player.recovery_required": "Player data recovery backup is present: %s",
   "commands.projectex.player.recovery_clean": "Player alchemy data has no pending recovery backup.",
   "menu.projectex.transmutation": "Transmutation",
+  "block.projectex.transmutation_table": "Transmutation Table",
   "screen.projectex.search": "Search learned items",
   "screen.projectex.create": "Create",
   "screen.projectex.favorite": "Favorite",

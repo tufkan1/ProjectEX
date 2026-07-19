@@ -30,7 +30,8 @@ pages. Favorites are a client preference layered over authoritative page entries
 The pure client models and payload tests cover these ordering rules. Minecraft screen
 GameTests and visual/narration verification are required before the M2 exit gate.
 
-During M2 development the server-owned menu is opened with `/projectex transmutation`.
+The server-owned menu is opened by using a Transmutation Table. During M2 development,
+`/projectex transmutation` remains available as a fallback.
 This exercises real player inventory, persistence, networking, search, learn, burn,
 create, favorites, and reconnect behavior before the physical table/tablet content is
 introduced. Component-bearing stacks are deliberately excluded from held-item actions

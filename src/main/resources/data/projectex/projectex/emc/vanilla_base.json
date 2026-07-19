@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "priority": 0,
+  "values": [
+    { "item": "minecraft:cobblestone", "emc": "1" },
+    { "item": "minecraft:stone", "emc": "1" },
+    { "item": "minecraft:dirt", "emc": "1" },
+    { "item": "minecraft:sand", "emc": "1" },
+    { "item": "minecraft:gravel", "emc": "4" },
+    { "item": "minecraft:oak_planks", "emc": "8" },
+    { "item": "minecraft:clay_ball", "emc": "16" },
+    { "item": "minecraft:oak_log", "emc": "32" },
+    { "item": "minecraft:charcoal", "emc": "32" },
+    { "item": "minecraft:redstone", "emc": "64" },
+    { "item": "minecraft:obsidian", "emc": "64" },
+    { "item": "minecraft:coal", "emc": "128" },
+    { "item": "minecraft:book", "emc": "152" },
+    { "item": "minecraft:iron_ingot", "emc": "256" },
+    { "item": "minecraft:glowstone_dust", "emc": "384" },
+    { "item": "minecraft:lapis_lazuli", "emc": "864" },
+    { "item": "minecraft:ender_pearl", "emc": "1024" },
+    { "item": "minecraft:gold_ingot", "emc": "2048" },
+    { "item": "minecraft:diamond", "emc": "8192" },
+    { "item": "minecraft:emerald", "emc": "16384" }
+  ]
+}

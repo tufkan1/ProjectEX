@@ -8,6 +8,11 @@ implementation informed by the behavior of ProjectE and ProjectExpansion.
 > slice are playable, but content progression and world blocks are still incomplete.
 > Do not use development builds in important worlds.
 
+The current playable loop starts at the craftable Transmutation Table. Right-click it,
+learn a held item, burn valued items into EMC, then create learned items from the
+server-authoritative browser. `/projectex transmutation` remains available as a
+development fallback.
+
 ## Compatibility
 
 | Component | Current target |

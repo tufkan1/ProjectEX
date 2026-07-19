@@ -24,6 +24,7 @@ the Minecraft version.
 - Bounded server-side knowledge search/paging and client favorites/browser state.
 - Command-opened transmutation menu/screen backed by atomic player inventory commits.
 - Versioned, bounded client-side persistence for transmutation favorites.
+- Craftable Transmutation Table with distance-bound server sessions and starter EMC data.
 
 ## [0.1.0-alpha.1] - Unreleased
 
