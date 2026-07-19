@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "priority": 100,
+  "values": [
+    { "item": "minecraft:charcoal", "alias": "minecraft:coal" },
+    { "item": "example:disabled", "remove": true },
+    {
+      "item": "example:charged_crystal",
+      "components": {
+        "example:mode": "stable",
+        "example:charge": 100
+      },
+      "emc": "10000000000000000000000000000000000000000"
+    }
+  ]
+}
