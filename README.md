@@ -4,9 +4,9 @@ ProjectEX is a community-driven alchemy and EMC mod being built for Fabric,
 starting with Minecraft Java Edition 26.2. It is a clean, maintainable
 implementation informed by the behavior of ProjectE and ProjectExpansion.
 
-> **Status: early alpha.** The EMC platform and command-opened transmutation vertical
-> slice are playable, but content progression and world blocks are still incomplete.
-> Do not use development builds in important worlds.
+> **Status: public alpha.** The complete 26.2 progression is available for testing,
+> but APIs and world formats are not frozen for 1.0. Back up important worlds before
+> installing or upgrading.
 
 The current playable loop starts at the craftable Transmutation Table. Right-click it,
 learn a held item, burn valued items into EMC, then create learned items from the
@@ -51,6 +51,10 @@ Windows PowerShell:
 
 Artifacts are written to `build/libs`. Run unit tests with `./gradlew test` and
 launch a development client with `./gradlew runClient`.
+
+Verified public builds are available from [GitHub Releases](https://github.com/tufkan1/ProjectEX/releases).
+Each release includes checksums, a CycloneDX SBOM, source/Javadoc jars, and GitHub
+artifact attestations. Do not download ProjectEX from unofficial mirrors.
 
 ## Project map
 

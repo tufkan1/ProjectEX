@@ -6,6 +6,8 @@ the Minecraft version.
 
 ## [Unreleased]
 
+## [0.1.0-alpha.1] - 2026-07-19
+
 ### Added
 
 - Optional Jade 26.2 machine and condenser tooltips with server-side authorization, a privacy allowlist, and present/absent production-client CI profiles.
@@ -45,7 +47,3 @@ the Minecraft version.
 - Strict schema-v1 matter-tier data packs with atomic fail-closed reload, bounded balance validation, bundled defaults, live runtime resolution, and safe charge clamping after configuration changes.
 - Versioned common/server/client configuration, public-alpha migration fixtures, manifest-backed atomic backups, offline recovery packages, and operator config/migration/datapack/machine audits.
 - Reproducible 1.0 performance, allocation, packet, persistence, concurrency, privilege, secret, and artifact release-audit gates.
-
-## [0.1.0-alpha.1] - Unreleased
-
-- Planned first developer preview; not yet feature complete or world-safe.

@@ -6,11 +6,14 @@ on:
 
 permissions:
   contents: write
+  id-token: write
+  attestations: write
+  artifact-metadata: write
 
 jobs:
   release:
     runs-on: ubuntu-24.04
-    timeout-minutes: 25
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v7
         with:
@@ -23,7 +26,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v6
       - run: chmod +x ./gradlew
 
-      - name: Verify tag matches mod version
+      - name: Verify version, source commit, and signed tag
         shell: bash
         run: |
           expected="v$(sed -n 's/^mod_version=//p' gradle.properties)"
@@ -31,21 +34,67 @@ jobs:
             echo "Tag ${GITHUB_REF_NAME} does not match ${expected}" >&2
             exit 1
           }
+          git fetch origin main
+          test "$(git rev-list -n 1 "${GITHUB_REF_NAME}")" = "$(git rev-parse origin/main)" || {
+            echo "Release tag must point to the current main commit" >&2
+            exit 1
+          }
+          git config gpg.format ssh
+          git config gpg.ssh.allowedSignersFile "${GITHUB_WORKSPACE}/.github/release-signers"
+          git verify-tag "${GITHUB_REF_NAME}"
 
-      - name: Build release
-        run: ./gradlew --no-daemon clean check build
+      - name: Build and run release audits
+        run: ./gradlew --no-daemon clean releaseAudit verifyNoCompatClient
+
+      - name: Verify Jade compatibility profile
+        run: ./gradlew --no-daemon -PcompatJade verifyJadeCompatClient --rerun-tasks
+
+      - name: Stage release artifacts
+        shell: bash
+        run: |
+          mkdir -p dist first-build
+          cp build/libs/*.jar first-build/
+          cp build/libs/*.jar dist/
+          cp build/reports/cyclonedx-direct/bom.json dist/projectex-fabric.cdx.json
+
+      - name: Rebuild jars and prove reproducibility
+        shell: bash
+        run: |
+          ./gradlew --no-daemon clean jar sourcesJar javadocJar
+          for original in first-build/*.jar; do
+            rebuilt="build/libs/$(basename "${original}")"
+            cmp --silent "${original}" "${rebuilt}" || {
+              echo "Non-reproducible artifact: $(basename "${original}")" >&2
+              sha256sum "${original}" "${rebuilt}" >&2
+              exit 1
+            }
+          done
 
       - name: Create checksums
         shell: bash
-        run: cd build/libs && sha256sum *.jar > SHA256SUMS
+        run: (cd dist && sha256sum *.jar *.cdx.json > SHA256SUMS)
 
-      - name: Publish GitHub release
+      - name: Attest build provenance
+        uses: actions/attest@v4
+        with:
+          subject-path: dist/*.jar
+
+      - name: Attest runtime SBOM
+        uses: actions/attest@v4
+        with:
+          subject-path: dist/*.jar
+          sbom-path: dist/projectex-fabric.cdx.json
+
+      - name: Publish immutable GitHub release assets
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           prerelease=""
           [[ "${GITHUB_REF_NAME}" == *-* ]] && prerelease="--prerelease"
-          gh release create "${GITHUB_REF_NAME}" build/libs/*.jar build/libs/SHA256SUMS \
+          notes="docs/release-notes/${GITHUB_REF_NAME#v}.md"
+          test -f "${notes}"
+          gh release create "${GITHUB_REF_NAME}" dist/* \
+            --verify-tag \
             --title "ProjectEX ${GITHUB_REF_NAME} for Minecraft 26.2" \
-            --generate-notes ${prerelease}
+            --notes-file "${notes}" ${prerelease}
