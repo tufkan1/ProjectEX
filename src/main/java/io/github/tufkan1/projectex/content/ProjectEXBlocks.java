@@ -45,6 +45,12 @@ public final class ProjectEXBlocks {
     public static final Block CONDENSER_MK1 = CONDENSER_MK1_FAMILY.block();
     public static final Block CONDENSER_MK2 = CONDENSER_MK2_FAMILY.block();
     public static final Block ALCHEMICAL_CHEST = ALCHEMICAL_CHEST_FAMILY.block();
+    public static final ProjectEXContentRegistry.RegisteredBlock DARK_MATTER_BLOCK_FAMILY =
+        matterBlock("dark_matter_block", SoundType.NETHERITE_BLOCK);
+    public static final ProjectEXContentRegistry.RegisteredBlock RED_MATTER_BLOCK_FAMILY =
+        matterBlock("red_matter_block", SoundType.NETHERITE_BLOCK);
+    public static final Block DARK_MATTER_BLOCK = DARK_MATTER_BLOCK_FAMILY.block();
+    public static final Block RED_MATTER_BLOCK = RED_MATTER_BLOCK_FAMILY.block();
 
     private ProjectEXBlocks() {
     }
@@ -62,6 +68,8 @@ public final class ProjectEXBlocks {
                 entries.accept(CONDENSER_MK1.asItem());
                 entries.accept(CONDENSER_MK2.asItem());
                 entries.accept(ALCHEMICAL_CHEST.asItem());
+                entries.accept(DARK_MATTER_BLOCK.asItem());
+                entries.accept(RED_MATTER_BLOCK.asItem());
             });
     }
 
@@ -81,6 +89,14 @@ public final class ProjectEXBlocks {
             id,
             properties -> new AlchemyStorageBlock(properties, kind),
             BlockBehaviour.Properties.of().strength(4.0F, 18.0F).sound(SoundType.METAL)
+        );
+    }
+
+    private static ProjectEXContentRegistry.RegisteredBlock matterBlock(String id, SoundType sound) {
+        return ProjectEXContentRegistry.registerBlockWithItem(
+            id, Block::new,
+            BlockBehaviour.Properties.of().strength(20.0F, 1_200.0F)
+                .requiresCorrectToolForDrops().sound(sound)
         );
     }
 }

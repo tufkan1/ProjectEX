@@ -6,9 +6,30 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.DyeColor;
+import io.github.tufkan1.projectex.matter.MatterTier;
+import java.util.Map;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.item.ToolMaterial;
+import net.minecraft.world.item.equipment.ArmorMaterial;
+import net.minecraft.world.item.equipment.ArmorType;
+import net.minecraft.world.item.equipment.EquipmentAssets;
 
 /** First survival progression materials and active items. */
 public final class ProjectEXItems {
+    private static final ToolMaterial DARK_TOOL_MATERIAL = new ToolMaterial(
+        ProjectEXTags.INCORRECT_FOR_DARK_MATTER_TOOL, 4_096, 14.0F, 3.0F, 1,
+        ProjectEXTags.DARK_MATTER_REPAIR
+    );
+    private static final ToolMaterial RED_TOOL_MATERIAL = new ToolMaterial(
+        ProjectEXTags.INCORRECT_FOR_RED_MATTER_TOOL, 8_192, 16.0F, 4.0F, 1,
+        ProjectEXTags.RED_MATTER_REPAIR
+    );
+    private static final ArmorMaterial DARK_ARMOR_MATERIAL = armorMaterial(
+        48, 3, 8, 6, 3, 3.0F, 0.1F, ProjectEXTags.DARK_MATTER_REPAIR
+    );
+    private static final ArmorMaterial RED_ARMOR_MATERIAL = armorMaterial(
+        64, 4, 9, 7, 4, 4.0F, 0.2F, ProjectEXTags.RED_MATTER_REPAIR
+    );
     public static final ProjectEXContentRegistry.RegisteredItem<Item> LOW_COVALENCE_DUST =
         simple("low_covalence_dust");
     public static final ProjectEXContentRegistry.RegisteredItem<Item> MEDIUM_COVALENCE_DUST =
@@ -57,6 +78,31 @@ public final class ProjectEXItems {
         star(KleinStarTier.OMEGA);
     public static final List<ProjectEXContentRegistry.RegisteredItem<AlchemicalBagItem>> ALCHEMICAL_BAGS =
         java.util.Arrays.stream(DyeColor.values()).map(ProjectEXItems::bag).toList();
+    public static final ProjectEXContentRegistry.RegisteredItem<MatterToolItem> DARK_MATTER_PICKAXE =
+        activeMatterTool("dark_matter_pickaxe", MatterTier.DARK, MatterToolItem.Kind.PICKAXE, DARK_TOOL_MATERIAL, 1, -2.8F);
+    public static final ProjectEXContentRegistry.RegisteredItem<MatterToolItem> DARK_MATTER_HAMMER =
+        activeMatterTool("dark_matter_hammer", MatterTier.DARK, MatterToolItem.Kind.HAMMER, DARK_TOOL_MATERIAL, 4, -3.2F);
+    public static final ProjectEXContentRegistry.RegisteredItem<MatterToolItem> RED_MATTER_PICKAXE =
+        activeMatterTool("red_matter_pickaxe", MatterTier.RED, MatterToolItem.Kind.PICKAXE, RED_TOOL_MATERIAL, 1, -2.8F);
+    public static final ProjectEXContentRegistry.RegisteredItem<MatterToolItem> RED_MATTER_HAMMER =
+        activeMatterTool("red_matter_hammer", MatterTier.RED, MatterToolItem.Kind.HAMMER, RED_TOOL_MATERIAL, 5, -3.1F);
+    public static final List<ProjectEXContentRegistry.RegisteredItem<Item>> MATTER_HAND_TOOLS = List.of(
+        handTool("dark_matter_axe", DARK_TOOL_MATERIAL, "axe"),
+        handTool("dark_matter_shovel", DARK_TOOL_MATERIAL, "shovel"),
+        handTool("dark_matter_hoe", DARK_TOOL_MATERIAL, "hoe"),
+        handTool("dark_matter_sword", DARK_TOOL_MATERIAL, "sword"),
+        handTool("red_matter_axe", RED_TOOL_MATERIAL, "axe"),
+        handTool("red_matter_shovel", RED_TOOL_MATERIAL, "shovel"),
+        handTool("red_matter_hoe", RED_TOOL_MATERIAL, "hoe"),
+        handTool("red_matter_sword", RED_TOOL_MATERIAL, "sword")
+    );
+    public static final List<ProjectEXContentRegistry.RegisteredItem<MatterArmorItem>> MATTER_ARMOR =
+        java.util.stream.Stream.concat(
+            java.util.Arrays.stream(ArmorType.values()).filter(type -> type != ArmorType.BODY)
+                .map(type -> armor("dark_matter_" + armorName(type), MatterTier.DARK, type, DARK_ARMOR_MATERIAL)),
+            java.util.Arrays.stream(ArmorType.values()).filter(type -> type != ArmorType.BODY)
+                .map(type -> armor("red_matter_" + armorName(type), MatterTier.RED, type, RED_ARMOR_MATERIAL))
+        ).toList();
 
     private static final List<ProjectEXContentRegistry.RegisteredItem<? extends Item>> MATERIALS = List.of(
         LOW_COVALENCE_DUST,
@@ -89,6 +135,12 @@ public final class ProjectEXItems {
                 entries.accept(PHILOSOPHERS_STONE.item());
                 KLEIN_STARS.forEach(entry -> entries.accept(entry.item()));
                 ALCHEMICAL_BAGS.forEach(entry -> entries.accept(entry.item()));
+                entries.accept(DARK_MATTER_PICKAXE.item());
+                entries.accept(DARK_MATTER_HAMMER.item());
+                entries.accept(RED_MATTER_PICKAXE.item());
+                entries.accept(RED_MATTER_HAMMER.item());
+                MATTER_HAND_TOOLS.forEach(entry -> entries.accept(entry.item()));
+                MATTER_ARMOR.forEach(entry -> entries.accept(entry.item()));
             });
     }
 
@@ -122,5 +174,63 @@ public final class ProjectEXItems {
             properties -> new AlchemicalBagItem(properties, color),
             new Item.Properties().rarity(Rarity.UNCOMMON)
         );
+    }
+
+    private static ProjectEXContentRegistry.RegisteredItem<MatterToolItem> activeMatterTool(
+        String id, MatterTier tier, MatterToolItem.Kind kind, ToolMaterial material,
+        float attackDamage, float attackSpeed
+    ) {
+        return ProjectEXContentRegistry.registerItem(
+            id, properties -> new MatterToolItem(properties, tier, kind),
+            new Item.Properties().rarity(tier == MatterTier.RED ? Rarity.EPIC : Rarity.RARE)
+                .pickaxe(material, attackDamage, attackSpeed).fireResistant()
+        );
+    }
+
+    private static ProjectEXContentRegistry.RegisteredItem<Item> handTool(
+        String id, ToolMaterial material, String kind
+    ) {
+        Item.Properties properties = new Item.Properties().rarity(Rarity.RARE).fireResistant();
+        properties = switch (kind) {
+            case "axe" -> properties.axe(material, 5, -3.0F);
+            case "shovel" -> properties.shovel(material, 1.5F, -3.0F);
+            case "hoe" -> properties.hoe(material, -2, 0);
+            case "sword" -> properties.sword(material, 3, -2.4F);
+            default -> throw new IllegalArgumentException("Unknown matter tool kind");
+        };
+        return ProjectEXContentRegistry.registerItem(id, Item::new, properties);
+    }
+
+    private static ProjectEXContentRegistry.RegisteredItem<MatterArmorItem> armor(
+        String id, MatterTier tier, ArmorType type, ArmorMaterial material
+    ) {
+        return ProjectEXContentRegistry.registerItem(
+            id, properties -> new MatterArmorItem(properties, tier, type),
+            new Item.Properties().rarity(tier == MatterTier.RED ? Rarity.EPIC : Rarity.RARE)
+                .fireResistant().humanoidArmor(material, type)
+        );
+    }
+
+    private static ArmorMaterial armorMaterial(
+        int durability, int helmet, int chest, int legs, int boots,
+        float toughness, float knockback, net.minecraft.tags.TagKey<Item> repair
+    ) {
+        return new ArmorMaterial(
+            durability,
+            Map.of(ArmorType.HELMET, helmet, ArmorType.CHESTPLATE, chest,
+                ArmorType.LEGGINGS, legs, ArmorType.BOOTS, boots, ArmorType.BODY, chest),
+            1, SoundEvents.ARMOR_EQUIP_NETHERITE, toughness, knockback, repair,
+            EquipmentAssets.NETHERITE
+        );
+    }
+
+    private static String armorName(ArmorType type) {
+        return switch (type) {
+            case HELMET -> "helmet";
+            case CHESTPLATE -> "chestplate";
+            case LEGGINGS -> "leggings";
+            case BOOTS -> "boots";
+            case BODY -> throw new IllegalArgumentException("Body armor is unsupported");
+        };
     }
 }

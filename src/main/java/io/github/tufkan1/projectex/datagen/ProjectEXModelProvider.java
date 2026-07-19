@@ -67,7 +67,9 @@ public final class ProjectEXModelProvider implements DataProvider {
         Map.entry("relay_mk3", "minecraft:block/crying_obsidian"),
         Map.entry("condenser_mk1", "minecraft:block/diamond_block"),
         Map.entry("condenser_mk2", "minecraft:block/netherite_block"),
-        Map.entry("alchemical_chest", "minecraft:block/obsidian")
+        Map.entry("alchemical_chest", "minecraft:block/obsidian"),
+        Map.entry("dark_matter_block", "minecraft:block/coal_block"),
+        Map.entry("red_matter_block", "minecraft:block/redstone_block")
     );
 
     private final Path assetsRoot;
@@ -149,6 +151,40 @@ public final class ProjectEXModelProvider implements DataProvider {
             writes.add(save(output, "models/item/" + item + ".json", baseModel));
             writes.add(save(output, "items/" + item + ".json", clientItem));
         }
+        java.util.stream.Stream.concat(
+            java.util.stream.Stream.of(
+                io.github.tufkan1.projectex.content.ProjectEXItems.DARK_MATTER_PICKAXE,
+                io.github.tufkan1.projectex.content.ProjectEXItems.DARK_MATTER_HAMMER,
+                io.github.tufkan1.projectex.content.ProjectEXItems.RED_MATTER_PICKAXE,
+                io.github.tufkan1.projectex.content.ProjectEXItems.RED_MATTER_HAMMER
+            ),
+            java.util.stream.Stream.concat(
+                io.github.tufkan1.projectex.content.ProjectEXItems.MATTER_HAND_TOOLS.stream(),
+                io.github.tufkan1.projectex.content.ProjectEXItems.MATTER_ARMOR.stream()
+            )
+        ).forEach(entry -> {
+            String item = entry.id().getPath();
+            String suffix = item.substring(item.indexOf("matter_") + "matter_".length());
+            String vanilla = suffix.equals("hammer") ? "pickaxe" : suffix;
+            String texture = "minecraft:item/netherite_" + vanilla;
+            String parent = switch (suffix) {
+                case "helmet", "chestplate", "leggings", "boots" -> "minecraft:item/generated";
+                default -> "minecraft:item/handheld";
+            };
+            String baseModel = """
+                {
+                  "parent": "%s",
+                  "textures": { "layer0": "%s" }
+                }
+                """.formatted(parent, texture);
+            String clientItem = """
+                {
+                  "model": { "type": "minecraft:model", "model": "projectex:item/%s" }
+                }
+                """.formatted(item);
+            writes.add(save(output, "models/item/" + item + ".json", baseModel));
+            writes.add(save(output, "items/" + item + ".json", clientItem));
+        });
         return CompletableFuture.allOf(writes.toArray(CompletableFuture[]::new));
     }
 

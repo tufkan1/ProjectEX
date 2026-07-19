@@ -24,6 +24,18 @@ public final class ProjectEXTags {
         Registries.BLOCK,
         ProjectEX.id("philosophers_stone_denied")
     );
+    public static final TagKey<Block> INCORRECT_FOR_DARK_MATTER_TOOL = TagKey.create(
+        Registries.BLOCK, ProjectEX.id("incorrect_for_dark_matter_tool")
+    );
+    public static final TagKey<Block> INCORRECT_FOR_RED_MATTER_TOOL = TagKey.create(
+        Registries.BLOCK, ProjectEX.id("incorrect_for_red_matter_tool")
+    );
+    public static final TagKey<Item> DARK_MATTER_REPAIR = TagKey.create(
+        Registries.ITEM, ProjectEX.id("dark_matter_repair")
+    );
+    public static final TagKey<Item> RED_MATTER_REPAIR = TagKey.create(
+        Registries.ITEM, ProjectEX.id("red_matter_repair")
+    );
 
     private ProjectEXTags() {
     }

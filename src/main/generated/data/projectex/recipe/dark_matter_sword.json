@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "M": "projectex:dark_matter",
+    "S": "minecraft:stick"
+  },
+  "pattern": [
+    " M ",
+    " M ",
+    " S "
+  ],
+  "result": {
+    "id": "projectex:dark_matter_sword"
+  }
+}

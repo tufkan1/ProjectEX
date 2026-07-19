@@ -13,6 +13,7 @@ same pull request that introduces any derived material.
 | Condenser target/output and color-keyed bag concepts | ProjectE `CondenserBlockEntity` / `AlchemicalBag` | `15d4ce65bd06eb4222709b984255fbf5080e78bc` | MIT | Behavior research only; exact evaluator, component identity, ownership, nesting policy, and tests are original ProjectEX work |
 | Condenser/chest/bag generated models | ProjectEX datagen with vanilla texture identifiers | N/A | MIT / Minecraft EULA | Original JSON layout using runtime-provided vanilla textures; no ProjectE art imported |
 | Dark/red matter tier and furnace balance concepts | ProjectE `EnumMatterType` / `DMFurnaceBlockEntity` | `15d4ce65bd06eb4222709b984255fbf5080e78bc` | MIT | Behavior research only; bounded planning, exact furnace evaluator, armor policy, audit model, and tests are original ProjectEX work |
+| Dark/red matter generated models | ProjectEX datagen with vanilla coal/redstone/netherite texture identifiers | N/A | MIT / Minecraft EULA | Original JSON layout using runtime-provided vanilla textures as explicit placeholders; no ProjectE or ProjectExpansion art imported |
 
 ## Rules
 

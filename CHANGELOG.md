@@ -37,6 +37,7 @@ the Minecraft version.
 - Energy Condenser MK1/MK2 and the 104-slot Alchemical Chest with exact EMC conservation, component-safe targets, separated sided automation, retained state, and server-owned paging.
 - Sixteen color-keyed Alchemical Bags with owner-bound UUIDs, world-backed shared inventories, legacy component migration, and copy/nesting duplication defenses.
 - Data-ready dark/red matter safety core with bounded protection-aware area plans, all-or-nothing furnace output/fuel remainder accounting, armor caps, and audit contracts.
+- Craftable dark/red matter blocks, complete tool and armor families, chargeable pickaxe/hammer area mining with exact server EMC accounting, public claim protection, cooldowns, full-set maintenance effects, recipes, tags, models, and English/Turkish localization.
 
 ## [0.1.0-alpha.1] - Unreleased
 

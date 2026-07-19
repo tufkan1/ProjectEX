@@ -31,6 +31,8 @@ public final class ProjectEXBlockLootProvider extends FabricBlockLootSubProvider
         storage(ProjectEXBlocks.CONDENSER_MK1);
         storage(ProjectEXBlocks.CONDENSER_MK2);
         storage(ProjectEXBlocks.ALCHEMICAL_CHEST);
+        dropSelf(ProjectEXBlocks.DARK_MATTER_BLOCK);
+        dropSelf(ProjectEXBlocks.RED_MATTER_BLOCK);
     }
 
     private void machine(net.minecraft.world.level.block.Block block) {

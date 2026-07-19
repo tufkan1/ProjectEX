@@ -6,6 +6,7 @@ import io.github.tufkan1.projectex.content.component.PortableEmcState;
 import io.github.tufkan1.projectex.content.component.MachineItemState;
 import io.github.tufkan1.projectex.content.component.AlchemyStorageState;
 import io.github.tufkan1.projectex.content.component.BagItemState;
+import io.github.tufkan1.projectex.content.component.MatterToolState;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -50,6 +51,14 @@ public final class ProjectEXComponents {
         DataComponentType.<BagItemState>builder()
             .persistent(BagItemState.CODEC)
             .networkSynchronized(BagItemState.STREAM_CODEC)
+            .build()
+    );
+    public static final DataComponentType<MatterToolState> MATTER_TOOL_STATE = Registry.register(
+        BuiltInRegistries.DATA_COMPONENT_TYPE,
+        ProjectEX.id("matter_tool_state"),
+        DataComponentType.<MatterToolState>builder()
+            .persistent(MatterToolState.CODEC)
+            .networkSynchronized(MatterToolState.STREAM_CODEC)
             .build()
     );
 

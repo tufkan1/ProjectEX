@@ -10,8 +10,9 @@ commit only a complete returned plan.
 per-block EMC cost, cooldown, furnace timing/output layout, bonus-output probability,
 and the armor reduction cap. The built-in dark/red defaults are compatibility-oriented
 starting values researched against ProjectE commit
-`15d4ce65bd06eb4222709b984255fbf5080e78bc`. A later runtime PR will load the same
-validated shape from data packs; invalid or unsafe definitions fail before publication.
+`15d4ce65bd06eb4222709b984255fbf5080e78bc`. Runtime blocks, tools, and armor consume
+these validated definitions. Data-pack override loading remains a separate compatibility
+step; unsafe definitions are already rejected by the tier constructor.
 
 ## Area action contract
 
@@ -26,8 +27,12 @@ validated shape from data packs; invalid or unsafe definitions fail before publi
 
 The world executor must revalidate the plan immediately before mutation, charge the
 exact returned EMC once, and emit one privacy-minimal `MatterActionAuditEvent`. Claim
-mods can register `MatterAreaActionProtection.EVENT`; the runtime executor will issue
+mods can register `MatterAreaActionProtection.EVENT`; the runtime executor issues
 an immutable `MatterAreaActionContext` for every candidate before it enters the plan.
+Dark/red pickaxes and hammers use a server POV raycast and a versioned item charge
+component. Only blocks actually committed consume EMC and vanilla durability; failed
+or newly protected positions are refunded exactly. Successful actions start a bounded
+server cooldown. The request is never trusted from client coordinates.
 
 ## Furnace contract
 
@@ -42,3 +47,8 @@ time is positive and any crafting remainder has an already-reserved exact sink.
 caps reduction at 95%, and rate-limits full-set periodic effects to at most once per
 20 ticks. The built-in tiers deliberately remain below the global cap, so armor can
 never turn a positive incoming hit into invulnerability.
+
+The runtime armor pieces use vanilla armor attributes for ordinary damage handling.
+The policy gates the server-only full-set maintenance effect: both tiers restore a
+bounded amount of air and clear fire once per second, while a complete red set also
+heals half a heart per second. Mixed or incomplete sets receive no periodic effect.
