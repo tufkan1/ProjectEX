@@ -48,6 +48,7 @@ launch a development client with `./gradlew runClient`.
 - [Public EMC API](docs/emc-api.md) — query lifecycle, consumer examples, and compatibility policy
 - [Player data](docs/player-data.md) — persistence schema, lifecycle, and corruption recovery
 - [Alchemy transactions](docs/alchemy-transactions.md) — atomic learn, burn, create, and abuse controls
+- [Network protocol](docs/network-protocol.md) — payload schema, sessions, replay defense, and limits
 - [Contributing](CONTRIBUTING.md) — development and pull request workflow
 - [Support](SUPPORT.md) — where questions and bug reports belong
 - [Security](SECURITY.md) — private vulnerability reporting policy
