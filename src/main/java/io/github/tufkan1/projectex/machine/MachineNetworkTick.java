@@ -1,16 +1,18 @@
 package io.github.tufkan1.projectex.machine;
 
 import io.github.tufkan1.projectex.api.emc.EmcValue;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /** One-tick conservative router with explicit cycle and work-budget rejection. */
 public final class MachineNetworkTick {
     private final MachineTickBudget budget;
-    private final Map<String, Set<String>> routes = new HashMap<>();
+    private final Map<String, Set<String>> routes = new TreeMap<>();
     private EmcValue transferred = EmcValue.ZERO;
     private int transferCount;
 
@@ -31,7 +33,7 @@ public final class MachineNetworkTick {
         Objects.requireNonNull(target, "target");
         Objects.requireNonNull(requested, "requested");
         if (sourceId.equals(targetId) || source == target || transferCount >= budget.maxTransfers()
-            || pathExists(targetId, sourceId, new HashSet<>())) {
+            || pathExists(targetId, sourceId)) {
             return Transfer.rejected(requested, source.stored(), target.stored());
         }
 
@@ -48,7 +50,7 @@ public final class MachineNetworkTick {
         if (!inserted.equals(extracted)) {
             throw new IllegalStateException("Validated machine transfer did not commit atomically");
         }
-        routes.computeIfAbsent(sourceId, ignored -> new HashSet<>()).add(targetId);
+        routes.computeIfAbsent(sourceId, ignored -> new TreeSet<>()).add(targetId);
         transferred = transferred.add(inserted);
         transferCount++;
         return new Transfer(
@@ -69,15 +71,20 @@ public final class MachineNetworkTick {
         return transferCount;
     }
 
-    private boolean pathExists(String current, String destination, Set<String> visited) {
-        if (current.equals(destination)) {
-            return true;
+    private boolean pathExists(String start, String destination) {
+        Set<String> visited = new TreeSet<>();
+        Deque<String> pending = new ArrayDeque<>();
+        pending.add(start);
+        while (!pending.isEmpty()) {
+            String current = pending.removeFirst();
+            if (current.equals(destination)) {
+                return true;
+            }
+            if (visited.add(current)) {
+                pending.addAll(routes.getOrDefault(current, Set.of()));
+            }
         }
-        if (!visited.add(current)) {
-            return false;
-        }
-        return routes.getOrDefault(current, Set.of()).stream()
-            .anyMatch(next -> pathExists(next, destination, visited));
+        return false;
     }
 
     public record Transfer(

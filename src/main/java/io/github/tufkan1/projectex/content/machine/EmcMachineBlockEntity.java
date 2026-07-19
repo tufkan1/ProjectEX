@@ -259,7 +259,12 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
             if (state.stored().equals(EmcValue.ZERO)) {
                 break;
             }
-            BlockEntity adjacent = level.getBlockEntity(worldPosition.relative(direction));
+            BlockPos targetPos = worldPosition.relative(direction);
+            // Machine routing must never synchronously load a neighboring chunk.
+            if (!level.getChunkSource().hasChunk(targetPos.getX() >> 4, targetPos.getZ() >> 4)) {
+                continue;
+            }
+            BlockEntity adjacent = level.getBlockEntity(targetPos);
             if (!(adjacent instanceof EmcMachineBlockEntity target)) {
                 continue;
             }

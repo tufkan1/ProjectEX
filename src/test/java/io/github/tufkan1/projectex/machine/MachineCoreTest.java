@@ -62,6 +62,31 @@ final class MachineCoreTest {
     }
 
     @Test
+    void longNetworkCycleCheckIsIterativeAndConservative() {
+        int nodes = 10_000;
+        MachineNetworkTick tick = new MachineNetworkTick(
+            new MachineTickBudget(nodes, EmcValue.of(nodes))
+        );
+        MachineBuffer[] buffers = new MachineBuffer[nodes];
+        for (int index = 0; index < nodes; index++) {
+            buffers[index] = new MachineBuffer(EmcValue.of(2), EmcValue.of(1));
+        }
+        for (int index = 0; index < nodes - 1; index++) {
+            assertTrue(tick.route(
+                String.format("node-%05d", index), buffers[index],
+                String.format("node-%05d", index + 1), buffers[index + 1], EmcValue.of(1)
+            ).allowed());
+        }
+
+        MachineNetworkTick.Transfer cycle = tick.route(
+            String.format("node-%05d", nodes - 1), buffers[nodes - 1],
+            "node-00000", buffers[0], EmcValue.of(1)
+        );
+        assertFalse(cycle.allowed());
+        assertEquals(EmcValue.ZERO, cycle.moved());
+    }
+
+    @Test
     void stateCodecRoundTripsAndRejectsCorruption() {
         UUID owner = UUID.randomUUID();
         MachineState state = new MachineState(
