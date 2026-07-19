@@ -4,13 +4,15 @@ It is not an official port, and is not endorsed by or affiliated with Mojang,
 Microsoft, ProjectE, or ProjectExpansion. Do not request support for ProjectEX
 from those projects.
 
-Design and compatibility research references:
+Design/compatibility references and bundled visual assets:
 
 - ProjectE, Copyright (c) 2020 Sin Tachikawa, MIT License
   https://github.com/sinkillerj/ProjectE
 - ProjectExpansion, Copyright (c) 2025 Donovan_DMC, MIT License
   https://github.com/DonovanDMC/ProjectExpansion
 
-If source or assets are later adapted from either project, retain the original
-copyright notice in the affected file or asset manifest and record the origin
-in docs/provenance.md. Ideas and behavior alone are not recorded as copied code.
+ProjectEX bundles original item, block-model, texture, animation metadata, and GUI
+assets from the immutable upstream commits recorded in docs/provenance.md. They are
+redistributed under their respective MIT licenses, included at
+META-INF/licenses/projectex/ProjectE-LICENSE.txt and
+META-INF/licenses/projectex/ProjectExpansion-LICENSE.txt in release artifacts.

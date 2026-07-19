@@ -15,14 +15,7 @@ import net.minecraft.data.PackOutput;
 /** Deterministically emits the block, block-state, and 26.2 client item model set. */
 public final class ProjectEXModelProvider implements DataProvider {
     private static final String BLOCK_MODEL = """
-        {
-          "parent": "minecraft:block/cube_bottom_top",
-          "textures": {
-            "bottom": "minecraft:block/obsidian",
-            "side": "minecraft:block/polished_blackstone",
-            "top": "minecraft:block/diamond_block"
-          }
-        }
+        { "parent": "projecte:block/transmutation_table" }
         """;
     private static final String BLOCK_STATE = """
         {
@@ -42,102 +35,102 @@ public final class ProjectEXModelProvider implements DataProvider {
         }
         """;
     private static final Map<String, String> GENERATED_ITEMS = Map.ofEntries(
-        Map.entry("low_covalence_dust", "minecraft:item/gunpowder"),
-        Map.entry("medium_covalence_dust", "minecraft:item/redstone"),
-        Map.entry("high_covalence_dust", "minecraft:item/glowstone_dust"),
-        Map.entry("alchemical_coal", "minecraft:item/coal"),
-        Map.entry("mobius_fuel", "minecraft:item/blaze_powder"),
-        Map.entry("aeternalis_fuel", "minecraft:item/echo_shard"),
-        Map.entry("dark_matter", "minecraft:item/ender_pearl"),
-        Map.entry("red_matter", "minecraft:item/nether_star"),
-        Map.entry("magenta_fuel", "minecraft:item/magenta_dye"),
-        Map.entry("pink_fuel", "minecraft:item/pink_dye"),
-        Map.entry("purple_fuel", "minecraft:item/purple_dye"),
-        Map.entry("violet_fuel", "minecraft:item/chorus_fruit"),
-        Map.entry("blue_fuel", "minecraft:item/blue_dye"),
-        Map.entry("cyan_fuel", "minecraft:item/cyan_dye"),
-        Map.entry("green_fuel", "minecraft:item/green_dye"),
-        Map.entry("lime_fuel", "minecraft:item/lime_dye"),
-        Map.entry("yellow_fuel", "minecraft:item/yellow_dye"),
-        Map.entry("orange_fuel", "minecraft:item/orange_dye"),
-        Map.entry("white_fuel", "minecraft:item/white_dye"),
-        Map.entry("magenta_matter", "minecraft:item/magenta_dye"),
-        Map.entry("pink_matter", "minecraft:item/pink_dye"),
-        Map.entry("purple_matter", "minecraft:item/purple_dye"),
-        Map.entry("violet_matter", "minecraft:item/chorus_fruit"),
-        Map.entry("blue_matter", "minecraft:item/blue_dye"),
-        Map.entry("cyan_matter", "minecraft:item/cyan_dye"),
-        Map.entry("green_matter", "minecraft:item/green_dye"),
-        Map.entry("lime_matter", "minecraft:item/lime_dye"),
-        Map.entry("yellow_matter", "minecraft:item/yellow_dye"),
-        Map.entry("orange_matter", "minecraft:item/orange_dye"),
-        Map.entry("white_matter", "minecraft:item/quartz"),
-        Map.entry("fading_matter", "minecraft:item/echo_shard"),
-        Map.entry("final_star_shard", "minecraft:item/nether_star"),
-        Map.entry("final_star", "minecraft:block/dragon_egg"),
-        Map.entry("infinite_steak", "minecraft:item/cooked_beef"),
-        Map.entry("philosophers_stone", "minecraft:item/ender_eye"),
-        Map.entry("transmutation_tablet", "minecraft:item/enchanted_book"),
-        Map.entry("arcane_tablet", "minecraft:item/knowledge_book"),
-        Map.entry("repair_talisman", "minecraft:item/paper"),
-        Map.entry("evertide_amulet", "minecraft:item/heart_of_the_sea"),
-        Map.entry("volcanite_amulet", "minecraft:item/magma_cream"),
-        Map.entry("knowledge_tome", "minecraft:item/enchanted_book"),
-        Map.entry("knowledge_sharing_book", "minecraft:item/written_book"),
-        Map.entry("basic_alchemical_book", "minecraft:item/book"),
-        Map.entry("advanced_alchemical_book", "minecraft:item/writable_book"),
-        Map.entry("master_alchemical_book", "minecraft:item/written_book"),
-        Map.entry("arcane_alchemical_book", "minecraft:item/enchanted_book"),
-        Map.entry("nova_catalyst", "minecraft:item/fire_charge"),
-        Map.entry("destruction_catalyst", "minecraft:item/flint_and_steel"),
-        Map.entry("body_stone", "minecraft:item/golden_carrot"),
-        Map.entry("soul_stone", "minecraft:item/ghast_tear"),
-        Map.entry("life_stone", "minecraft:item/totem_of_undying"),
-        Map.entry("divining_rod_1", "minecraft:item/stick"),
-        Map.entry("divining_rod_2", "minecraft:item/blaze_rod"),
-        Map.entry("divining_rod_3", "minecraft:item/echo_shard"),
-        Map.entry("klein_star_ein", "minecraft:item/amethyst_shard"),
-        Map.entry("klein_star_zwei", "minecraft:item/prismarine_crystals"),
-        Map.entry("klein_star_drei", "minecraft:item/diamond"),
-        Map.entry("klein_star_vier", "minecraft:item/emerald"),
-        Map.entry("klein_star_sphere", "minecraft:item/heart_of_the_sea"),
-        Map.entry("klein_star_omega", "minecraft:item/nether_star"),
-        Map.entry("magnum_star_ein", "minecraft:item/amethyst_shard"),
-        Map.entry("magnum_star_zwei", "minecraft:item/prismarine_crystals"),
-        Map.entry("magnum_star_drei", "minecraft:item/diamond"),
-        Map.entry("magnum_star_vier", "minecraft:item/emerald"),
-        Map.entry("magnum_star_sphere", "minecraft:item/heart_of_the_sea"),
-        Map.entry("magnum_star_omega", "minecraft:item/nether_star"),
-        Map.entry("colossal_star_ein", "minecraft:item/amethyst_shard"),
-        Map.entry("colossal_star_zwei", "minecraft:item/prismarine_crystals"),
-        Map.entry("colossal_star_drei", "minecraft:item/diamond"),
-        Map.entry("colossal_star_vier", "minecraft:item/emerald"),
-        Map.entry("colossal_star_sphere", "minecraft:item/heart_of_the_sea"),
-        Map.entry("colossal_star_omega", "minecraft:item/nether_star"),
-        Map.entry("gargantuan_star_ein", "minecraft:item/amethyst_shard"),
-        Map.entry("gargantuan_star_zwei", "minecraft:item/prismarine_crystals"),
-        Map.entry("gargantuan_star_drei", "minecraft:item/diamond"),
-        Map.entry("gargantuan_star_vier", "minecraft:item/emerald"),
-        Map.entry("gargantuan_star_sphere", "minecraft:item/heart_of_the_sea"),
-        Map.entry("gargantuan_star_omega", "minecraft:item/nether_star")
+        Map.entry("low_covalence_dust", "projecte:item/covalence_dust/low"),
+        Map.entry("medium_covalence_dust", "projecte:item/covalence_dust/medium"),
+        Map.entry("high_covalence_dust", "projecte:item/covalence_dust/high"),
+        Map.entry("alchemical_coal", "projecte:item/fuels/alchemical_coal"),
+        Map.entry("mobius_fuel", "projecte:item/fuels/mobius"),
+        Map.entry("aeternalis_fuel", "projecte:item/fuels/aeternalis"),
+        Map.entry("dark_matter", "projecte:item/matter/dark"),
+        Map.entry("red_matter", "projecte:item/matter/red"),
+        Map.entry("magenta_fuel", "projectexpansion:item/fuel/magenta"),
+        Map.entry("pink_fuel", "projectexpansion:item/fuel/pink"),
+        Map.entry("purple_fuel", "projectexpansion:item/fuel/purple"),
+        Map.entry("violet_fuel", "projectexpansion:item/fuel/violet"),
+        Map.entry("blue_fuel", "projectexpansion:item/fuel/blue"),
+        Map.entry("cyan_fuel", "projectexpansion:item/fuel/cyan"),
+        Map.entry("green_fuel", "projectexpansion:item/fuel/green"),
+        Map.entry("lime_fuel", "projectexpansion:item/fuel/lime"),
+        Map.entry("yellow_fuel", "projectexpansion:item/fuel/yellow"),
+        Map.entry("orange_fuel", "projectexpansion:item/fuel/orange"),
+        Map.entry("white_fuel", "projectexpansion:item/fuel/white"),
+        Map.entry("magenta_matter", "projectexpansion:item/matter/magenta"),
+        Map.entry("pink_matter", "projectexpansion:item/matter/pink"),
+        Map.entry("purple_matter", "projectexpansion:item/matter/purple"),
+        Map.entry("violet_matter", "projectexpansion:item/matter/violet"),
+        Map.entry("blue_matter", "projectexpansion:item/matter/blue"),
+        Map.entry("cyan_matter", "projectexpansion:item/matter/cyan"),
+        Map.entry("green_matter", "projectexpansion:item/matter/green"),
+        Map.entry("lime_matter", "projectexpansion:item/matter/lime"),
+        Map.entry("yellow_matter", "projectexpansion:item/matter/yellow"),
+        Map.entry("orange_matter", "projectexpansion:item/matter/orange"),
+        Map.entry("white_matter", "projectexpansion:item/matter/white"),
+        Map.entry("fading_matter", "projectexpansion:item/matter/fading"),
+        Map.entry("final_star_shard", "projectexpansion:item/star/final_shard"),
+        Map.entry("final_star", "projectexpansion:item/star/final"),
+        Map.entry("infinite_steak", "projectexpansion:item/infinite_steak"),
+        Map.entry("philosophers_stone", "projecte:item/philosophers_stone"),
+        Map.entry("transmutation_tablet", "projecte:item/transmutation_tablet"),
+        Map.entry("arcane_tablet", "projectexpansion:item/arcane_transmutation_tablet"),
+        Map.entry("repair_talisman", "projecte:item/repair_talisman"),
+        Map.entry("evertide_amulet", "projecte:item/rings/evertide_amulet"),
+        Map.entry("volcanite_amulet", "projecte:item/rings/volcanite_amulet"),
+        Map.entry("knowledge_tome", "projecte:item/tome"),
+        Map.entry("knowledge_sharing_book", "projectexpansion:item/knowledge_sharing_book"),
+        Map.entry("basic_alchemical_book", "projectexpansion:item/basic_alchemical_book"),
+        Map.entry("advanced_alchemical_book", "projectexpansion:item/advanced_alchemical_book"),
+        Map.entry("master_alchemical_book", "projectexpansion:item/master_alchemical_book"),
+        Map.entry("arcane_alchemical_book", "projectexpansion:item/arcane_alchemical_book"),
+        Map.entry("nova_catalyst", "projecte:block/explosives/nova_side"),
+        Map.entry("destruction_catalyst", "projecte:item/destruction_catalyst"),
+        Map.entry("body_stone", "projecte:item/rings/body_stone_off"),
+        Map.entry("soul_stone", "projecte:item/rings/soul_stone_off"),
+        Map.entry("life_stone", "projecte:item/rings/life_stone_off"),
+        Map.entry("divining_rod_1", "projecte:item/divining_rod_1"),
+        Map.entry("divining_rod_2", "projecte:item/divining_rod_2"),
+        Map.entry("divining_rod_3", "projecte:item/divining_rod_3"),
+        Map.entry("klein_star_ein", "projecte:item/stars/klein_star_1"),
+        Map.entry("klein_star_zwei", "projecte:item/stars/klein_star_2"),
+        Map.entry("klein_star_drei", "projecte:item/stars/klein_star_3"),
+        Map.entry("klein_star_vier", "projecte:item/stars/klein_star_4"),
+        Map.entry("klein_star_sphere", "projecte:item/stars/klein_star_5"),
+        Map.entry("klein_star_omega", "projecte:item/stars/klein_star_6"),
+        Map.entry("magnum_star_ein", "projectexpansion:item/star/magnum/ein"),
+        Map.entry("magnum_star_zwei", "projectexpansion:item/star/magnum/zwei"),
+        Map.entry("magnum_star_drei", "projectexpansion:item/star/magnum/drei"),
+        Map.entry("magnum_star_vier", "projectexpansion:item/star/magnum/vier"),
+        Map.entry("magnum_star_sphere", "projectexpansion:item/star/magnum/sphere"),
+        Map.entry("magnum_star_omega", "projectexpansion:item/star/magnum/omega"),
+        Map.entry("colossal_star_ein", "projectexpansion:item/star/colossal/ein"),
+        Map.entry("colossal_star_zwei", "projectexpansion:item/star/colossal/zwei"),
+        Map.entry("colossal_star_drei", "projectexpansion:item/star/colossal/drei"),
+        Map.entry("colossal_star_vier", "projectexpansion:item/star/colossal/vier"),
+        Map.entry("colossal_star_sphere", "projectexpansion:item/star/colossal/sphere"),
+        Map.entry("colossal_star_omega", "projectexpansion:item/star/colossal/omega"),
+        Map.entry("gargantuan_star_ein", "projectexpansion:item/star/gargantuan/ein"),
+        Map.entry("gargantuan_star_zwei", "projectexpansion:item/star/gargantuan/zwei"),
+        Map.entry("gargantuan_star_drei", "projectexpansion:item/star/gargantuan/drei"),
+        Map.entry("gargantuan_star_vier", "projectexpansion:item/star/gargantuan/vier"),
+        Map.entry("gargantuan_star_sphere", "projectexpansion:item/star/gargantuan/sphere"),
+        Map.entry("gargantuan_star_omega", "projectexpansion:item/star/gargantuan/omega")
     );
     private static final Map<String, String> MACHINE_BLOCKS = Map.ofEntries(
-        Map.entry("collector_mk1", "minecraft:block/glowstone"),
-        Map.entry("collector_mk2", "minecraft:block/diamond_block"),
-        Map.entry("collector_mk3", "minecraft:block/emerald_block"),
-        Map.entry("relay_mk1", "minecraft:block/obsidian"),
-        Map.entry("relay_mk2", "minecraft:block/polished_blackstone"),
-        Map.entry("relay_mk3", "minecraft:block/crying_obsidian"),
-        Map.entry("condenser_mk1", "minecraft:block/diamond_block"),
-        Map.entry("condenser_mk2", "minecraft:block/netherite_block"),
-        Map.entry("condenser_mk3", "minecraft:block/amethyst_block"),
-        Map.entry("alchemical_chest", "minecraft:block/obsidian"),
-        Map.entry("advanced_alchemical_chest", "minecraft:block/crying_obsidian"),
-        Map.entry("dark_matter_block", "minecraft:block/coal_block"),
-        Map.entry("red_matter_block", "minecraft:block/redstone_block")
-        , Map.entry("dark_matter_furnace", "minecraft:block/blast_furnace_side")
-        , Map.entry("red_matter_furnace", "minecraft:block/crying_obsidian")
-        , Map.entry("dark_matter_pedestal", "minecraft:block/coal_block")
+        Map.entry("collector_mk1", "projecte:block/collector_mk1"),
+        Map.entry("collector_mk2", "projecte:block/collector_mk2"),
+        Map.entry("collector_mk3", "projecte:block/collector_mk3"),
+        Map.entry("relay_mk1", "projecte:block/relay_mk1"),
+        Map.entry("relay_mk2", "projecte:block/relay_mk2"),
+        Map.entry("relay_mk3", "projecte:block/relay_mk3"),
+        Map.entry("condenser_mk1", "projecte:block/condenser_mk1"),
+        Map.entry("condenser_mk2", "projecte:block/condenser_mk2"),
+        Map.entry("condenser_mk3", "projectexpansion:block/condenser_mk3"),
+        Map.entry("alchemical_chest", "projecte:block/alchemical_chest"),
+        Map.entry("advanced_alchemical_chest", "projectexpansion:block/advanced_alchemical_chest/purple"),
+        Map.entry("dark_matter_block", "projecte:block/dark_matter_block"),
+        Map.entry("red_matter_block", "projecte:block/red_matter_block"),
+        Map.entry("dark_matter_furnace", "projecte:block/dm_furnace"),
+        Map.entry("red_matter_furnace", "projecte:block/rm_furnace"),
+        Map.entry("dark_matter_pedestal", "projecte:block/dm_pedestal")
     );
 
     private final Path assetsRoot;
@@ -154,27 +147,21 @@ public final class ProjectEXModelProvider implements DataProvider {
         writes.add(save(output, "blockstates/transmutation_table.json", BLOCK_STATE));
         writes.add(save(output, "items/transmutation_table.json", ITEM_MODEL));
         Map<String, String> machineBlocks = new java.util.LinkedHashMap<>(MACHINE_BLOCKS);
-        java.util.stream.Stream.of(
-            io.github.tufkan1.projectex.content.ProjectEXBlocks.EXPANSION_COLLECTORS,
-            io.github.tufkan1.projectex.content.ProjectEXBlocks.EXPANSION_RELAYS,
-            io.github.tufkan1.projectex.content.ProjectEXBlocks.POWER_FLOWERS
-        ).flatMap(map -> map.entrySet().stream()).forEach(entry ->
-            machineBlocks.put(entry.getValue().id().getPath(), expansionTexture(entry.getKey()))
-        );
-        machineBlocks.put("compact_sun", "minecraft:block/shroomlight");
+        io.github.tufkan1.projectex.content.ProjectEXBlocks.EXPANSION_COLLECTORS.forEach((tier, entry) ->
+            machineBlocks.put(entry.id().getPath(), "projectexpansion:block/collector/" + tier.id()));
+        io.github.tufkan1.projectex.content.ProjectEXBlocks.EXPANSION_RELAYS.forEach((tier, entry) ->
+            machineBlocks.put(entry.id().getPath(), "projectexpansion:block/relay/" + tier.id()));
+        io.github.tufkan1.projectex.content.ProjectEXBlocks.POWER_FLOWERS.forEach((tier, entry) ->
+            machineBlocks.put(entry.id().getPath(), "projectexpansion:block/power_flower/" + tier.id()));
+        machineBlocks.put("compact_sun", "projectexpansion:block/compact_sun");
         io.github.tufkan1.projectex.content.ProjectEXBlocks.EMC_LINKS.forEach((tier, entry) ->
-            machineBlocks.put(entry.id().getPath(), expansionTexture(tier))
+            machineBlocks.put(entry.id().getPath(), "projectexpansion:block/emc_link/" + tier.id())
         );
-        machineBlocks.put("transmutation_interface", "minecraft:block/enchanting_table_side");
-        machineBlocks.forEach((block, texture) -> {
+        machineBlocks.put("transmutation_interface", "projectexpansion:block/transmutation_interface");
+        machineBlocks.forEach((block, sourceModel) -> {
             String blockModel = """
-                {
-                  "parent": "minecraft:block/cube_all",
-                  "textures": {
-                    "all": "%s"
-                  }
-                }
-                """.formatted(texture);
+                { "parent": "%s" }
+                """.formatted(sourceModel);
             String blockState = """
                 {
                   "variants": {
@@ -220,15 +207,8 @@ public final class ProjectEXModelProvider implements DataProvider {
             String item = entry.id().getPath();
             String tier = item.substring(0, item.indexOf("_compressed_collector"));
             String baseModel = """
-                {
-                  "parent": "minecraft:item/generated",
-                  "textures": { "layer0": "%s" }
-                }
-                """.formatted(expansionTexture(
-                    io.github.tufkan1.projectex.machine.ExpansionMachineTier.valueOf(
-                        tier.toUpperCase(java.util.Locale.ROOT)
-                    )
-                ));
+                { "parent": "projectexpansion:block/collector/%s" }
+                """.formatted(tier);
             String clientItem = """
                 {
                   "model": { "type": "minecraft:model", "model": "projectex:item/%s" }
@@ -242,7 +222,7 @@ public final class ProjectEXModelProvider implements DataProvider {
             String baseModel = """
                 {
                   "parent": "minecraft:item/generated",
-                  "textures": { "layer0": "minecraft:block/%s_wool" }
+                  "textures": { "layer0": "projecte:item/alchemy_bags/%s" }
                 }
                 """.formatted(color.getName());
             String clientItem = """
@@ -267,8 +247,19 @@ public final class ProjectEXModelProvider implements DataProvider {
         ).forEach(entry -> {
             String item = entry.id().getPath();
             String suffix = item.substring(item.indexOf("matter_") + "matter_".length());
-            String vanilla = suffix.equals("hammer") ? "pickaxe" : suffix;
-            String texture = "minecraft:item/netherite_" + vanilla;
+            boolean dark = item.startsWith("dark_matter_");
+            String sourceSuffix = switch (suffix) {
+                case "helmet" -> "head";
+                case "chestplate" -> "chest";
+                case "leggings" -> "legs";
+                case "boots" -> "feet";
+                default -> suffix;
+            };
+            String texture = "projecte:item/" + (dark ? "dm_" : "rm_")
+                + (switch (suffix) {
+                    case "helmet", "chestplate", "leggings", "boots" -> "armor/";
+                    default -> "tools/";
+                }) + sourceSuffix;
             String parent = switch (suffix) {
                 case "helmet", "chestplate", "leggings", "boots" -> "minecraft:item/generated";
                 default -> "minecraft:item/handheld";
@@ -292,20 +283,6 @@ public final class ProjectEXModelProvider implements DataProvider {
 
     private CompletableFuture<?> save(CachedOutput output, String path, String json) {
         return DataProvider.saveStable(output, JsonParser.parseString(json), assetsRoot.resolve(path));
-    }
-
-    private static String expansionTexture(
-        io.github.tufkan1.projectex.machine.ExpansionMachineTier tier
-    ) {
-        return switch (tier) {
-            case BASIC -> "minecraft:block/glowstone";
-            case DARK -> "minecraft:block/coal_block";
-            case RED -> "minecraft:block/redstone_block";
-            case VIOLET -> "minecraft:block/chorus_plant";
-            case FADING -> "minecraft:block/crying_obsidian";
-            case FINAL -> "minecraft:block/netherite_block";
-            default -> "minecraft:block/" + tier.id() + "_concrete";
-        };
     }
 
     @Override

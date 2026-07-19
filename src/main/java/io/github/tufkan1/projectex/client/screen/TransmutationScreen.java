@@ -22,7 +22,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import org.lwjgl.glfw.GLFW;
 
-/** Accessible button-based transmutation screen backed only by authoritative client caches. */
+/** Accessible transmutation screen using the original ProjectE panel and authoritative caches. */
 @Environment(EnvType.CLIENT)
 public final class TransmutationScreen extends AbstractContainerScreen<TransmutationMenu> {
     private static final int PAGE_SIZE = 6;
@@ -128,7 +128,9 @@ public final class TransmutationScreen extends AbstractContainerScreen<Transmuta
     @Override
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
-        graphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0xE0101010);
+        ProjectEXGuiTextures.draw(graphics, ProjectEXGuiTextures.TRANSMUTATION,
+            leftPos, topPos, imageWidth, imageHeight);
+        graphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0x38101010);
         graphics.outline(leftPos, topPos, imageWidth, imageHeight, 0xFF8A6A2F);
     }
 

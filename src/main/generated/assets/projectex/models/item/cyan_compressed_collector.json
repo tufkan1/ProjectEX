@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "minecraft:block/cyan_concrete"
-  }
+  "parent": "projectexpansion:block/collector/cyan"
 }

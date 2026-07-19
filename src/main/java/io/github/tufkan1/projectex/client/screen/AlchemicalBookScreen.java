@@ -14,7 +14,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
-/** Keyboard/narrator-friendly destination editor and teleport selector. */
+/** Keyboard/narrator-friendly editor over the original ProjectExpansion tablet panel. */
 @Environment(EnvType.CLIENT)
 public final class AlchemicalBookScreen extends Screen {
     private static final int PAGE_SIZE = 6;
@@ -102,6 +102,9 @@ public final class AlchemicalBookScreen extends Screen {
         int left = (width - 300) / 2;
         int top = (height - 210) / 2;
         graphics.fill(left, top, left + 300, top + 210, 0xEE17120C);
+        ProjectEXGuiTextures.draw(graphics, ProjectEXGuiTextures.ALCHEMICAL_BOOK,
+            left + 22, top, 256, 210);
+        graphics.fill(left, top, left + 300, top + 210, 0x3517120C);
         graphics.outline(left, top, 300, 210, 0xFFD5A94E);
     }
 

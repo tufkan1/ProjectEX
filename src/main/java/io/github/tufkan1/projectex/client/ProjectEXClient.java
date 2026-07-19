@@ -43,6 +43,9 @@ import io.github.tufkan1.projectex.network.AlchemicalBookAction;
 import io.github.tufkan1.projectex.network.AlchemicalBookActionPayload;
 import io.github.tufkan1.projectex.network.AlchemicalBookViewPayload;
 import io.github.tufkan1.projectex.config.ProjectEXConfig;
+import io.github.tufkan1.projectex.network.EmcTooltipSyncPayload;
+import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 /** Client-only networking state; screens consume this instead of trusting local calculations. */
 @Environment(EnvType.CLIENT)
@@ -60,6 +63,7 @@ public final class ProjectEXClient implements ClientModInitializer {
     ));
     private static UUID pendingKnowledgeConfirmation;
     private static final ClientAlchemicalBookState ALCHEMICAL_BOOK = new ClientAlchemicalBookState();
+    private static final ClientEmcTooltipState EMC_TOOLTIPS = new ClientEmcTooltipState();
 
     @Override
     @SuppressWarnings("deprecation") // Fabric's 26.2 registry remains the supported public hook.
@@ -92,6 +96,19 @@ public final class ProjectEXClient implements ClientModInitializer {
                 ProjectEX.LOGGER.warn("Discarded unexpected ProjectEX knowledge page payload");
             }
         });
+        ClientPlayNetworking.registerGlobalReceiver(EmcTooltipSyncPayload.TYPE, (payload, context) -> {
+            if (payload.revision() < EMC_TOOLTIPS.snapshot().revision()) return;
+            if (!EMC_TOOLTIPS.accept(payload)) {
+                ProjectEX.LOGGER.warn("Discarded malformed EMC tooltip payload");
+            }
+        });
+        ItemTooltipCallback.EVENT.register((stack, context, flag, lines) -> {
+            if (stack.isEmpty()) return;
+            BuiltInRegistries.ITEM.getResourceKey(stack.getItem()).ifPresent(key ->
+                EMC_TOOLTIPS.find(key.identifier().toString()).ifPresent(value ->
+                    lines.add(Component.translatable("tooltip.projectex.emc_value", value)
+                        .withStyle(net.minecraft.ChatFormatting.YELLOW))));
+        });
         ClientPlayNetworking.registerGlobalReceiver(KnowledgeSharePreviewPayload.TYPE, (payload, context) ->
             openKnowledgeConfirmation(payload));
         ClientPlayNetworking.registerGlobalReceiver(KnowledgeShareResultPayload.TYPE, (payload, context) -> {
@@ -123,6 +140,7 @@ public final class ProjectEXClient implements ClientModInitializer {
             KNOWLEDGE.close();
             pendingKnowledgeConfirmation = null;
             ALCHEMICAL_BOOK.close();
+            EMC_TOOLTIPS.clear();
         });
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (CHARGE_KEY.consumeClick()) sendUtilityState(client, UtilityStateAction.CHARGE);
@@ -131,6 +149,8 @@ public final class ProjectEXClient implements ClientModInitializer {
     }
 
     public static ClientAlchemicalBookState alchemicalBook() { return ALCHEMICAL_BOOK; }
+
+    public static ClientEmcTooltipState emcTooltips() { return EMC_TOOLTIPS; }
 
     public static boolean sendAlchemicalBookAction(AlchemicalBookAction action, String name) {
         return ALCHEMICAL_BOOK.action(action, name).map(payload -> {

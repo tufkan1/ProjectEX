@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "minecraft:block/magenta_concrete"
-  }
+  "parent": "projectexpansion:block/power_flower/magenta"
 }

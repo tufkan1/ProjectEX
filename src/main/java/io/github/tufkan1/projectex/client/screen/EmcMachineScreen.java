@@ -10,7 +10,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 
-/** Accessible texture-free baseline UI for collectors and relays. */
+/** Accessible machine UI over the original ProjectE collector/relay panels. */
 @Environment(EnvType.CLIENT)
 public final class EmcMachineScreen extends AbstractContainerScreen<EmcMachineMenu> {
     private Button redstone;
@@ -45,7 +45,12 @@ public final class EmcMachineScreen extends AbstractContainerScreen<EmcMachineMe
         float partialTick
     ) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
-        graphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0xE0121218);
+        net.minecraft.resources.Identifier texture = menu.tier().type()
+            == io.github.tufkan1.projectex.machine.MachineTier.MachineType.RELAY
+            ? ProjectEXGuiTextures.relay(menu.tier().level())
+            : ProjectEXGuiTextures.collector(menu.tier().level());
+        ProjectEXGuiTextures.draw(graphics, texture, leftPos, topPos, imageWidth, imageHeight);
+        graphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0x30121218);
         graphics.outline(leftPos, topPos, imageWidth, imageHeight, 0xFF7A58A6);
         graphics.fill(leftPos + 52, topPos + 34, leftPos + 70, topPos + 52, 0xFF2A2530);
         graphics.fill(leftPos + 106, topPos + 34, leftPos + 124, topPos + 52, 0xFF2A2530);

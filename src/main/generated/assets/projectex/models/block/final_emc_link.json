@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "minecraft:block/netherite_block"
-  }
+  "parent": "projectexpansion:block/emc_link/final"
 }

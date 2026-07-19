@@ -4,7 +4,7 @@ ProjectEX is a community-driven alchemy and EMC mod being built for Fabric,
 starting with Minecraft Java Edition 26.2. It is a clean, maintainable
 implementation informed by the behavior of ProjectE and ProjectExpansion.
 
-> **Status: stable 1.0 support line.** ProjectEX 1.0 freezes its public API,
+> **Status: stable 1.x support line.** ProjectEX 1.x keeps its public API,
 > configuration schema 1, and persisted-data format 1 for Minecraft 26.2. Back up
 > important worlds before every mod or game upgrade.
 
@@ -51,6 +51,10 @@ Windows PowerShell:
 
 Artifacts are written to `build/libs`. Run unit tests with `./gradlew test` and
 launch a development client with `./gradlew runClient`.
+
+Release filenames always identify both the supported game version and mod version,
+for example `projectex-fabric-26.2-1.1.0.jar`. A jar built for one Minecraft feature
+release is never presented as universally compatible with later releases.
 
 Verified public builds are available from [GitHub Releases](https://github.com/tufkan1/ProjectEX/releases).
 Each release includes checksums, a CycloneDX SBOM, source/Javadoc jars, and GitHub
@@ -100,6 +104,25 @@ ProjectEX is not supported or endorsed by ProjectE or ProjectExpansion. Please
 report ProjectEX problems only in this repository. Both reference projects are
 MIT-licensed; provenance rules are documented in [NOTICE](NOTICE) and
 [docs/provenance.md](docs/provenance.md).
+
+## AI development and risk notice
+
+ProjectEX is developed entirely with artificial-intelligence-assisted code and content
+generation under maintainer direction, automated checks, and review. It is provided
+“as is”, without warranties. Installing or running a mod can affect game and world data;
+users are responsible for backups, compatibility checks, configuration, and accepting
+the resulting risk. To the fullest extent permitted by applicable law, the maintainers
+and contributors are not liable for loss or damage arising from use of ProjectEX. This
+notice does not exclude rights or liabilities that applicable law does not allow to be
+excluded.
+
+ProjectEX, bakımcı yönlendirmesi, otomatik kontroller ve inceleme eşliğinde tamamen
+yapay zekâ destekli kod ve içerik üretimiyle geliştirilmektedir. Yazılım hiçbir garanti
+verilmeden “olduğu gibi” sunulur. Modun kurulması veya çalıştırılması oyun ve dünya
+verilerini etkileyebilir; yedekleme, uyumluluk kontrolü, yapılandırma ve kullanımdan
+doğan riskin kabulü kullanıcıya aittir. Yürürlükteki hukukun izin verdiği en geniş
+ölçüde bakımcılar ve katkıda bulunanlar kullanımdan doğan kayıp ya da zararlardan
+sorumlu değildir.
 
 ## License
 

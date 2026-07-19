@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "minecraft:block/enchanting_table_side"
-  }
+  "parent": "projectexpansion:block/transmutation_interface"
 }
