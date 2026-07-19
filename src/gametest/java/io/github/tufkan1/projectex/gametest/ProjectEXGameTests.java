@@ -10,6 +10,8 @@ import io.github.tufkan1.projectex.content.ProjectEXBlocks;
 import io.github.tufkan1.projectex.content.ProjectEXComponents;
 import io.github.tufkan1.projectex.content.ProjectEXItems;
 import io.github.tufkan1.projectex.content.ExpansionMaterialTier;
+import io.github.tufkan1.projectex.endgame.FinalStarAccess;
+import io.github.tufkan1.projectex.api.endgame.FinalStarSlot;
 import io.github.tufkan1.projectex.content.alchemy.WorldTransmutationService;
 import io.github.tufkan1.projectex.api.alchemy.WorldTransmutationProtection;
 import io.github.tufkan1.projectex.content.component.ActiveItemState;
@@ -905,6 +907,44 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
         EmcValue fading = ProjectEX.emc().find(EmcKey.parse("projectex:fading_matter")).orElseThrow();
         helper.assertTrue(fading.equals(previousFuel.multiply(6).add(previousMatter.multiply(3))),
             "Fading Matter did not resolve to its exact terminal recipe cost");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void infiniteSteakUsesAtomicEmcOrFinalStarLeaseWithoutShrinking(GameTestHelper helper) {
+        for (String recipe : List.of("final_star_shard", "final_star", "infinite_steak")) {
+            var key = net.minecraft.resources.ResourceKey.create(
+                net.minecraft.core.registries.Registries.RECIPE, ProjectEX.id(recipe)
+            );
+            helper.assertTrue(helper.getLevel().getServer().getRecipeManager().byKey(key).isPresent(),
+                "Missing endgame recipe: " + recipe);
+        }
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        ItemStack steak = new ItemStack(ProjectEXItems.INFINITE_STEAK.item());
+        MatterEmcPayment.credit(player, EmcValue.of(128));
+        player.getFoodData().setFoodLevel(10);
+        player.getFoodData().setSaturation(0);
+
+        ItemStack paidResult = steak.finishUsingItem(helper.getLevel(), player);
+        helper.assertTrue(paidResult == steak && steak.getCount() == 1,
+            "Infinite Steak shrank during paid use");
+        helper.assertTrue(MatterEmcPayment.balance(player).equals(EmcValue.of(64)),
+            "Infinite Steak did not debit its exact server EMC cost");
+        helper.assertValueEqual(player.getFoodData().getFoodLevel(), 18, "Paid Infinite Steak hunger");
+        helper.assertTrue(player.getCooldowns().isOnCooldown(steak),
+            "Infinite Steak did not apply its item cooldown");
+
+        for (int tick = 0; tick < 20; tick++) player.getCooldowns().tick();
+        player.getFoodData().setFoodLevel(10);
+        player.getFoodData().setSaturation(0);
+        player.getInventory().setItem(5, new ItemStack(ProjectEXItems.FINAL_STAR.item()));
+        steak.finishUsingItem(helper.getLevel(), player);
+        helper.assertTrue(MatterEmcPayment.balance(player).equals(EmcValue.of(64)),
+            "Final Star backed use incorrectly debited player EMC");
+        helper.assertValueEqual(player.getFoodData().getFoodLevel(), 18, "Final Star Infinite Steak hunger");
+        var capability = FinalStarAccess.find(player).orElseThrow();
+        helper.assertTrue(capability.slot() == FinalStarSlot.INVENTORY && !capability.ready(),
+            "Final Star inventory lease did not expose or claim its shared cooldown");
         helper.succeed();
     }
 

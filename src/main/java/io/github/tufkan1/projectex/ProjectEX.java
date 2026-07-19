@@ -20,6 +20,8 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import io.github.tufkan1.projectex.machine.MachineRuntimeConfig;
 import io.github.tufkan1.projectex.matter.MatterTierReloadListener;
+import io.github.tufkan1.projectex.endgame.EndgameRuntimeConfig;
+import io.github.tufkan1.projectex.endgame.FinalStarAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +35,7 @@ public final class ProjectEX implements ModInitializer {
     @Override
     public void onInitialize() {
         MachineRuntimeConfig.reload();
+        EndgameRuntimeConfig.reload();
         ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(
             id("emc_values"),
             new EmcDataReloadListener(EMC_VALUES)
@@ -49,6 +52,7 @@ public final class ProjectEX implements ModInitializer {
         ProjectEXItems.register();
         ProjectEXRecipeSerializers.register();
         ProjectEXEmcStorage.register();
+        FinalStarAccess.register();
         ProjectEXMenus.register();
         EmcCommands.register();
         AlchemyNetworking.register();

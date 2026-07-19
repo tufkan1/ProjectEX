@@ -71,6 +71,16 @@ public final class ProjectEXItems {
         )).toList();
     public static final ProjectEXContentRegistry.RegisteredItem<Item> FADING_MATTER =
         material("fading_matter", Rarity.EPIC);
+    public static final ProjectEXContentRegistry.RegisteredItem<Item> FINAL_STAR_SHARD =
+        material("final_star_shard", Rarity.EPIC);
+    public static final ProjectEXContentRegistry.RegisteredItem<FinalStarItem> FINAL_STAR =
+        ProjectEXContentRegistry.registerItem(
+            "final_star", FinalStarItem::new, new Item.Properties().rarity(Rarity.EPIC)
+        );
+    public static final ProjectEXContentRegistry.RegisteredItem<InfiniteSteakItem> INFINITE_STEAK =
+        ProjectEXContentRegistry.registerItem(
+            "infinite_steak", InfiniteSteakItem::new, new Item.Properties().rarity(Rarity.RARE)
+        );
     public static final ProjectEXContentRegistry.RegisteredItem<PhilosophersStoneItem> PHILOSOPHERS_STONE =
         ProjectEXContentRegistry.registerItem(
             "philosophers_stone",
@@ -177,6 +187,9 @@ public final class ProjectEXItems {
         CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.TOOLS_AND_UTILITIES)
             .register(entries -> {
                 entries.accept(PHILOSOPHERS_STONE.item());
+                entries.accept(FINAL_STAR_SHARD.item());
+                entries.accept(FINAL_STAR.item());
+                entries.accept(INFINITE_STEAK.item());
                 KLEIN_STARS.forEach(entry -> entries.accept(entry.item()));
                 ALCHEMICAL_BAGS.forEach(entry -> entries.accept(entry.item()));
                 entries.accept(DARK_MATTER_PICKAXE.item());
