@@ -4,6 +4,7 @@ import io.github.tufkan1.projectex.api.emc.EmcApi;
 import io.github.tufkan1.projectex.command.EmcCommands;
 import io.github.tufkan1.projectex.content.ProjectEXMenus;
 import io.github.tufkan1.projectex.content.ProjectEXBlocks;
+import io.github.tufkan1.projectex.content.ProjectEXBlockEntities;
 import io.github.tufkan1.projectex.content.ProjectEXComponents;
 import io.github.tufkan1.projectex.content.ProjectEXItems;
 import io.github.tufkan1.projectex.content.storage.ProjectEXEmcStorage;
@@ -16,6 +17,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
+import io.github.tufkan1.projectex.machine.MachineRuntimeConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,12 +30,14 @@ public final class ProjectEX implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        MachineRuntimeConfig.reload();
         ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(
             id("emc_values"),
             new EmcDataReloadListener(EMC_VALUES)
         );
         ProjectEXComponents.register();
         ProjectEXBlocks.register();
+        ProjectEXBlockEntities.register();
         ProjectEXItems.register();
         ProjectEXRecipeSerializers.register();
         ProjectEXEmcStorage.register();

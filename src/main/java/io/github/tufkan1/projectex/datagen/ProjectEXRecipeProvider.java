@@ -15,6 +15,7 @@ import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.level.block.Blocks;
 
 /** Crafting recipes for the core ProjectEX content families. */
 public final class ProjectEXRecipeProvider extends FabricRecipeProvider {
@@ -112,6 +113,42 @@ public final class ProjectEXRecipeProvider extends FabricRecipeProvider {
                     new KleinStarUpgradeRecipe(),
                     null
                 );
+
+                shaped(RecipeCategory.MISC, ProjectEXBlocks.COLLECTOR_MK1)
+                    .define('G', Blocks.GLOWSTONE).define('D', Items.DIAMOND_BLOCK)
+                    .define('F', Items.FURNACE).define('L', Items.GLASS)
+                    .pattern("LGL").pattern("GFG").pattern("LDL")
+                    .unlockedBy("has_diamond_block", has(Items.DIAMOND_BLOCK))
+                    .save(output, id("collector_mk1"));
+                shaped(RecipeCategory.MISC, ProjectEXBlocks.COLLECTOR_MK2)
+                    .define('C', ProjectEXBlocks.COLLECTOR_MK1)
+                    .define('D', ProjectEXItems.DARK_MATTER.item()).define('G', Blocks.GLOWSTONE)
+                    .pattern("GDG").pattern("DCD").pattern("GDG")
+                    .unlockedBy("has_collector_mk1", has(ProjectEXBlocks.COLLECTOR_MK1))
+                    .save(output, id("collector_mk2"));
+                shaped(RecipeCategory.MISC, ProjectEXBlocks.COLLECTOR_MK3)
+                    .define('C', ProjectEXBlocks.COLLECTOR_MK2)
+                    .define('R', ProjectEXItems.RED_MATTER.item()).define('G', Blocks.GLOWSTONE)
+                    .pattern("GRG").pattern("RCR").pattern("GRG")
+                    .unlockedBy("has_collector_mk2", has(ProjectEXBlocks.COLLECTOR_MK2))
+                    .save(output, id("collector_mk3"));
+                shaped(RecipeCategory.MISC, ProjectEXBlocks.RELAY_MK1)
+                    .define('O', Items.OBSIDIAN).define('D', Items.DIAMOND).define('G', Items.GLASS)
+                    .pattern("OGO").pattern("DOD").pattern("OGO")
+                    .unlockedBy("has_diamond", has(Items.DIAMOND))
+                    .save(output, id("relay_mk1"));
+                shaped(RecipeCategory.MISC, ProjectEXBlocks.RELAY_MK2)
+                    .define('R', ProjectEXBlocks.RELAY_MK1)
+                    .define('D', ProjectEXItems.DARK_MATTER.item()).define('O', Items.OBSIDIAN)
+                    .pattern("ODO").pattern("DRD").pattern("ODO")
+                    .unlockedBy("has_relay_mk1", has(ProjectEXBlocks.RELAY_MK1))
+                    .save(output, id("relay_mk2"));
+                shaped(RecipeCategory.MISC, ProjectEXBlocks.RELAY_MK3)
+                    .define('L', ProjectEXBlocks.RELAY_MK2)
+                    .define('R', ProjectEXItems.RED_MATTER.item()).define('O', Items.OBSIDIAN)
+                    .pattern("ORO").pattern("RLR").pattern("ORO")
+                    .unlockedBy("has_relay_mk2", has(ProjectEXBlocks.RELAY_MK2))
+                    .save(output, id("relay_mk3"));
             }
 
             private ResourceKey<Recipe<?>> id(String path) {

@@ -58,6 +58,14 @@ public final class ProjectEXModelProvider implements DataProvider {
         Map.entry("klein_star_sphere", "minecraft:item/heart_of_the_sea"),
         Map.entry("klein_star_omega", "minecraft:item/nether_star")
     );
+    private static final Map<String, String> MACHINE_BLOCKS = Map.ofEntries(
+        Map.entry("collector_mk1", "minecraft:block/glowstone"),
+        Map.entry("collector_mk2", "minecraft:block/diamond_block"),
+        Map.entry("collector_mk3", "minecraft:block/emerald_block"),
+        Map.entry("relay_mk1", "minecraft:block/obsidian"),
+        Map.entry("relay_mk2", "minecraft:block/polished_blackstone"),
+        Map.entry("relay_mk3", "minecraft:block/crying_obsidian")
+    );
 
     private final Path assetsRoot;
 
@@ -72,6 +80,36 @@ public final class ProjectEXModelProvider implements DataProvider {
         writes.add(save(output, "models/block/transmutation_table.json", BLOCK_MODEL));
         writes.add(save(output, "blockstates/transmutation_table.json", BLOCK_STATE));
         writes.add(save(output, "items/transmutation_table.json", ITEM_MODEL));
+        MACHINE_BLOCKS.forEach((block, texture) -> {
+            String blockModel = """
+                {
+                  "parent": "minecraft:block/cube_all",
+                  "textures": {
+                    "all": "%s"
+                  }
+                }
+                """.formatted(texture);
+            String blockState = """
+                {
+                  "variants": {
+                    "": {
+                      "model": "projectex:block/%s"
+                    }
+                  }
+                }
+                """.formatted(block);
+            String clientItem = """
+                {
+                  "model": {
+                    "type": "minecraft:model",
+                    "model": "projectex:block/%s"
+                  }
+                }
+                """.formatted(block);
+            writes.add(save(output, "models/block/" + block + ".json", blockModel));
+            writes.add(save(output, "blockstates/" + block + ".json", blockState));
+            writes.add(save(output, "items/" + block + ".json", clientItem));
+        });
         GENERATED_ITEMS.forEach((item, texture) -> {
             String baseModel = """
                 {

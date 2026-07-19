@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "D": "minecraft:diamond_block",
+    "F": "minecraft:furnace",
+    "G": "minecraft:glowstone",
+    "L": "minecraft:glass"
+  },
+  "pattern": [
+    "LGL",
+    "GFG",
+    "LDL"
+  ],
+  "result": {
+    "id": "projectex:collector_mk1"
+  }
+}

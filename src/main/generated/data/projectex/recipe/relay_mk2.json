@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "D": "projectex:dark_matter",
+    "O": "minecraft:obsidian",
+    "R": "projectex:relay_mk1"
+  },
+  "pattern": [
+    "ODO",
+    "DRD",
+    "ODO"
+  ],
+  "result": {
+    "id": "projectex:relay_mk2"
+  }
+}

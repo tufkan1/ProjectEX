@@ -13,6 +13,10 @@ learn a held item, burn valued items into EMC, then create learned items from th
 server-authoritative browser. `/projectex transmutation` remains available as a
 development fallback.
 
+Klein Stars provide portable EMC storage. Three Energy Collector and Anti-Matter
+Relay tiers can upgrade fuel, charge stars, and move EMC through cycle-safe adjacent
+networks with server-owned redstone, access, comparator, and automation controls.
+
 ## Compatibility
 
 | Component | Current target |
@@ -53,6 +57,7 @@ launch a development client with `./gradlew runClient`.
 - [Public EMC API](docs/emc-api.md) — query lifecycle, consumer examples, and compatibility policy
 - [EMC storage API](docs/emc-storage-api.md) — portable storage, exact transfers, automation, and migration
 - [EMC machine core](docs/machine-core.md) — fixed-point generation, ownership, budgets, and cycle safety
+- [Behavior parity matrix](docs/parity-matrix.md) — implemented reference behavior and intentional differences
 - [Player data](docs/player-data.md) — persistence schema, lifecycle, and corruption recovery
 - [Alchemy transactions](docs/alchemy-transactions.md) — atomic learn, burn, create, and abuse controls
 - [Network protocol](docs/network-protocol.md) — payload schema, sessions, replay defense, and limits

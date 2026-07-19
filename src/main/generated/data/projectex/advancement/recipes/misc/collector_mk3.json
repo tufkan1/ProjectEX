@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_collector_mk2": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projectex:collector_mk2"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "projectex:collector_mk3"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_collector_mk2"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "projectex:collector_mk3"
+    ]
+  }
+}

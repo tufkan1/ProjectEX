@@ -13,8 +13,13 @@ import io.github.tufkan1.projectex.content.alchemy.WorldTransmutationService;
 import io.github.tufkan1.projectex.api.alchemy.WorldTransmutationProtection;
 import io.github.tufkan1.projectex.content.component.ActiveItemState;
 import io.github.tufkan1.projectex.content.component.PortableEmcState;
+import io.github.tufkan1.projectex.content.component.MachineItemState;
 import io.github.tufkan1.projectex.content.recipe.KleinStarUpgradeRecipe;
+import io.github.tufkan1.projectex.content.machine.EmcMachineBlockEntity;
+import io.github.tufkan1.projectex.machine.MachineTier;
+import io.github.tufkan1.projectex.machine.MachineRedstoneMode;
 import io.github.tufkan1.projectex.menu.TransmutationMenu;
+import io.github.tufkan1.projectex.menu.EmcMachineMenu;
 import java.lang.reflect.Method;
 import java.util.List;
 import net.fabricmc.fabric.api.gametest.v1.CustomTestMethodInvoker;
@@ -34,6 +39,9 @@ import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.gamerules.GameRules;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 
 /** Runtime registration, resource reload, and physical menu smoke tests. */
 @SuppressWarnings("removal")
@@ -319,6 +327,205 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
         helper.assertTrue(stored(dropped.getItem()).equals(EmcValue.of(765_432)),
             "Player death changed the Klein Star EMC component");
         helper.succeed();
+    }
+
+    @GameTest
+    public void collectorGeneratesAndRelayCycleConservesEmc(GameTestHelper helper) {
+        BlockPos collectorPos = new BlockPos(0, 1, 0);
+        BlockPos relayPos = new BlockPos(1, 1, 0);
+        helper.setBlock(collectorPos, ProjectEXBlocks.COLLECTOR_MK1);
+        helper.setBlock(relayPos, ProjectEXBlocks.RELAY_MK1);
+        EmcMachineBlockEntity collector = machine(helper, collectorPos);
+        EmcMachineBlockEntity relay = machine(helper, relayPos);
+
+        EmcMachineBlockEntity.tickServer(
+            helper.getLevel(), helper.absolutePos(collectorPos), collector.getBlockState(), collector
+        );
+        helper.assertTrue(collector.machineState().stored().equals(EmcValue.ZERO),
+            "Collector did not transfer its exact generated EMC");
+        helper.assertTrue(relay.machineState().stored().equals(EmcValue.of(4)),
+            "Relay did not receive the MK1 collector rate");
+
+        EmcMachineBlockEntity.tickServer(
+            helper.getLevel(), helper.absolutePos(relayPos), relay.getBlockState(), relay
+        );
+        helper.assertTrue(
+            collector.machineState().stored().add(relay.machineState().stored()).equals(EmcValue.of(4)),
+            "A collector/relay feedback edge generated or lost EMC"
+        );
+        helper.assertTrue(relay.comparatorSignal() >= 0,
+            "Machine comparator signal was outside its lower bound");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void machineOwnershipAllowsOwnerServerMenu(GameTestHelper helper) {
+        BlockPos relative = new BlockPos(9, 1, 0);
+        helper.setBlock(relative, ProjectEXBlocks.COLLECTOR_MK2);
+        EmcMachineBlockEntity machine = machine(helper, relative);
+        ServerPlayer owner = helper.makeMockServerPlayerInLevel();
+        machine.claim(owner.getUUID());
+        BlockPos absolute = helper.absolutePos(relative);
+        owner.setPos(absolute.getX() + 0.5, absolute.getY() + 1.0, absolute.getZ() + 0.5);
+        helper.getBlockState(relative).useWithoutItem(
+            helper.getLevel(), owner,
+            new BlockHitResult(Vec3.atCenterOf(absolute), Direction.UP, absolute, false)
+        );
+        helper.assertTrue(owner.containerMenu instanceof EmcMachineMenu,
+            "Machine owner could not open the server menu");
+        helper.assertTrue(machine.machineState().access().owner().orElseThrow().equals(owner.getUUID()),
+            "Machine did not persist its owner identity");
+        EmcMachineMenu menu = (EmcMachineMenu) owner.containerMenu;
+        helper.assertTrue(menu.clickMenuButton(owner, 0)
+                && machine.machineState().redstoneMode() == MachineRedstoneMode.REQUIRE_SIGNAL,
+            "Server menu did not apply the owner redstone control");
+        helper.assertTrue(menu.clickMenuButton(owner, 1)
+                && machine.machineState().access().publicAccess(),
+            "Server menu did not apply the owner access control");
+        owner.closeContainer();
+        helper.succeed();
+    }
+
+    @GameTest
+    public void relayMovesExactEmcBetweenKleinStarsAndExposesSidedStorage(GameTestHelper helper) {
+        BlockPos relative = new BlockPos(3, 1, 0);
+        helper.setBlock(relative, ProjectEXBlocks.RELAY_MK1);
+        EmcMachineBlockEntity relay = machine(helper, relative);
+        var horizontal = ItemStorage.SIDED.find(
+            helper.getLevel(), helper.absolutePos(relative), Direction.NORTH
+        );
+        var vertical = ItemStorage.SIDED.find(
+            helper.getLevel(), helper.absolutePos(relative), Direction.UP
+        );
+        helper.assertTrue(horizontal != null && vertical != null,
+            "Fabric sided machine storages were not exposed");
+        try (Transaction transaction = Transaction.openOuter()) {
+            helper.assertTrue(horizontal.insert(
+                ItemVariant.of(star(ProjectEXItems.KLEIN_STAR_DREI.item(), 1_000)),
+                1,
+                transaction
+            ) == 1, "Horizontal automation could not insert the relay input");
+            helper.assertTrue(vertical.insert(
+                ItemVariant.of(star(ProjectEXItems.KLEIN_STAR_DREI.item(), 0)),
+                1,
+                transaction
+            ) == 1, "Vertical automation could not insert the relay output storage");
+            transaction.commit();
+        }
+
+        EmcMachineBlockEntity.tickServer(
+            helper.getLevel(), helper.absolutePos(relative), relay.getBlockState(), relay
+        );
+        helper.assertTrue(stored(relay.getItem(EmcMachineBlockEntity.INPUT_SLOT)).equals(EmcValue.of(936)),
+            "Relay input extraction was not exact");
+        helper.assertTrue(stored(relay.getItem(EmcMachineBlockEntity.OUTPUT_SLOT)).equals(EmcValue.of(64)),
+            "Relay output charge was not exact");
+        helper.assertTrue(relay.machineState().stored().equals(EmcValue.ZERO),
+            "Relay retained duplicated EMC after charging");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void collectorRedstoneModeControlsServerGeneration(GameTestHelper helper) {
+        BlockPos relative = new BlockPos(12, 1, 0);
+        helper.setBlock(relative, ProjectEXBlocks.COLLECTOR_MK1);
+        EmcMachineBlockEntity collector = machine(helper, relative);
+        java.util.UUID owner = java.util.UUID.randomUUID();
+        collector.claim(owner);
+        helper.assertTrue(collector.setRedstoneMode(MachineRedstoneMode.REQUIRE_SIGNAL, owner, false),
+            "Owner could not configure machine redstone policy");
+
+        EmcMachineBlockEntity.tickServer(
+            helper.getLevel(), helper.absolutePos(relative), collector.getBlockState(), collector
+        );
+        helper.assertTrue(collector.machineState().stored().equals(EmcValue.ZERO),
+            "Signal-required collector generated without redstone power");
+        helper.setBlock(relative.relative(Direction.EAST), Blocks.REDSTONE_BLOCK);
+        EmcMachineBlockEntity.tickServer(
+            helper.getLevel(), helper.absolutePos(relative), collector.getBlockState(), collector
+        );
+        helper.assertTrue(collector.machineState().stored().equals(EmcValue.of(4)),
+            "Powered collector did not generate its exact rate");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void collectorFuelUpgradeSpendsExactEmcDifference(GameTestHelper helper) {
+        BlockPos relative = new BlockPos(15, 1, 0);
+        helper.setBlock(relative, ProjectEXBlocks.COLLECTOR_MK3);
+        EmcMachineBlockEntity collector = machine(helper, relative);
+        collector.setItem(
+            EmcMachineBlockEntity.INPUT_SLOT,
+            new ItemStack(ProjectEXItems.ALCHEMICAL_COAL.item())
+        );
+        for (int tick = 0; tick < 100; tick++) {
+            EmcMachineBlockEntity.tickServer(
+                helper.getLevel(), helper.absolutePos(relative), collector.getBlockState(), collector
+            );
+        }
+        EmcValue inputValue = ProjectEX.emc().find(EmcKey.parse("projectex:alchemical_coal"))
+            .orElseThrow();
+        EmcValue outputValue = ProjectEX.emc().find(EmcKey.parse("projectex:mobius_fuel"))
+            .orElseThrow();
+        EmcValue expectedStored = EmcValue.of(4_000).subtract(outputValue.subtract(inputValue));
+        helper.assertTrue(collector.getItem(EmcMachineBlockEntity.OUTPUT_SLOT)
+                .is(ProjectEXItems.MOBIUS_FUEL.item()),
+            "Collector did not produce the next fuel tier");
+        helper.assertTrue(collector.machineState().stored().equals(expectedStored),
+            "Collector fuel upgrade did not spend the exact EMC difference");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void machineStateAndInventoryRoundTripThroughBlockEntityPersistence(GameTestHelper helper) {
+        BlockPos relative = new BlockPos(6, 1, 0);
+        helper.setBlock(relative, ProjectEXBlocks.COLLECTOR_MK3);
+        EmcMachineBlockEntity original = machine(helper, relative);
+        original.setItem(EmcMachineBlockEntity.INPUT_SLOT,
+            new ItemStack(ProjectEXItems.ALCHEMICAL_COAL.item(), 3));
+        EmcMachineBlockEntity.tickServer(
+            helper.getLevel(), helper.absolutePos(relative), original.getBlockState(), original
+        );
+
+        var tag = original.saveWithFullMetadata(helper.getLevel().registryAccess());
+        var loaded = net.minecraft.world.level.block.entity.BlockEntity.loadStatic(
+            helper.absolutePos(relative),
+            original.getBlockState(),
+            tag,
+            helper.getLevel().registryAccess()
+        );
+        helper.assertTrue(loaded instanceof EmcMachineBlockEntity,
+            "Saved machine did not decode as its registered block-entity type");
+        EmcMachineBlockEntity restored = (EmcMachineBlockEntity) loaded;
+        helper.assertTrue(restored.tier() == MachineTier.COLLECTOR_MK3,
+            "Machine tier changed across persistence");
+        helper.assertTrue(restored.machineState().equals(original.machineState()),
+            "Versioned machine state changed across persistence");
+        helper.assertTrue(restored.getItem(EmcMachineBlockEntity.INPUT_SLOT).getCount()
+                == original.getItem(EmcMachineBlockEntity.INPUT_SLOT).getCount(),
+            "Machine inventory changed across persistence");
+
+        ItemStack machineDrop = net.minecraft.world.level.block.Block.getDrops(
+            original.getBlockState(), helper.getLevel(), helper.absolutePos(relative), original
+        ).stream().filter(stack -> stack.is(ProjectEXBlocks.COLLECTOR_MK3.asItem()))
+            .findFirst().orElseThrow(() -> new AssertionError("Machine block did not produce its stateful drop"));
+        MachineItemState carried = machineDrop.get(ProjectEXComponents.MACHINE_STATE);
+        helper.assertTrue(carried != null && carried.toMachineState().equals(original.machineState()),
+            "Broken machine item did not retain exact machine state");
+        BlockPos replacementPos = new BlockPos(7, 1, 0);
+        helper.setBlock(replacementPos, ProjectEXBlocks.COLLECTOR_MK3);
+        EmcMachineBlockEntity replaced = machine(helper, replacementPos);
+        replaced.applyComponentsFromItemStack(machineDrop);
+        helper.assertTrue(replaced.machineState().equals(original.machineState()),
+            "Placed machine did not restore exact carried state");
+        helper.assertTrue(replaced.getItem(EmcMachineBlockEntity.INPUT_SLOT).getCount()
+                == original.getItem(EmcMachineBlockEntity.INPUT_SLOT).getCount(),
+            "Placed machine did not restore its carried inventory");
+        helper.succeed();
+    }
+
+    private static EmcMachineBlockEntity machine(GameTestHelper helper, BlockPos relative) {
+        return helper.getBlockEntity(relative, EmcMachineBlockEntity.class);
     }
 
     private static ItemStack star(net.minecraft.world.item.Item item, long stored) {

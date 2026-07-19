@@ -29,7 +29,17 @@ public final class ProjectEXBlockTagProvider extends FabricTagsProvider.BlockTag
             ProjectEXBlocks.TRANSMUTATION_TABLE_FAMILY.id()
         );
         builder(BlockTags.MINEABLE_WITH_PICKAXE).add(table);
+        builder(BlockTags.MINEABLE_WITH_PICKAXE).add(
+            key(ProjectEXBlocks.COLLECTOR_MK1), key(ProjectEXBlocks.COLLECTOR_MK2),
+            key(ProjectEXBlocks.COLLECTOR_MK3), key(ProjectEXBlocks.RELAY_MK1),
+            key(ProjectEXBlocks.RELAY_MK2), key(ProjectEXBlocks.RELAY_MK3)
+        );
         builder(BlockTags.NEEDS_DIAMOND_TOOL).add(table);
+        builder(BlockTags.NEEDS_DIAMOND_TOOL).add(
+            key(ProjectEXBlocks.COLLECTOR_MK1), key(ProjectEXBlocks.COLLECTOR_MK2),
+            key(ProjectEXBlocks.COLLECTOR_MK3), key(ProjectEXBlocks.RELAY_MK1),
+            key(ProjectEXBlocks.RELAY_MK2), key(ProjectEXBlocks.RELAY_MK3)
+        );
         builder(ProjectEXTags.PHILOSOPHERS_STONE_ALLOWED).add(
             key(Blocks.STONE),
             key(Blocks.COBBLESTONE),
