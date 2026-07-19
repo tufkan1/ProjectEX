@@ -76,6 +76,7 @@ launch a development client with `./gradlew runClient`.
 - [Knowledge sharing](docs/knowledge-sharing.md) — signed snapshots, explicit confirmation, replay defense, and audit
 - [Alchemical Books](docs/alchemical-books.md) — destination persistence, EMC costs, binding, and teleport security
 - [Configuration and migrations](docs/configuration-and-migrations.md) — schemas, upgrades, backups, recovery, and operator audits
+- [Release audit and budgets](docs/release-audit.md) — soak envelope, packet/save ceilings, privilege matrix, and security gates
 - [Contributing](CONTRIBUTING.md) — development and pull request workflow
 - [Support](SUPPORT.md) — where questions and bug reports belong
 - [Security](SECURITY.md) — private vulnerability reporting policy

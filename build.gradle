@@ -83,11 +83,56 @@ java {
 	targetCompatibility = JavaVersion.VERSION_25
 }
 
+def projectName = project.name
+
 tasks.named("sourcesJar") {
 	mustRunAfter tasks.named("runDatagen")
+	from("LICENSE") {
+		rename { "${it}_${projectName}" }
+	}
+	from("NOTICE") {
+		rename { "${it}_${projectName}" }
+	}
 }
 
-def projectName = project.name
+tasks.register("verifyReleaseArtifacts") {
+	group = "verification"
+	description = "Checks release jars for required notices, forbidden files, and size budgets."
+	dependsOn tasks.named("jar"), tasks.named("sourcesJar")
+	doLast {
+		def jars = fileTree(layout.buildDirectory.dir("libs")).matching { include "*.jar" }.files
+		if (jars.size() != 2) throw new GradleException("Expected runtime and sources jars, found ${jars*.name}")
+		jars.each { archive ->
+			if (archive.length() > 4L * 1024 * 1024) {
+				throw new GradleException("Artifact exceeds 4 MiB budget: ${archive.name}")
+			}
+			def zip = new java.util.zip.ZipFile(archive)
+			try {
+				def names = zip.entries().collect { it.name }
+				["LICENSE_ProjectEX", "NOTICE_ProjectEX"].each { required ->
+					if (!names.contains(required)) throw new GradleException("${archive.name} lacks ${required}")
+				}
+				if (!archive.name.endsWith("-sources.jar") && !names.contains("fabric.mod.json")) {
+					throw new GradleException("Runtime jar lacks fabric.mod.json")
+				}
+				def forbidden = names.find { name ->
+					name.startsWith(".git/") || name.startsWith("run/") || name.contains("/.env")
+						|| name.endsWith(".pem") || name.endsWith(".key") || name.contains("credentials")
+				}
+				if (forbidden != null) throw new GradleException("Forbidden artifact entry: ${forbidden}")
+			} finally {
+				zip.close()
+			}
+		}
+	}
+}
+
+tasks.register("releaseAudit") {
+	group = "verification"
+	description = "Runs every local 1.0 release audit, including the production client journey."
+	dependsOn tasks.named("check"), tasks.named("build"), tasks.named("verifyReleaseArtifacts"),
+		tasks.named("runProductionClientGameTest")
+}
 
 jar {
 	from("LICENSE") {

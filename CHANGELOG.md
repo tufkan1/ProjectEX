@@ -41,6 +41,7 @@ the Minecraft version.
 - Dark/red matter furnaces with vanilla recipe compatibility, tier speed and bonus outputs, atomic component-safe output planning, exact fuel remainders, sided automation, retained inventory, and an accessible synchronized progress screen.
 - Strict schema-v1 matter-tier data packs with atomic fail-closed reload, bounded balance validation, bundled defaults, live runtime resolution, and safe charge clamping after configuration changes.
 - Versioned common/server/client configuration, public-alpha migration fixtures, manifest-backed atomic backups, offline recovery packages, and operator config/migration/datapack/machine audits.
+- Reproducible 1.0 performance, allocation, packet, persistence, concurrency, privilege, secret, and artifact release-audit gates.
 
 ## [0.1.0-alpha.1] - Unreleased
 

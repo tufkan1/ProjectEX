@@ -96,6 +96,45 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
         helper.assertTrue(applied.complete(), "ProjectEX migration did not publish its baseline marker");
         helper.assertTrue(!applied.backupId().isBlank(), "ProjectEX migration did not create a backup");
         helper.assertValueEqual(migration.status().sourceFormat(), 1, "Published migration format");
+        helper.assertTrue(java.nio.file.Files.isRegularFile(
+            migration.prepareRecovery(applied.backupId()).resolve("RESTORE.txt")),
+            "Crash recovery package was not prepared");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void releaseAuditSoaksSupportedPlayersAndMachineNetworkOnDedicatedServer(GameTestHelper helper) {
+        PlayerAlchemySavedData data = PlayerAlchemySavedData.get(helper.getLevel().getServer());
+        java.util.ArrayList<UUID> players = new java.util.ArrayList<>();
+        for (int index = 0; index < io.github.tufkan1.projectex.audit.ReleaseAuditBudgets.SUPPORTED_PLAYERS;
+             index++) {
+            UUID player = new UUID(0x5058L, index + 1L);
+            players.add(player);
+            data.update(player, state -> state.credit(EmcValue.of(1)));
+        }
+        helper.assertValueEqual(players.stream().filter(player ->
+            data.state(player).balance().equals(EmcValue.of(1))).count(),
+            (long) io.github.tufkan1.projectex.audit.ReleaseAuditBudgets.SUPPORTED_PLAYERS,
+            "Supported player-state count");
+
+        int machines = io.github.tufkan1.projectex.audit.ReleaseAuditBudgets.SUPPORTED_MACHINES_PER_LEVEL;
+        io.github.tufkan1.projectex.machine.MachineBuffer source =
+            new io.github.tufkan1.projectex.machine.MachineBuffer(EmcValue.of(2), EmcValue.of(1));
+        for (int tickIndex = 0;
+             tickIndex < io.github.tufkan1.projectex.audit.ReleaseAuditBudgets.MACHINE_SOAK_TICKS;
+             tickIndex++) {
+            var tick = new io.github.tufkan1.projectex.machine.MachineNetworkTick(
+                new io.github.tufkan1.projectex.machine.MachineTickBudget(machines, EmcValue.of(machines)));
+            for (int index = 0; index < machines; index++) {
+                var target = new io.github.tufkan1.projectex.machine.MachineBuffer(EmcValue.of(1), EmcValue.ZERO);
+                helper.assertValueEqual(tick.route("source", source, "target-" + index, target,
+                    EmcValue.of(1)).moved(), EmcValue.of(1), "Soak transfer");
+                source.insert(target.extract(EmcValue.of(1)));
+            }
+            helper.assertValueEqual(tick.transferCount(), machines, "Soak tick transfer count");
+        }
+        helper.assertValueEqual(source.stored(), EmcValue.of(1), "Soak EMC conservation");
+        players.forEach(data::remove);
         helper.succeed();
     }
 

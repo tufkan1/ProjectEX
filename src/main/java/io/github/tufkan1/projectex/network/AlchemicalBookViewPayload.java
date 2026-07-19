@@ -16,6 +16,7 @@ public record AlchemicalBookViewPayload(
     UUID sessionId, long requestId, int tier, boolean editable, String balance, String failure,
     List<Entry> entries, Optional<Entry> back
 ) implements CustomPacketPayload {
+    public static final int MAX_COST_LENGTH = 128;
     public static final Type<AlchemicalBookViewPayload> TYPE =
         new Type<>(ProjectEX.id("alchemical_book_view_v1"));
     public static final StreamCodec<RegistryFriendlyByteBuf, AlchemicalBookViewPayload> CODEC =
@@ -50,12 +51,12 @@ public record AlchemicalBookViewPayload(
     }
 
     public record Entry(AlchemicalDestination destination, String cost) {
-        public Entry { if (cost.length() > 4_096) throw new IllegalArgumentException("Oversized teleport price"); }
+        public Entry { if (cost.length() > MAX_COST_LENGTH) throw new IllegalArgumentException("Oversized teleport price"); }
         private void write(RegistryFriendlyByteBuf buffer) {
-            AlchemicalDestination.STREAM_CODEC.encode(buffer, destination); buffer.writeUtf(cost, 4_096);
+            AlchemicalDestination.STREAM_CODEC.encode(buffer, destination); buffer.writeUtf(cost, MAX_COST_LENGTH);
         }
         private static Entry read(RegistryFriendlyByteBuf buffer) {
-            return new Entry(AlchemicalDestination.STREAM_CODEC.decode(buffer), buffer.readUtf(4_096));
+            return new Entry(AlchemicalDestination.STREAM_CODEC.decode(buffer), buffer.readUtf(MAX_COST_LENGTH));
         }
     }
 }
