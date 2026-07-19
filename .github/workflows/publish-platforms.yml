@@ -1,0 +1,59 @@
+name: Publish release to mod platforms
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing verified GitHub release tag
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  attestations: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment: distribution
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag }}
+
+      - name: Download immutable GitHub release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release download "${{ inputs.tag }}" --dir dist
+
+      - name: Verify checksums and provenance
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          cd dist
+          sha256sum --check SHA256SUMS
+          runtime="$(find . -maxdepth 1 -name 'projectex-fabric-*.jar' ! -name '*-sources.jar' ! -name '*-javadoc.jar' -print -quit)"
+          test -n "${runtime}"
+          gh attestation verify "${runtime}" --repo "${GITHUB_REPOSITORY}"
+
+      - name: Publish the verified runtime jar
+        uses: Kir-Antipov/mc-publish@v3.3.1
+        with:
+          modrinth-id: ${{ secrets.MODRINTH_PROJECT_ID }}
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge-id: ${{ secrets.CURSEFORGE_PROJECT_ID }}
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          files: |
+            dist/projectex-fabric-*.jar
+            !dist/projectex-fabric-*-sources.jar
+            !dist/projectex-fabric-*-javadoc.jar
+          name: ProjectEX ${{ inputs.tag }} for Minecraft 26.2
+          version: ${{ inputs.tag }}
+          version-type: alpha
+          loaders: fabric
+          game-versions: 26.2
+          dependencies: |
+            fabric-api(required){modrinth:P7dR8mSH}{curseforge:306612}
+            jade(optional){modrinth:nvQzSEkH}{curseforge:324717}
