@@ -80,6 +80,25 @@ public final class PlayerAlchemySavedData extends SavedData {
         return removed;
     }
 
+    public synchronized boolean compareAndSet(
+        UUID playerId,
+        PlayerAlchemyState expected,
+        PlayerAlchemyState replacement
+    ) {
+        if (!state(playerId).equals(expected)) {
+            return false;
+        }
+        if (replacement.equals(PlayerAlchemyState.EMPTY)) {
+            states.remove(playerId);
+        } else {
+            states.put(playerId, replacement);
+        }
+        if (!replacement.equals(expected)) {
+            setDirty();
+        }
+        return true;
+    }
+
     public synchronized Map<UUID, PlayerAlchemyState> snapshot() {
         return Collections.unmodifiableMap(new TreeMap<>(states));
     }

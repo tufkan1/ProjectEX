@@ -10,7 +10,8 @@ pages. Favorites are a client preference layered over authoritative page entries
 1. Opening the screen focuses search, then Tab moves through result grid, previous,
    next, favorites toggle, burn/create count, and close in visual order.
 2. Arrow keys move within the result grid without requiring a mouse.
-3. Enter creates the focused learned item; the action remains server-authoritative.
+3. Enter selects a focused learned item; Tab reaches an explicit Create button whose
+   activation remains server-authoritative and prevents accidental creation.
 4. The favorite shortcut never triggers create/burn and announces its new state.
 5. Page changes announce current page, total pages, result count, balance, and any
    typed server failure through translatable narration text.
@@ -28,3 +29,9 @@ pages. Favorites are a client preference layered over authoritative page entries
 
 The pure client models and payload tests cover these ordering rules. Minecraft screen
 GameTests and visual/narration verification are required before the M2 exit gate.
+
+During M2 development the server-owned menu is opened with `/projectex transmutation`.
+This exercises real player inventory, persistence, networking, search, learn, burn,
+create, favorites, and reconnect behavior before the physical table/tablet content is
+introduced. Component-bearing stacks are deliberately excluded from held-item actions
+until an exact canonical component adapter is available.

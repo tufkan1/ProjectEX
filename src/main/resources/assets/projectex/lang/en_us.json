@@ -10,5 +10,16 @@
   "commands.projectex.player.reset": "Reset ProjectEX state for player %s.",
   "commands.projectex.player.empty": "Player %s had no ProjectEX state.",
   "commands.projectex.player.recovery_required": "Player data recovery backup is present: %s",
-  "commands.projectex.player.recovery_clean": "Player alchemy data has no pending recovery backup."
+  "commands.projectex.player.recovery_clean": "Player alchemy data has no pending recovery backup.",
+  "menu.projectex.transmutation": "Transmutation",
+  "screen.projectex.search": "Search learned items",
+  "screen.projectex.create": "Create",
+  "screen.projectex.favorite": "Favorite",
+  "screen.projectex.unfavorite": "Unfavorite",
+  "screen.projectex.learn": "Learn held",
+  "screen.projectex.burn": "Burn held",
+  "screen.projectex.balance": "EMC: %s",
+  "screen.projectex.page": "Page %s/%s · %s results",
+  "screen.projectex.failure": "Server response: %s",
+  "screen.projectex.narration": "Balance %s EMC. Page %s of %s. %s results. Status %s."
 }

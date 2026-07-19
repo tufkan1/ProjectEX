@@ -22,6 +22,7 @@ the Minecraft version.
 - Versioned Fabric transmutation payloads with server sessions, replay defense, and bounded codecs.
 - Client session cache with authoritative response ordering and disconnect cleanup.
 - Bounded server-side knowledge search/paging and client favorites/browser state.
+- Command-opened transmutation menu/screen backed by atomic player inventory commits.
 
 ## [0.1.0-alpha.1] - Unreleased
 
