@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_condenser_mk2": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projectex:condenser_mk2"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "projectex:condenser_mk3"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_condenser_mk2"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "projectex:condenser_mk3"
+    ]
+  }
+}

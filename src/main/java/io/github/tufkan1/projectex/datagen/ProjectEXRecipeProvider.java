@@ -381,6 +381,12 @@ public final class ProjectEXRecipeProvider extends FabricRecipeProvider {
                     .pattern("ARA").pattern("RNR").pattern("ARA")
                     .unlockedBy("has_condenser_mk1", has(ProjectEXBlocks.CONDENSER_MK1))
                     .save(output, id("condenser_mk2"));
+                shaped(RecipeCategory.MISC, ProjectEXBlocks.CONDENSER_MK3)
+                    .define('C', ProjectEXBlocks.CONDENSER_MK2)
+                    .define('M', ProjectEXItems.EXPANSION_MATTERS.get(0).item())
+                    .pattern("MCM").pattern("CCC").pattern("MCM")
+                    .unlockedBy("has_condenser_mk2", has(ProjectEXBlocks.CONDENSER_MK2))
+                    .save(output, id("condenser_mk3"));
 
                 java.util.List<net.minecraft.world.item.Item> colors = Items.DYE.asList();
                 for (int index = 0; index < ProjectEXItems.alchemicalBags().size(); index++) {

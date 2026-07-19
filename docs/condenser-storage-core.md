@@ -33,7 +33,9 @@ preventing direct and indirect recursive inventories.
 
 ## Fabric runtime contract
 
-- MK1 consumes at most one item per server tick; MK2 consumes at most 64.
+- MK1 consumes at most one item per server tick, MK2 at most 64, and MK3 at most
+  512. MK3 has 91 input and 180 output slots, exposed through six server-owned pages;
+  its target remains a separate, non-automatable template slot.
 - Slot 0 is a physical target template and is never exposed to automation.
 - Horizontal faces insert only into the 42 input slots. Vertical faces extract only
   from the 42 output slots.

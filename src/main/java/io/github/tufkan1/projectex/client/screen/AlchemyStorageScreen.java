@@ -13,8 +13,8 @@ import net.minecraft.world.entity.player.Inventory;
 /** Accessible, texture-free paged inventory for storage blocks. */
 @Environment(EnvType.CLIENT)
 public final class AlchemyStorageScreen extends AbstractContainerScreen<AlchemyStorageMenu> {
-    private Button firstPage;
-    private Button secondPage;
+    private Button previousPage;
+    private Button nextPage;
     private Button access;
 
     public AlchemyStorageScreen(AlchemyStorageMenu menu, Inventory inventory, Component title) {
@@ -24,18 +24,18 @@ public final class AlchemyStorageScreen extends AbstractContainerScreen<AlchemyS
 
     @Override protected void init() {
         super.init();
-        firstPage = addRenderableWidget(Button.builder(Component.translatable("screen.projectex.storage.page", 1),
-            ignored -> send(0)).bounds(leftPos + 30, topPos + 18, 42, 16).build());
-        secondPage = addRenderableWidget(Button.builder(Component.translatable("screen.projectex.storage.page", 2),
-            ignored -> send(1)).bounds(leftPos + 74, topPos + 18, 42, 16).build());
-        access = addRenderableWidget(Button.builder(accessLabel(), ignored -> send(2))
+        previousPage = addRenderableWidget(Button.builder(Component.literal("<"),
+            ignored -> send(100)).bounds(leftPos + 30, topPos + 18, 20, 16).build());
+        nextPage = addRenderableWidget(Button.builder(Component.literal(">"),
+            ignored -> send(101)).bounds(leftPos + 52, topPos + 18, 20, 16).build());
+        access = addRenderableWidget(Button.builder(accessLabel(), ignored -> send(102))
             .bounds(leftPos + 118, topPos + 18, 50, 16).build());
     }
 
     @Override protected void containerTick() {
         super.containerTick();
-        firstPage.active = menu.page() != 0;
-        secondPage.active = menu.page() != 1;
+        previousPage.active = menu.pageCount() > 1;
+        nextPage.active = menu.pageCount() > 1;
         access.setMessage(accessLabel());
     }
 
@@ -55,7 +55,7 @@ public final class AlchemyStorageScreen extends AbstractContainerScreen<AlchemyS
         graphics.text(font, title, titleLabelX, titleLabelY, 0xFFE7FFF9, false);
         graphics.text(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0xFFE7FFF9, false);
         graphics.text(font, Component.translatable(menu.kind().condenser()
-            ? (menu.page() == 0 ? "screen.projectex.storage.inputs" : "screen.projectex.storage.outputs")
+            ? (menu.inputPage() ? "screen.projectex.storage.inputs" : "screen.projectex.storage.outputs")
             : "screen.projectex.storage.contents"), 8, 142, 0xFFAED7CD, false);
     }
 

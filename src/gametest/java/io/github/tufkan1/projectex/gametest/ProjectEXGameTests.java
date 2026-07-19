@@ -1172,6 +1172,34 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
     }
 
     @GameTest
+    public void condenserMk3ProcessesOneBoundedExactBatch(GameTestHelper helper) {
+        BlockPos relative = new BlockPos(20, 1, 0);
+        helper.setBlock(relative, ProjectEXBlocks.CONDENSER_MK3);
+        AlchemyStorageBlockEntity condenser = helper.getBlockEntity(relative, AlchemyStorageBlockEntity.class);
+        condenser.setItem(AlchemyStorageBlockEntity.TARGET_SLOT, new ItemStack(Items.DIAMOND));
+        for (int slot = 1; slot <= 8; slot++) {
+            condenser.setItem(slot, new ItemStack(Items.COAL, 64));
+        }
+
+        AlchemyStorageBlockEntity.tickServer(
+            helper.getLevel(), helper.absolutePos(relative), condenser.getBlockState(), condenser
+        );
+
+        for (int slot = 1; slot <= 8; slot++) {
+            helper.assertTrue(condenser.getItem(slot).isEmpty(),
+                "MK3 did not consume its complete bounded 512-item batch");
+        }
+        helper.assertTrue(condenser.getItem(92).is(Items.DIAMOND)
+                && condenser.getItem(92).getCount() == 8,
+            "MK3 did not produce exactly eight diamonds from 65,536 EMC");
+        helper.assertTrue(condenser.storageState().stored().equals(EmcValue.ZERO),
+            "MK3 exact batch left an invalid EMC remainder");
+        helper.assertTrue(condenser.getContainerSize() == 272,
+            "MK3 inventory layout does not preserve 91 inputs, 180 outputs, and one target");
+        helper.succeed();
+    }
+
+    @GameTest
     public void fullCondenserOutputConsumesNothing(GameTestHelper helper) {
         BlockPos relative = new BlockPos(21, 1, 0);
         helper.setBlock(relative, ProjectEXBlocks.CONDENSER_MK1);
