@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "projectex:green_collector",
+    "projectex:lime_matter",
+    "projectex:lime_matter",
+    "projectex:lime_matter",
+    "projectex:lime_matter",
+    "projectex:lime_matter",
+    "projectex:lime_matter",
+    "projectex:lime_matter",
+    "projectex:lime_matter"
+  ],
+  "result": {
+    "id": "projectex:lime_collector"
+  }
+}

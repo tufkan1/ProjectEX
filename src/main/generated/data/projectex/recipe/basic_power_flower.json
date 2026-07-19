@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": "projectex:basic_compressed_collector",
+    "L": "projectex:transmutation_table",
+    "R": "projectex:relay_mk1"
+  },
+  "pattern": [
+    "CLC",
+    "RRR",
+    "RRR"
+  ],
+  "result": {
+    "id": "projectex:basic_power_flower"
+  }
+}

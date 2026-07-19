@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": "projectex:violet_compressed_collector",
+    "L": "projectex:transmutation_table",
+    "R": "projectex:violet_relay"
+  },
+  "pattern": [
+    "CLC",
+    "RRR",
+    "RRR"
+  ],
+  "result": {
+    "id": "projectex:violet_power_flower"
+  }
+}

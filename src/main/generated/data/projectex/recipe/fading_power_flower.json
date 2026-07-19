@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": "projectex:fading_compressed_collector",
+    "L": "projectex:transmutation_table",
+    "R": "projectex:fading_relay"
+  },
+  "pattern": [
+    "CLC",
+    "RRR",
+    "RRR"
+  ],
+  "result": {
+    "id": "projectex:fading_power_flower"
+  }
+}

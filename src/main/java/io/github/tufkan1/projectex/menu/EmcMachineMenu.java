@@ -34,8 +34,8 @@ public final class EmcMachineMenu extends AbstractContainerMenu {
             @Override
             public int get(int index) {
                 return switch (index) {
-                    case 0 -> machine.machineState().stored().amount().intValueExact();
-                    case 1 -> machine.tier().capacity().amount().intValueExact();
+                    case 0 -> saturatingInt(machine.machineState().stored().amount());
+                    case 1 -> saturatingInt(machine.tier().capacity().amount());
                     case 2 -> machine.tier().ordinal();
                     case 3 -> machine.machineState().redstoneMode().ordinal();
                     case 4 -> machine.machineState().access().publicAccess() ? 1 : 0;
@@ -51,6 +51,10 @@ public final class EmcMachineMenu extends AbstractContainerMenu {
             @Override
             public int getCount() {
                 return 5;
+            }
+
+            private int saturatingInt(java.math.BigInteger value) {
+                return value.min(java.math.BigInteger.valueOf(Integer.MAX_VALUE)).intValue();
             }
         }, machine);
     }

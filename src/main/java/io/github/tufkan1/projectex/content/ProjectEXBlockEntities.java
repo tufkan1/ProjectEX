@@ -16,14 +16,18 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 
 /** Block-entity types and Fabric sided automation adapters. */
 public final class ProjectEXBlockEntities {
-    private static final Set<Block> EMC_MACHINE_BLOCKS = Set.of(
-        ProjectEXBlocks.COLLECTOR_MK1,
-        ProjectEXBlocks.COLLECTOR_MK2,
-        ProjectEXBlocks.COLLECTOR_MK3,
-        ProjectEXBlocks.RELAY_MK1,
-        ProjectEXBlocks.RELAY_MK2,
-        ProjectEXBlocks.RELAY_MK3
-    );
+    private static final Set<Block> EMC_MACHINE_BLOCKS = java.util.stream.Stream.concat(
+        java.util.stream.Stream.of(
+            ProjectEXBlocks.COLLECTOR_MK1, ProjectEXBlocks.COLLECTOR_MK2,
+            ProjectEXBlocks.COLLECTOR_MK3, ProjectEXBlocks.RELAY_MK1,
+            ProjectEXBlocks.RELAY_MK2, ProjectEXBlocks.RELAY_MK3
+        ),
+        java.util.stream.Stream.of(
+            ProjectEXBlocks.EXPANSION_COLLECTORS,
+            ProjectEXBlocks.EXPANSION_RELAYS,
+            ProjectEXBlocks.POWER_FLOWERS
+        ).flatMap(map -> map.values().stream()).map(ProjectEXContentRegistry.RegisteredBlock::block)
+    ).collect(java.util.stream.Collectors.toUnmodifiableSet());
 
     public static final BlockEntityType<EmcMachineBlockEntity> EMC_MACHINE = Registry.register(
         BuiltInRegistries.BLOCK_ENTITY_TYPE,

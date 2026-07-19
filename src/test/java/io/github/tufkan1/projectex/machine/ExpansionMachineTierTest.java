@@ -50,4 +50,18 @@ final class ExpansionMachineTierTest {
         assertEquals(new EmcValue(BigInteger.valueOf(64).multiply(BigInteger.valueOf(6).pow(14))),
             ExpansionMachineTier.FADING.relayTransferPerTick());
     }
+
+    @Test
+    void machineCatalogMapsEveryPlayableExpansionBlockTier() {
+        for (ExpansionMachineTier tier : ExpansionMachineTier.values()) {
+            assertEquals(tier, MachineTier.expansion(MachineTier.MachineType.POWER_FLOWER, tier)
+                .expansionTier().orElseThrow());
+            if (tier.ordinal() >= ExpansionMachineTier.MAGENTA.ordinal()) {
+                assertEquals(tier, MachineTier.expansion(MachineTier.MachineType.COLLECTOR, tier)
+                    .expansionTier().orElseThrow());
+                assertEquals(tier, MachineTier.expansion(MachineTier.MachineType.RELAY, tier)
+                    .expansionTier().orElseThrow());
+            }
+        }
+    }
 }
