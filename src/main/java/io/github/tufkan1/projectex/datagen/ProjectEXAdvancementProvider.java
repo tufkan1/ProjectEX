@@ -64,5 +64,23 @@ public final class ProjectEXAdvancementProvider extends FabricAdvancementProvide
                 InventoryChangeTrigger.TriggerInstance.hasItems(ProjectEXBlocks.TRANSMUTATION_TABLE)
             )
             .save(exporter, ProjectEX.id("transmutation").toString());
+
+        Advancement.Builder.advancement()
+            .parent(stone)
+            .display(
+                ProjectEXItems.KLEIN_STAR_EIN.item(),
+                Component.translatable("advancements.projectex.klein_star.title"),
+                Component.translatable("advancements.projectex.klein_star.description"),
+                null,
+                AdvancementType.TASK,
+                true,
+                true,
+                false
+            )
+            .addCriterion(
+                "has_klein_star",
+                InventoryChangeTrigger.TriggerInstance.hasItems(ProjectEXItems.KLEIN_STAR_EIN.item())
+            )
+            .save(exporter, ProjectEX.id("klein_star").toString());
     }
 }

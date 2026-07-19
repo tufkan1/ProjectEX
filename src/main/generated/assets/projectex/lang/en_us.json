@@ -1,4 +1,6 @@
 {
+  "advancements.projectex.klein_star.description": "Craft a Klein Star and carry EMC with you.",
+  "advancements.projectex.klein_star.title": "Portable Potential",
   "advancements.projectex.philosophers_stone.description": "Craft a Philosopher's Stone and reshape ordinary matter.",
   "advancements.projectex.philosophers_stone.title": "First Principle",
   "advancements.projectex.transmutation.description": "Craft a Transmutation Table and begin exchanging matter.",
@@ -22,6 +24,13 @@
   "item.projectex.alchemical_coal": "Alchemical Coal",
   "item.projectex.dark_matter": "Dark Matter",
   "item.projectex.high_covalence_dust": "High Covalence Dust",
+  "item.projectex.klein_star.stored": "%s / %s EMC",
+  "item.projectex.klein_star_drei": "Klein Star Drei",
+  "item.projectex.klein_star_ein": "Klein Star Ein",
+  "item.projectex.klein_star_omega": "Klein Star Omega",
+  "item.projectex.klein_star_sphere": "Klein Star Sphere",
+  "item.projectex.klein_star_vier": "Klein Star Vier",
+  "item.projectex.klein_star_zwei": "Klein Star Zwei",
   "item.projectex.low_covalence_dust": "Low Covalence Dust",
   "item.projectex.medium_covalence_dust": "Medium Covalence Dust",
   "item.projectex.mobius_fuel": "Mobius Fuel",
@@ -60,5 +69,6 @@
   "screen.projectex.unfavorite": "Unfavorite",
   "tag.block.projectex.philosophers_stone_allowed": "Philosopher's Stone Transformable",
   "tag.block.projectex.philosophers_stone_denied": "Philosopher's Stone Protected",
-  "tag.item.projectex.covalence_dusts": "Covalence Dusts"
+  "tag.item.projectex.covalence_dusts": "Covalence Dusts",
+  "tag.item.projectex.klein_stars": "Klein Stars"
 }

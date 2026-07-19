@@ -3,6 +3,7 @@ package io.github.tufkan1.projectex.datagen;
 import io.github.tufkan1.projectex.ProjectEX;
 import io.github.tufkan1.projectex.content.ProjectEXBlocks;
 import io.github.tufkan1.projectex.content.ProjectEXItems;
+import io.github.tufkan1.projectex.content.recipe.KleinStarUpgradeRecipe;
 import java.util.concurrent.CompletableFuture;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
@@ -97,6 +98,20 @@ public final class ProjectEXRecipeProvider extends FabricRecipeProvider {
                     .pattern("DDD")
                     .unlockedBy("has_dark_matter", has(ProjectEXItems.DARK_MATTER.item()))
                     .save(output, id("red_matter"));
+
+                shaped(RecipeCategory.TOOLS, ProjectEXItems.KLEIN_STAR_EIN.item())
+                    .define('A', ProjectEXItems.AETERNALIS_FUEL.item())
+                    .define('D', ProjectEXItems.DARK_MATTER.item())
+                    .pattern(" A ")
+                    .pattern("ADA")
+                    .pattern(" A ")
+                    .unlockedBy("has_dark_matter", has(ProjectEXItems.DARK_MATTER.item()))
+                    .save(output, id("klein_star_ein"));
+                output.accept(
+                    id("klein_star_upgrade"),
+                    new KleinStarUpgradeRecipe(),
+                    null
+                );
             }
 
             private ResourceKey<Recipe<?>> id(String path) {

@@ -42,6 +42,18 @@ public final class ProjectEXItems {
             PhilosophersStoneItem::new,
             new Item.Properties().rarity(Rarity.UNCOMMON)
         );
+    public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> KLEIN_STAR_EIN =
+        star(KleinStarTier.EIN);
+    public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> KLEIN_STAR_ZWEI =
+        star(KleinStarTier.ZWEI);
+    public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> KLEIN_STAR_DREI =
+        star(KleinStarTier.DREI);
+    public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> KLEIN_STAR_VIER =
+        star(KleinStarTier.VIER);
+    public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> KLEIN_STAR_SPHERE =
+        star(KleinStarTier.SPHERE);
+    public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> KLEIN_STAR_OMEGA =
+        star(KleinStarTier.OMEGA);
 
     private static final List<ProjectEXContentRegistry.RegisteredItem<? extends Item>> MATERIALS = List.of(
         LOW_COVALENCE_DUST,
@@ -53,6 +65,15 @@ public final class ProjectEXItems {
         DARK_MATTER,
         RED_MATTER
     );
+    private static final List<ProjectEXContentRegistry.RegisteredItem<KleinStarItem>> KLEIN_STARS =
+        List.of(
+            KLEIN_STAR_EIN,
+            KLEIN_STAR_ZWEI,
+            KLEIN_STAR_DREI,
+            KLEIN_STAR_VIER,
+            KLEIN_STAR_SPHERE,
+            KLEIN_STAR_OMEGA
+        );
 
     private ProjectEXItems() {
     }
@@ -61,14 +82,29 @@ public final class ProjectEXItems {
         CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.INGREDIENTS)
             .register(entries -> MATERIALS.forEach(entry -> entries.accept(entry.item())));
         CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.TOOLS_AND_UTILITIES)
-            .register(entries -> entries.accept(PHILOSOPHERS_STONE.item()));
+            .register(entries -> {
+                entries.accept(PHILOSOPHERS_STONE.item());
+                KLEIN_STARS.forEach(entry -> entries.accept(entry.item()));
+            });
     }
 
     public static List<ProjectEXContentRegistry.RegisteredItem<? extends Item>> materials() {
         return MATERIALS;
     }
 
+    public static List<ProjectEXContentRegistry.RegisteredItem<KleinStarItem>> kleinStars() {
+        return KLEIN_STARS;
+    }
+
     private static ProjectEXContentRegistry.RegisteredItem<Item> simple(String path) {
         return ProjectEXContentRegistry.registerItem(path, Item::new, new Item.Properties());
+    }
+
+    private static ProjectEXContentRegistry.RegisteredItem<KleinStarItem> star(KleinStarTier tier) {
+        return ProjectEXContentRegistry.registerItem(
+            "klein_star_" + tier.serializedName(),
+            properties -> new KleinStarItem(properties, tier),
+            new Item.Properties().rarity(Rarity.UNCOMMON)
+        );
     }
 }

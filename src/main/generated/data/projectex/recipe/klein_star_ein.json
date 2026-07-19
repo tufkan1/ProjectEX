@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "A": "projectex:aeternalis_fuel",
+    "D": "projectex:dark_matter"
+  },
+  "pattern": [
+    " A ",
+    "ADA",
+    " A "
+  ],
+  "result": {
+    "id": "projectex:klein_star_ein"
+  }
+}

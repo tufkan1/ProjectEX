@@ -2,6 +2,7 @@ package io.github.tufkan1.projectex.content;
 
 import io.github.tufkan1.projectex.ProjectEX;
 import io.github.tufkan1.projectex.content.component.ActiveItemState;
+import io.github.tufkan1.projectex.content.component.PortableEmcState;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -14,6 +15,14 @@ public final class ProjectEXComponents {
         DataComponentType.<ActiveItemState>builder()
             .persistent(ActiveItemState.CODEC)
             .networkSynchronized(ActiveItemState.STREAM_CODEC)
+            .build()
+    );
+    public static final DataComponentType<PortableEmcState> PORTABLE_EMC = Registry.register(
+        BuiltInRegistries.DATA_COMPONENT_TYPE,
+        ProjectEX.id("portable_emc"),
+        DataComponentType.<PortableEmcState>builder()
+            .persistent(PortableEmcState.CODEC)
+            .networkSynchronized(PortableEmcState.STREAM_CODEC)
             .build()
     );
 

@@ -30,6 +30,8 @@ the Minecraft version.
 - Headless client GameTest for the complete learn, burn, and create network journey.
 - Typed content registration and reproducible recipe/tag/loot/model/language/advancement datagen.
 - Core covalence dust, fuel, matter progression and a protected server-authoritative Philosopher's Stone.
+- Six-tier Klein Star progression with exact retained-EMC upgrades and synchronized tooltips.
+- Versioned Fabric item EMC storage API with simulation, automation policy, migration, and overflow safety.
 
 ## [0.1.0-alpha.1] - Unreleased
 
