@@ -11,6 +11,7 @@ import io.github.tufkan1.projectex.network.AlchemySessionPayload;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -20,9 +21,13 @@ import net.minecraft.client.gui.screens.MenuScreens;
 public final class ProjectEXClient implements ClientModInitializer {
     private static final ClientAlchemySessionState ALCHEMY = new ClientAlchemySessionState();
     private static final ClientKnowledgeBrowserState KNOWLEDGE = new ClientKnowledgeBrowserState();
+    private static ClientFavoriteStore favoriteStore;
 
     @Override
     public void onInitializeClient() {
+        favoriteStore = new ClientFavoriteStore(
+            FabricLoader.getInstance().getConfigDir().resolve("projectex-favorites.json"));
+        KNOWLEDGE.replaceFavorites(favoriteStore.load());
         MenuScreens.register(ProjectEXMenus.TRANSMUTATION, TransmutationScreen::new);
         ClientPlayNetworking.registerGlobalReceiver(AlchemySessionPayload.TYPE, (payload, context) -> {
             if (!ALCHEMY.open(payload)) {
@@ -91,5 +96,15 @@ public final class ProjectEXClient implements ClientModInitializer {
 
     public static ClientKnowledgeBrowserState knowledge() {
         return KNOWLEDGE;
+    }
+
+    public static boolean toggleFavorite(String itemId) {
+        if (!KNOWLEDGE.toggleFavorite(itemId)) {
+            return false;
+        }
+        if (favoriteStore != null && !favoriteStore.save(KNOWLEDGE.snapshot().favorites())) {
+            ProjectEX.LOGGER.warn("Could not persist ProjectEX client favorites");
+        }
+        return true;
     }
 }
