@@ -229,5 +229,9 @@
   "item.projectex.destruction_catalyst": "Destruction Catalyst",
   "item.projectex.destructive_catalyst.result": "Destroyed %s blocks; spent %s EMC",
   "tag.block.projectex.destructive_catalyst_allowed": "Destructive Catalyst breakable blocks",
-  "tag.block.projectex.destructive_catalyst_denied": "Destructive Catalyst denied blocks"
+  "tag.block.projectex.destructive_catalyst_denied": "Destructive Catalyst denied blocks",
+  "item.projectex.body_stone": "Body Stone",
+  "item.projectex.soul_stone": "Soul Stone",
+  "item.projectex.life_stone": "Life Stone",
+  "item.projectex.vitality_stone.result": "Vitality restored for %s EMC"
 }

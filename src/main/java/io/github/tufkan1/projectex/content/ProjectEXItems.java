@@ -135,6 +135,12 @@ public final class ProjectEXItems {
                 properties, DestructiveCatalystItem.Kind.DESTRUCTION),
             new Item.Properties().rarity(Rarity.RARE).fireResistant()
         );
+    public static final ProjectEXContentRegistry.RegisteredItem<VitalityStoneItem> BODY_STONE =
+        vitalityStone("body_stone", VitalityStoneItem.Kind.BODY);
+    public static final ProjectEXContentRegistry.RegisteredItem<VitalityStoneItem> SOUL_STONE =
+        vitalityStone("soul_stone", VitalityStoneItem.Kind.SOUL);
+    public static final ProjectEXContentRegistry.RegisteredItem<VitalityStoneItem> LIFE_STONE =
+        vitalityStone("life_stone", VitalityStoneItem.Kind.LIFE);
     public static final List<ProjectEXContentRegistry.RegisteredItem<DiviningRodItem>> DIVINING_RODS =
         java.util.stream.IntStream.range(0, 3).mapToObj(tier ->
             ProjectEXContentRegistry.registerItem(
@@ -250,6 +256,9 @@ public final class ProjectEXItems {
                 entries.accept(KNOWLEDGE_TOME.item());
                 entries.accept(NOVA_CATALYST.item());
                 entries.accept(DESTRUCTION_CATALYST.item());
+                entries.accept(BODY_STONE.item());
+                entries.accept(SOUL_STONE.item());
+                entries.accept(LIFE_STONE.item());
                 DIVINING_RODS.forEach(entry -> entries.accept(entry.item()));
                 entries.accept(FINAL_STAR_SHARD.item());
                 entries.accept(FINAL_STAR.item());
@@ -297,6 +306,16 @@ public final class ProjectEXItems {
             tier.serializedName(),
             properties -> new KleinStarItem(properties, tier),
             new Item.Properties().rarity(Rarity.UNCOMMON)
+        );
+    }
+
+    private static ProjectEXContentRegistry.RegisteredItem<VitalityStoneItem> vitalityStone(
+        String id, VitalityStoneItem.Kind kind
+    ) {
+        return ProjectEXContentRegistry.registerItem(
+            id, properties -> new VitalityStoneItem(properties, kind),
+            new Item.Properties().rarity(kind == VitalityStoneItem.Kind.LIFE
+                ? Rarity.EPIC : Rarity.RARE).fireResistant()
         );
     }
 

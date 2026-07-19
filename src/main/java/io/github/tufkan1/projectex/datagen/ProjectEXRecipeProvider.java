@@ -99,6 +99,23 @@ public final class ProjectEXRecipeProvider extends FabricRecipeProvider {
                     .pattern("NMN").pattern("MFM").pattern("NMN")
                     .unlockedBy("has_nova_catalyst", has(ProjectEXItems.NOVA_CATALYST.item()))
                     .save(output, id("destruction_catalyst"));
+                shaped(RecipeCategory.TOOLS, ProjectEXItems.BODY_STONE.item())
+                    .define('S', Items.SUGAR).define('R', ProjectEXItems.RED_MATTER.item())
+                    .define('L', Items.LAPIS_LAZULI)
+                    .pattern("SSS").pattern("RLR").pattern("SSS")
+                    .unlockedBy("has_red_matter", has(ProjectEXItems.RED_MATTER.item()))
+                    .save(output, id("body_stone"));
+                shaped(RecipeCategory.TOOLS, ProjectEXItems.SOUL_STONE.item())
+                    .define('G', Items.GLOWSTONE_DUST).define('R', ProjectEXItems.RED_MATTER.item())
+                    .define('L', Items.LAPIS_LAZULI)
+                    .pattern("GGG").pattern("RLR").pattern("GGG")
+                    .unlockedBy("has_red_matter", has(ProjectEXItems.RED_MATTER.item()))
+                    .save(output, id("soul_stone"));
+                shapeless(RecipeCategory.TOOLS, ProjectEXItems.LIFE_STONE.item())
+                    .requires(ProjectEXItems.BODY_STONE.item())
+                    .requires(ProjectEXItems.SOUL_STONE.item())
+                    .unlockedBy("has_body_stone", has(ProjectEXItems.BODY_STONE.item()))
+                    .save(output, id("life_stone"));
                 shaped(RecipeCategory.MISC, ProjectEXBlocks.DARK_MATTER_PEDESTAL)
                     .define('D', ProjectEXBlocks.DARK_MATTER_BLOCK)
                     .define('R', ProjectEXItems.RED_MATTER.item())

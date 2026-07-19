@@ -94,8 +94,20 @@ public utility protection callback to every target. They never create an explosi
 damage entities. `projectex.destructiveCatalysts.enabled=false` disables both before planning,
 payment, mutation, cooldown, or item consumption; malformed values fail startup.
 
+## Vitality stones
+
+Body Stone restores two hunger points for 64 EMC, Soul Stone restores two health points for
+64 EMC, and Life Stone combines only the effects currently needed. When both are needed, its
+128 EMC debit is atomic: insufficient funds apply neither effect. No-op and failed actions
+consume nothing, and successful use has a 20-tick cooldown.
+
+All three stones work in the Dark Matter Pedestal every 20 ticks. The pedestal considers at
+most 16 living, non-spectator players in already-loaded chunks, sorted by UUID. Body and Soul
+restore one hunger or health point respectively; Life applies both where needed. These effects
+use no EMC because pedestal ownership, range, redstone, and work caps are the balancing
+boundary.
+
 ## Remaining #39 families
 
-Additional pedestal effects and rings will build on this state/network contract. Their world adapters must
-add per-target protection callbacks, allow/deny tags, chunk-loaded bounds, per-tick work caps,
-and exact EMC charging before #39 is closed.
+Future utility additions must preserve the same protection callbacks, allow/deny tags,
+chunk-loaded bounds, per-tick work caps, and exact EMC charging established by #39.

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "projectex:body_stone",
+    "projectex:soul_stone"
+  ],
+  "result": {
+    "id": "projectex:life_stone"
+  }
+}

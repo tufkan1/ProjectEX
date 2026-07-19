@@ -485,6 +485,53 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
     }
 
     @GameTest
+    public void vitalityStonesChargeAtomicallyAndProvideBoundedPedestalEffects(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        player.setGameMode(GameType.SURVIVAL);
+        player.setHealth(10.0F);
+        player.getFoodData().setFoodLevel(10);
+        ItemStack lifeStone = new ItemStack(ProjectEXItems.LIFE_STONE.item());
+        player.setItemInHand(InteractionHand.MAIN_HAND, lifeStone);
+        MatterEmcPayment.credit(player, EmcValue.of(127));
+        helper.assertTrue(ProjectEXItems.LIFE_STONE.item().use(
+                helper.getLevel(), player, InteractionHand.MAIN_HAND)
+                == net.minecraft.world.InteractionResult.FAIL,
+            "Life Stone partially applied without the atomic 128 EMC cost");
+        helper.assertTrue(player.getHealth() == 10.0F
+                && player.getFoodData().getFoodLevel() == 10
+                && MatterEmcPayment.balance(player).equals(EmcValue.of(127)),
+            "Failed Life Stone action changed vitality or EMC");
+        MatterEmcPayment.credit(player, EmcValue.of(1));
+        helper.assertTrue(ProjectEXItems.LIFE_STONE.item().use(
+                helper.getLevel(), player, InteractionHand.MAIN_HAND)
+                == net.minecraft.world.InteractionResult.SUCCESS_SERVER,
+            "Exactly funded Life Stone action failed");
+        helper.assertTrue(player.getHealth() == 12.0F
+                && player.getFoodData().getFoodLevel() == 12
+                && MatterEmcPayment.balance(player).equals(EmcValue.ZERO),
+            "Life Stone did not apply both exact-cost effects");
+
+        ServerPlayer nearby = helper.makeMockServerPlayerInLevel();
+        BlockPos pedestal = new BlockPos(20, 2, 14);
+        nearby.setPos(Vec3.atCenterOf(helper.absolutePos(pedestal)));
+        nearby.setHealth(10.0F);
+        nearby.getFoodData().setFoodLevel(10);
+        ((io.github.tufkan1.projectex.content.VitalityStoneItem)
+            ProjectEXItems.LIFE_STONE.item()).applyPedestalEffect(
+                helper.getLevel(), helper.absolutePos(pedestal), lifeStone, 4, 16);
+        helper.assertTrue(nearby.getHealth() == 11.0F
+                && nearby.getFoodData().getFoodLevel() == 11,
+            "Life Stone pedestal effect exceeded or missed its bounded one-point effects");
+        for (String recipe : List.of("body_stone", "soul_stone", "life_stone")) {
+            helper.assertTrue(helper.getLevel().getServer().getRecipeManager().byKey(
+                net.minecraft.resources.ResourceKey.create(
+                    net.minecraft.core.registries.Registries.RECIPE, ProjectEX.id(recipe)))
+                .isPresent(), "Missing vitality stone recipe: " + recipe);
+        }
+        helper.succeed();
+    }
+
+    @GameTest
     public void bundledEmcDataLoadsAtRuntime(GameTestHelper helper) {
         helper.assertValueEqual(
             ProjectEX.emc().find(EmcKey.parse("minecraft:diamond")).orElseThrow(),
