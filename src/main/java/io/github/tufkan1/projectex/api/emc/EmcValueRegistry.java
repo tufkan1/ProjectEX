@@ -9,12 +9,16 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /** Thread-safe EMC snapshot store. Reloaders replace the complete snapshot atomically. */
 public final class EmcValueRegistry {
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-    private Map<EmcKey, EmcValue> values = Map.of();
+    private Map<EmcMatch, EmcValue> values = Map.of();
 
     public Optional<EmcValue> find(EmcKey key) {
+        return find(EmcMatch.item(key));
+    }
+
+    public Optional<EmcValue> find(EmcMatch match) {
         lock.readLock().lock();
         try {
-            return Optional.ofNullable(values.get(key));
+            return Optional.ofNullable(values.get(match));
         } finally {
             lock.readLock().unlock();
         }
@@ -29,7 +33,7 @@ public final class EmcValueRegistry {
         }
     }
 
-    public Map<EmcKey, EmcValue> snapshot() {
+    public Map<EmcMatch, EmcValue> snapshot() {
         lock.readLock().lock();
         try {
             return values;
@@ -38,8 +42,8 @@ public final class EmcValueRegistry {
         }
     }
 
-    public void replaceAll(Map<EmcKey, EmcValue> replacement) {
-        Map<EmcKey, EmcValue> immutable = Collections.unmodifiableMap(new TreeMap<>(replacement));
+    public void replaceAll(Map<EmcMatch, EmcValue> replacement) {
+        Map<EmcMatch, EmcValue> immutable = Collections.unmodifiableMap(new TreeMap<>(replacement));
         lock.writeLock().lock();
         try {
             values = immutable;

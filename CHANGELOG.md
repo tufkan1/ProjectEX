@@ -12,6 +12,7 @@ the Minecraft version.
 - Loader-neutral, arbitrary-precision EMC domain model and unit tests.
 - Public repository governance, contribution, security, issue, CI, and release scaffolding.
 - Versioned EMC data-pack schema, strict parser, safety limits, and fixture tests.
+- Deterministic priority/conflict/alias resolution and atomic server data reload.
 
 ## [0.1.0-alpha.1] - Unreleased
 

@@ -1,6 +1,7 @@
 package io.github.tufkan1.projectex.emc.data;
 
 import io.github.tufkan1.projectex.api.emc.EmcKey;
+import io.github.tufkan1.projectex.api.emc.EmcMatch;
 import io.github.tufkan1.projectex.api.emc.EmcValue;
 import java.util.Objects;
 
@@ -38,7 +39,11 @@ public record EmcDefinition(
 
     /** Stable identity used to detect duplicates independently of JSON object key order. */
     public String matchKey() {
-        return componentsJson == null ? item.toString() : item + "|" + componentsJson;
+        return match().toString();
+    }
+
+    public EmcMatch match() {
+        return new EmcMatch(item, componentsJson);
     }
 
     public enum Kind {
