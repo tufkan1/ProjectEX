@@ -12,11 +12,14 @@ feature releases are not assumed binary compatible. The project ports forward to
 - A version is supported while it receives security and critical save-corruption fixes.
 - End of support is announced in the changelog and README before branch archival.
 
-## Pre-alpha expectations
+## Stability expectations
 
-Before 1.0, APIs and save formats may change. Any release capable of writing world
-or player state must include a data version and migration path. Users must back up
-worlds before upgrading; development builds are never declared world-safe.
+ProjectEX 1.0 freezes the supported public API, configuration schema 1, and persisted-data
+format 1 for the Minecraft 26.2 support line. Compatible changes preserve those contracts;
+breaking changes require a new major mod version and a documented migration path. Any
+release capable of writing world or player state includes a data version and migration
+path. Users must still back up worlds before upgrading, and development builds are never
+declared world-safe.
 
 ## Support scope
 

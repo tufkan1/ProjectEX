@@ -4,9 +4,9 @@ ProjectEX is a community-driven alchemy and EMC mod being built for Fabric,
 starting with Minecraft Java Edition 26.2. It is a clean, maintainable
 implementation informed by the behavior of ProjectE and ProjectExpansion.
 
-> **Status: public alpha.** The complete 26.2 progression is available for testing,
-> but APIs and world formats are not frozen for 1.0. Back up important worlds before
-> installing or upgrading.
+> **Status: stable 1.0 support line.** ProjectEX 1.0 freezes its public API,
+> configuration schema 1, and persisted-data format 1 for Minecraft 26.2. Back up
+> important worlds before every mod or game upgrade.
 
 The current playable loop starts at the craftable Transmutation Table. Right-click it,
 learn a held item, burn valued items into EMC, then create learned items from the

@@ -6,6 +6,15 @@ the Minecraft version.
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-07-19
+
+### Changed
+
+- Froze the Minecraft 26.2 support matrix, public API, configuration schema 1, and
+  persisted-data format 1 after the complete release audit and public alpha rehearsal.
+- Promoted the same audited feature set to the first world-supported stable release;
+  operators upgrading from `0.1.0-alpha.1` receive the documented format-0 migration.
+
 ## [0.1.0-alpha.1] - 2026-07-19
 
 ### Added
