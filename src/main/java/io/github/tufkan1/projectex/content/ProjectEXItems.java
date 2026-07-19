@@ -101,6 +101,19 @@ public final class ProjectEXItems {
             "transmutation_tablet", TransmutationTabletItem::new,
             new Item.Properties().rarity(Rarity.EPIC).fireResistant()
         );
+    public static final ProjectEXContentRegistry.RegisteredItem<RepairTalismanItem> REPAIR_TALISMAN =
+        ProjectEXContentRegistry.registerItem(
+            "repair_talisman", RepairTalismanItem::new,
+            new Item.Properties().rarity(Rarity.UNCOMMON)
+        );
+    public static final List<ProjectEXContentRegistry.RegisteredItem<DiviningRodItem>> DIVINING_RODS =
+        java.util.stream.IntStream.range(0, 3).mapToObj(tier ->
+            ProjectEXContentRegistry.registerItem(
+                "divining_rod_" + (tier + 1),
+                properties -> new DiviningRodItem(properties, tier),
+                new Item.Properties().rarity(tier == 2 ? Rarity.RARE : Rarity.UNCOMMON)
+            )
+        ).toList();
     public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> KLEIN_STAR_EIN =
         star(KleinStarTier.EIN);
     public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> KLEIN_STAR_ZWEI =
@@ -202,6 +215,8 @@ public final class ProjectEXItems {
             .register(entries -> {
                 entries.accept(PHILOSOPHERS_STONE.item());
                 entries.accept(TRANSMUTATION_TABLET.item());
+                entries.accept(REPAIR_TALISMAN.item());
+                DIVINING_RODS.forEach(entry -> entries.accept(entry.item()));
                 entries.accept(FINAL_STAR_SHARD.item());
                 entries.accept(FINAL_STAR.item());
                 entries.accept(INFINITE_STEAK.item());

@@ -282,5 +282,13 @@
   "item.projectex.utility.state": "%s — Şarj %s, Kip: %s",
   "key.categories.projectex.utilities": "ProjectEX Araçları",
   "key.projectex.utility_charge": "Araç Şarjını Değiştir",
-  "key.projectex.utility_mode": "Araç Kipini Değiştir"
+  "key.projectex.utility_mode": "Araç Kipini Değiştir",
+  "item.projectex.repair_talisman": "Onarım Tılsımı",
+  "item.projectex.divining_rod_1": "Düşük Seviye Kehanet Çubuğu",
+  "item.projectex.divining_rod_2": "Orta Seviye Kehanet Çubuğu",
+  "item.projectex.divining_rod_3": "Yüksek Seviye Kehanet Çubuğu",
+  "item.projectex.divining_rod.result": "%s blok tarandı; ortalama EMC: %s",
+  "item.projectex.divining_rod.highest": "En yüksek değer #%s: %s EMC",
+  "tag.block.projectex.divining_rod_allowed": "Kehanet Çubuğuyla taranabilir bloklar",
+  "tag.block.projectex.divining_rod_denied": "Kehanet Çubuğuna kapalı bloklar"
 }

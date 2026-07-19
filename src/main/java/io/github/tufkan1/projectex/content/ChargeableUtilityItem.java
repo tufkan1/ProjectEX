@@ -30,8 +30,11 @@ public class ChargeableUtilityItem extends Item {
         if (stack.getItem() != this) return;
         ActiveItemState current = stack.getOrDefault(ProjectEXComponents.ACTIVE_ITEM_STATE,
             ActiveItemState.DEFAULT);
+        int maximumCharge = Math.clamp(maximumCharge(stack), 0, ActiveItemState.MAX_CHARGE);
         ActiveItemState updated = action == UtilityStateAction.CHARGE
-            ? current.nextCharge() : current.nextMode();
+            ? new ActiveItemState(current.version(),
+                current.charge() >= maximumCharge ? 0 : current.charge() + 1, current.mode())
+            : current.nextMode();
         stack.set(ProjectEXComponents.ACTIVE_ITEM_STATE, updated);
         if (player instanceof ServerPlayer serverPlayer) {
             serverPlayer.sendOverlayMessage(Component.translatable(
@@ -41,5 +44,9 @@ public class ChargeableUtilityItem extends Item {
                 Component.translatable("item.projectex.active_mode." + updated.mode().serializedName())
             ));
         }
+    }
+
+    protected int maximumCharge(ItemStack stack) {
+        return ActiveItemState.MAX_CHARGE;
     }
 }

@@ -29,9 +29,21 @@ The server authorizes the portable session only while a tablet remains in the ha
 open it. Dropping, moving, or replacing that held item makes the menu invalid and causes the
 session registry to reject later payloads. Disconnect handling is inherited from M2.
 
+## Repair Talisman and Divining Rods
+
+The Repair Talisman repairs one durability point on every damaged inventory item once per
+second. Multiple talismans do not stack, and an actively swung main-hand tool is skipped.
+
+The three Divining Rod tiers scan a 3x3 column inward from the clicked face. Their bounded
+depths are 3, 16, and 64 blocks, selected through the shared charge state. Scans never load
+chunks, do not mutate blocks, honor `projectex:divining_rod_allowed` and
+`projectex:divining_rod_denied`, and issue a per-position `UtilityWorldActionProtection`
+callback for claim integrations. Results use the live immutable EMC snapshot and report the
+average plus the tier's highest distinct values through accessible chat messages.
+
 ## Remaining #39 families
 
-Pedestal effects, repair talisman, divining rods, amulets, rings, knowledge tome policy, and
+Pedestal effects, amulets, rings, knowledge tome policy, and
 destructive catalysts will build on this state/network contract. Their world adapters must
 add per-target protection callbacks, allow/deny tags, chunk-loaded bounds, per-tick work caps,
 and exact EMC charging before #39 is closed.

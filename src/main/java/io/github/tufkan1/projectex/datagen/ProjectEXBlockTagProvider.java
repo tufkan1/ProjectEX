@@ -70,6 +70,12 @@ public final class ProjectEXBlockTagProvider extends FabricTagsProvider.BlockTag
             key(Blocks.JIGSAW),
             key(Blocks.END_PORTAL_FRAME)
         );
+        builder(ProjectEXTags.DIVINING_ROD_ALLOWED).addTag(BlockTags.MINEABLE_WITH_PICKAXE);
+        builder(ProjectEXTags.DIVINING_ROD_DENIED).add(
+            key(Blocks.BEDROCK), key(Blocks.BARRIER), key(Blocks.COMMAND_BLOCK),
+            key(Blocks.REPEATING_COMMAND_BLOCK), key(Blocks.CHAIN_COMMAND_BLOCK),
+            key(Blocks.STRUCTURE_BLOCK), key(Blocks.JIGSAW), key(Blocks.END_PORTAL_FRAME)
+        );
         builder(ProjectEXTags.INCORRECT_FOR_DARK_MATTER_TOOL).add(
             key(Blocks.BEDROCK), key(Blocks.BARRIER), key(Blocks.COMMAND_BLOCK),
             key(Blocks.REPEATING_COMMAND_BLOCK), key(Blocks.CHAIN_COMMAND_BLOCK),

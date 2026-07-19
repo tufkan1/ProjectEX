@@ -176,14 +176,9 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
         if (room.equals(EmcValue.ZERO)) {
             return;
         }
-        FixedPointRate rate = MachineRuntimeConfig.generationRate(tier);
-        if (tier.type() == MachineTier.MachineType.POWER_FLOWER && level != null
-            && level.getBlockState(worldPosition.below()).is(ProjectEXBlocks.COMPACT_SUN)) {
-            rate = new FixedPointRate(
-                rate.numerator().multiply(BigInteger.valueOf(MachineRuntimeConfig.compactSunMultiplier())),
-                rate.denominator()
-            );
-        }
+        boolean compactSun = tier.type() == MachineTier.MachineType.POWER_FLOWER && level != null
+            && level.getBlockState(worldPosition.below()).is(ProjectEXBlocks.COMPACT_SUN);
+        FixedPointRate rate = MachineRuntimeConfig.generationRate(tier, compactSun);
         FixedPointRate.Generation generation = rate.generate(
             state.deferredGeneration(),
             1,
