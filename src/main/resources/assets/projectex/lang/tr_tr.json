@@ -12,6 +12,7 @@
   "commands.projectex.player.recovery_required": "Oyuncu verisi kurtarma yedeği mevcut: %s",
   "commands.projectex.player.recovery_clean": "Oyuncu simya verisinde bekleyen kurtarma yedeği yok.",
   "menu.projectex.transmutation": "Dönüşüm",
+  "block.projectex.transmutation_table": "Dönüşüm Masası",
   "screen.projectex.search": "Öğrenilmiş eşyaları ara",
   "screen.projectex.create": "Oluştur",
   "screen.projectex.favorite": "Favori",

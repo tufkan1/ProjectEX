@@ -3,6 +3,7 @@ package io.github.tufkan1.projectex;
 import io.github.tufkan1.projectex.api.emc.EmcApi;
 import io.github.tufkan1.projectex.command.EmcCommands;
 import io.github.tufkan1.projectex.content.ProjectEXMenus;
+import io.github.tufkan1.projectex.content.ProjectEXBlocks;
 import io.github.tufkan1.projectex.emc.mapping.minecraft.MinecraftRecipeMappingService;
 import io.github.tufkan1.projectex.emc.reload.EmcDataReloadListener;
 import io.github.tufkan1.projectex.internal.emc.EmcValueRegistry;
@@ -27,6 +28,7 @@ public final class ProjectEX implements ModInitializer {
             id("emc_values"),
             new EmcDataReloadListener(EMC_VALUES)
         );
+        ProjectEXBlocks.register();
         ProjectEXMenus.register();
         EmcCommands.register();
         AlchemyNetworking.register();

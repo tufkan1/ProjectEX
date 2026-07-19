@@ -49,6 +49,22 @@ class EmcDataParserTest {
             file.values().get(2).componentsJson());
     }
 
+    @Test
+    void bundledVanillaBaseValuesRemainValid() throws IOException {
+        String resource = "/data/projectex/projectex/emc/vanilla_base.json";
+        try (InputStream stream = EmcDataParserTest.class.getResourceAsStream(resource)) {
+            if (stream == null) {
+                throw new IOException("Missing bundled EMC data: " + resource);
+            }
+            EmcDataFile file = EmcDataParser.parse(
+                new InputStreamReader(stream, StandardCharsets.UTF_8));
+            assertEquals(20, file.values().size());
+            assertEquals(EmcValue.of(8192), file.values().stream()
+                .filter(value -> value.item().toString().equals("minecraft:diamond"))
+                .findFirst().orElseThrow().value());
+        }
+    }
+
     @TestFactory
     Stream<DynamicTest> rejectsInvalidFixtures() {
         return INVALID_FIXTURES.stream().map(name -> DynamicTest.dynamicTest(name,
