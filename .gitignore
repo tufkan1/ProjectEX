@@ -1,0 +1,16 @@
+.gradle/
+build/
+out/
+run/
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.vscode/
+*.log
+*.hprof
+.env
+.env.*
+!.env.example
+.research/

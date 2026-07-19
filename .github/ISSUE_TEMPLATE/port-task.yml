@@ -1,0 +1,44 @@
+name: Port or parity task
+description: Track one bounded behavior from a reference implementation
+title: "[Port]: "
+labels: ["type: port", "status: needs-triage"]
+body:
+  - type: input
+    id: milestone
+    attributes:
+      label: Roadmap milestone / PX task
+      placeholder: "M3 / PX-303"
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Observable behavior to implement
+      description: Specify inputs, outputs, edge cases, multiplayer behavior, and configuration.
+    validations:
+      required: true
+  - type: textarea
+    id: upstream
+    attributes:
+      label: Immutable upstream references
+      description: Use commit-pinned ProjectE/ProjectExpansion links and state the license.
+    validations:
+      required: true
+  - type: textarea
+    id: fabric
+    attributes:
+      label: Proposed Fabric design
+      description: Events/APIs, persistence, packets, datagen, tests, and any mixin rationale.
+    validations:
+      required: true
+  - type: checkboxes
+    id: done
+    attributes:
+      label: Required deliverables
+      options:
+        - label: Tests and dedicated-server behavior are included in scope.
+          required: true
+        - label: Assets/localization/datagen and provenance are included in scope.
+          required: true
+        - label: Save/network compatibility impact is described.
+          required: true

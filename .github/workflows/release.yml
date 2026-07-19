@@ -1,0 +1,51 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: gradle/actions/wrapper-validation@v6
+      - uses: actions/setup-java@v5
+        with:
+          distribution: microsoft
+          java-version: "25"
+      - uses: gradle/actions/setup-gradle@v6
+      - run: chmod +x ./gradlew
+
+      - name: Verify tag matches mod version
+        shell: bash
+        run: |
+          expected="v$(sed -n 's/^mod_version=//p' gradle.properties)"
+          test "${GITHUB_REF_NAME}" = "${expected}" || {
+            echo "Tag ${GITHUB_REF_NAME} does not match ${expected}" >&2
+            exit 1
+          }
+
+      - name: Build release
+        run: ./gradlew --no-daemon clean check build
+
+      - name: Create checksums
+        shell: bash
+        run: cd build/libs && sha256sum *.jar > SHA256SUMS
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          prerelease=""
+          [[ "${GITHUB_REF_NAME}" == *-* ]] && prerelease="--prerelease"
+          gh release create "${GITHUB_REF_NAME}" build/libs/*.jar build/libs/SHA256SUMS \
+            --title "ProjectEX ${GITHUB_REF_NAME} for Minecraft 26.2" \
+            --generate-notes ${prerelease}

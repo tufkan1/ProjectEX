@@ -1,0 +1,38 @@
+name: Feature request
+description: Propose gameplay, API, compatibility, or quality-of-life work
+title: "[Feature]: "
+labels: ["type: enhancement", "status: needs-triage"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or player need
+      description: Describe the use case before proposing an implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives and balance/configuration considerations
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Link exact upstream code/behavior, other mods, screenshots, or design notes if relevant.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues and ROADMAP.md.
+          required: true
+        - label: I understand reference-project parity is not automatic acceptance.
+          required: true

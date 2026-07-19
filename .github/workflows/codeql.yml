@@ -1,0 +1,33 @@
+name: CodeQL
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "23 4 * * 1"
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  analyze:
+    name: Java analysis
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: java-kotlin
+          build-mode: manual
+      - uses: actions/setup-java@v5
+        with:
+          distribution: microsoft
+          java-version: "25"
+      - uses: gradle/actions/setup-gradle@v6
+      - run: chmod +x ./gradlew
+      - run: ./gradlew --no-daemon classes testClasses
+      - uses: github/codeql-action/analyze@v4

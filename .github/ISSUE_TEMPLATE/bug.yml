@@ -1,0 +1,72 @@
+name: Bug report
+description: Report reproducible incorrect behavior in a supported ProjectEX build
+title: "[Bug]: "
+labels: ["type: bug", "status: needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not report security vulnerabilities or duplication exploits publicly; follow SECURITY.md.
+        Do not ask ProjectE or ProjectExpansion maintainers for ProjectEX support.
+  - type: input
+    id: projectex
+    attributes:
+      label: ProjectEX version
+      placeholder: "0.1.0-alpha.1"
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Minecraft, Fabric Loader, Fabric API, and Java versions
+      placeholder: "Minecraft 26.2; Loader 0.19.3; Fabric API 0.155.2+26.2; Java 25"
+    validations:
+      required: true
+  - type: textarea
+    id: mods
+    attributes:
+      label: Other mods
+      description: Paste a short mod list or attach the generated list.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      placeholder: |
+        1. Create a new world...
+        2. Place...
+        3. Observe...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs and crash report
+      description: Drag files here or provide a link. Remove tokens and personal information.
+    validations:
+      required: true
+  - type: dropdown
+    id: server
+    attributes:
+      label: Where does it occur?
+      options: [Single player, Dedicated server, Both, Unknown]
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues and tested the latest applicable ProjectEX build.
+          required: true
+        - label: I can reproduce this without ProjectE/ProjectExpansion installed.
+          required: true
+        - label: This report contains no confidential security or exploit details.
+          required: true

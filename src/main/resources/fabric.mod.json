@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "projectex",
+  "version": "${version}",
+  "name": "ProjectEX",
+  "description": "A community-driven alchemy and EMC mod for modern Fabric.",
+  "authors": [
+    "tufkan1",
+    "ProjectEX contributors"
+  ],
+  "contact": {
+    "homepage": "https://github.com/tufkan1/ProjectEX",
+    "issues": "https://github.com/tufkan1/ProjectEX/issues",
+    "sources": "https://github.com/tufkan1/ProjectEX"
+  },
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "io.github.tufkan1.projectex.ProjectEX"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "~${minecraft_version}",
+    "java": ">=25",
+    "fabric-api": ">=0.155.2"
+  }
+}

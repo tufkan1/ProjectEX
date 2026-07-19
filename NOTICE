@@ -1,0 +1,16 @@
+ProjectEX is an independent, community-maintained Fabric project.
+
+It is not an official port, and is not endorsed by or affiliated with Mojang,
+Microsoft, ProjectE, or ProjectExpansion. Do not request support for ProjectEX
+from those projects.
+
+Design and compatibility research references:
+
+- ProjectE, Copyright (c) 2020 Sin Tachikawa, MIT License
+  https://github.com/sinkillerj/ProjectE
+- ProjectExpansion, Copyright (c) 2025 Donovan_DMC, MIT License
+  https://github.com/DonovanDMC/ProjectExpansion
+
+If source or assets are later adapted from either project, retain the original
+copyright notice in the affected file or asset manifest and record the origin
+in docs/provenance.md. Ideas and behavior alone are not recorded as copied code.
