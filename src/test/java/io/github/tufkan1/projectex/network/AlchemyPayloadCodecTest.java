@@ -75,6 +75,36 @@ class AlchemyPayloadCodecTest {
     }
 
     @Test
+    void knowledgeRequestAndBoundedPageRoundTrip() {
+        AlchemyKnowledgeRequestPayload request = new AlchemyKnowledgeRequestPayload(1, 2, 3, "coal", 0, 18);
+        AlchemyKnowledgePagePayload page = new AlchemyKnowledgePagePayload(
+            1,
+            2,
+            3,
+            AlchemyTransactionFailure.NONE.ordinal(),
+            0,
+            1,
+            1,
+            java.util.List.of(new AlchemyKnowledgePagePayload.Entry("minecraft:coal", "128"))
+        );
+        RegistryFriendlyByteBuf buffer = buffer();
+        try {
+            AlchemyKnowledgeRequestPayload.CODEC.encode(buffer, request);
+            assertEquals(request, AlchemyKnowledgeRequestPayload.CODEC.decode(buffer));
+            buffer.clear();
+            AlchemyKnowledgePagePayload.CODEC.encode(buffer, page);
+            AlchemyKnowledgePagePayload decoded = AlchemyKnowledgePagePayload.CODEC.decode(buffer);
+            assertEquals(page, decoded);
+            assertTrue(decoded.isStructurallyValid());
+        } finally {
+            buffer.release();
+        }
+        assertTrue(new AlchemyKnowledgePagePayload(
+            1, 2, 4, AlchemyTransactionFailure.NONE.ordinal(),
+            0, 0, 0, java.util.List.of()).isStructurallyValid());
+    }
+
+    @Test
     void malformedOperationsIdentifiersAndOversizedFieldsNeverBecomeTransactions() {
         assertTrue(new AlchemyActionPayload(1, 1, 0, 99, "minecraft:coal", 1, 0)
             .toTransaction().isEmpty());
@@ -92,6 +122,13 @@ class AlchemyPayloadCodecTest {
             .failure().isEmpty());
         assertTrue(!new AlchemyResultPayload(1, 1, 0, true,
             AlchemyTransactionFailure.RATE_LIMITED.ordinal(), 0, "0", 0).isStructurallyValid());
+        assertThrows(IllegalArgumentException.class, () -> new AlchemyKnowledgeRequestPayload(
+            1, 1, 0, "x".repeat(AlchemyNetworkProtocol.MAX_SEARCH_LENGTH + 1), 0, 18));
+        assertThrows(IllegalArgumentException.class, () -> new AlchemyKnowledgePagePayload(
+            1, 1, 0, 0, 0, 1, 55,
+            java.util.Collections.nCopies(
+                AlchemyNetworkProtocol.MAX_KNOWLEDGE_PAGE_SIZE + 1,
+                new AlchemyKnowledgePagePayload.Entry("minecraft:coal", "128"))));
     }
 
     private static RegistryFriendlyByteBuf buffer() {

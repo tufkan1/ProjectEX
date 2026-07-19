@@ -22,6 +22,10 @@ public final class AlchemyNetworking {
         PayloadTypeRegistry.serverboundPlay().register(AlchemyActionPayload.TYPE, AlchemyActionPayload.CODEC);
         PayloadTypeRegistry.clientboundPlay().register(AlchemyResultPayload.TYPE, AlchemyResultPayload.CODEC);
         PayloadTypeRegistry.clientboundPlay().register(AlchemySessionPayload.TYPE, AlchemySessionPayload.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(
+            AlchemyKnowledgeRequestPayload.TYPE, AlchemyKnowledgeRequestPayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(
+            AlchemyKnowledgePagePayload.TYPE, AlchemyKnowledgePagePayload.CODEC);
         ServerPlayNetworking.registerGlobalReceiver(AlchemyActionPayload.TYPE, (payload, context) -> {
             PlayerAlchemyState fallback = PlayerAlchemySavedData.get(context.server())
                 .state(context.player().getUUID());
@@ -31,6 +35,16 @@ public final class AlchemyNetworking {
                 payload,
                 ProjectEX.emc().snapshot(),
                 fallback,
+                System.nanoTime() / 1_000_000L
+            );
+            context.responseSender().sendPacket(result);
+        });
+        ServerPlayNetworking.registerGlobalReceiver(AlchemyKnowledgeRequestPayload.TYPE, (payload, context) -> {
+            AlchemyKnowledgePagePayload result = SESSIONS.handleKnowledge(
+                context.player().getUUID(),
+                !context.player().hasDisconnected(),
+                payload,
+                ProjectEX.emc().snapshot(),
                 System.nanoTime() / 1_000_000L
             );
             context.responseSender().sendPacket(result);

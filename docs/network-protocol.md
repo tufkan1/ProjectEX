@@ -50,3 +50,12 @@ Late, duplicate, unsolicited, malformed, and cross-session responses are discard
 
 Breaking field or semantic changes require a new payload identifier and protocol
 version. Old versions must fail with `UNSUPPORTED_PROTOCOL`, not be guessed or coerced.
+
+## Knowledge pages
+
+`alchemy_knowledge_request_v1` carries a separate monotonic query id, a search string
+of at most 64 characters, a zero-based page, and a requested page size of 1–54.
+`alchemy_knowledge_page_v1` returns only learned identifiers that still have a positive
+value in the current authoritative EMC snapshot. Filtering and paging happen on the
+server; responses contain at most 54 identifier/value entries. Action and query replay
+sequences are independent so search latency cannot invalidate create/burn requests.
