@@ -20,6 +20,7 @@ the Minecraft version.
 - Versioned UUID-keyed player EMC/knowledge persistence with migration and recovery backup.
 - Atomic server-authoritative learn, burn, and create evaluator with access and rate guards.
 - Versioned Fabric transmutation payloads with server sessions, replay defense, and bounded codecs.
+- Client session cache with authoritative response ordering and disconnect cleanup.
 
 ## [0.1.0-alpha.1] - Unreleased
 

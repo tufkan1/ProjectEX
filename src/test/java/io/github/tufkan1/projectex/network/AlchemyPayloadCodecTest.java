@@ -58,6 +58,23 @@ class AlchemyPayloadCodecTest {
     }
 
     @Test
+    void sessionPayloadRoundTripsAndRejectsInvalidAuthorityState() {
+        AlchemySessionPayload original = new AlchemySessionPayload(1, 2, 7, "8192", 4);
+        RegistryFriendlyByteBuf buffer = buffer();
+        try {
+            AlchemySessionPayload.CODEC.encode(buffer, original);
+            AlchemySessionPayload decoded = AlchemySessionPayload.CODEC.decode(buffer);
+            assertEquals(original, decoded);
+            assertTrue(decoded.isStructurallyValid());
+        } finally {
+            buffer.release();
+        }
+        assertTrue(!new AlchemySessionPayload(1, 0, 7, "0", 0).isStructurallyValid());
+        assertTrue(!new AlchemySessionPayload(99, 2, 7, "0", 0).isStructurallyValid());
+        assertTrue(!new AlchemySessionPayload(1, 2, 7, "not-a-number", 0).isStructurallyValid());
+    }
+
+    @Test
     void malformedOperationsIdentifiersAndOversizedFieldsNeverBecomeTransactions() {
         assertTrue(new AlchemyActionPayload(1, 1, 0, 99, "minecraft:coal", 1, 0)
             .toTransaction().isEmpty());

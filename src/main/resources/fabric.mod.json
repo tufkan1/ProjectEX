@@ -18,6 +18,9 @@
   "entrypoints": {
     "main": [
       "io.github.tufkan1.projectex.ProjectEX"
+    ],
+    "client": [
+      "io.github.tufkan1.projectex.client.ProjectEXClient"
     ]
   },
   "depends": {
