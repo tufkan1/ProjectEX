@@ -51,6 +51,12 @@ public final class ProjectEXBlocks {
         matterBlock("red_matter_block", SoundType.NETHERITE_BLOCK);
     public static final Block DARK_MATTER_BLOCK = DARK_MATTER_BLOCK_FAMILY.block();
     public static final Block RED_MATTER_BLOCK = RED_MATTER_BLOCK_FAMILY.block();
+    public static final ProjectEXContentRegistry.RegisteredBlock DARK_MATTER_FURNACE_FAMILY =
+        matterFurnace("dark_matter_furnace", io.github.tufkan1.projectex.matter.MatterTier.DARK);
+    public static final ProjectEXContentRegistry.RegisteredBlock RED_MATTER_FURNACE_FAMILY =
+        matterFurnace("red_matter_furnace", io.github.tufkan1.projectex.matter.MatterTier.RED);
+    public static final Block DARK_MATTER_FURNACE = DARK_MATTER_FURNACE_FAMILY.block();
+    public static final Block RED_MATTER_FURNACE = RED_MATTER_FURNACE_FAMILY.block();
 
     private ProjectEXBlocks() {
     }
@@ -70,6 +76,8 @@ public final class ProjectEXBlocks {
                 entries.accept(ALCHEMICAL_CHEST.asItem());
                 entries.accept(DARK_MATTER_BLOCK.asItem());
                 entries.accept(RED_MATTER_BLOCK.asItem());
+                entries.accept(DARK_MATTER_FURNACE.asItem());
+                entries.accept(RED_MATTER_FURNACE.asItem());
             });
     }
 
@@ -97,6 +105,15 @@ public final class ProjectEXBlocks {
             id, Block::new,
             BlockBehaviour.Properties.of().strength(20.0F, 1_200.0F)
                 .requiresCorrectToolForDrops().sound(sound)
+        );
+    }
+
+    private static ProjectEXContentRegistry.RegisteredBlock matterFurnace(
+        String id, io.github.tufkan1.projectex.matter.MatterTier tier
+    ) {
+        return ProjectEXContentRegistry.registerBlockWithItem(
+            id, properties -> new MatterFurnaceBlock(properties, tier),
+            BlockBehaviour.Properties.of().strength(8.0F, 1_200.0F).sound(SoundType.METAL)
         );
     }
 }

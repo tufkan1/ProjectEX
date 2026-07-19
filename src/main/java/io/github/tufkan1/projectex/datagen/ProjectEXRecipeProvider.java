@@ -183,6 +183,19 @@ public final class ProjectEXRecipeProvider extends FabricRecipeProvider {
 
                 matterBlockRecipes(ProjectEXBlocks.DARK_MATTER_BLOCK, ProjectEXItems.DARK_MATTER.item(), "dark_matter");
                 matterBlockRecipes(ProjectEXBlocks.RED_MATTER_BLOCK, ProjectEXItems.RED_MATTER.item(), "red_matter");
+                shaped(RecipeCategory.MISC, ProjectEXBlocks.DARK_MATTER_FURNACE)
+                    .define('F', Items.FURNACE).define('D', ProjectEXItems.DARK_MATTER.item())
+                    .define('O', Items.OBSIDIAN)
+                    .pattern("ODO").pattern("DFD").pattern("ODO")
+                    .unlockedBy("has_dark_matter", has(ProjectEXItems.DARK_MATTER.item()))
+                    .save(output, id("dark_matter_furnace"));
+                shaped(RecipeCategory.MISC, ProjectEXBlocks.RED_MATTER_FURNACE)
+                    .define('F', ProjectEXBlocks.DARK_MATTER_FURNACE)
+                    .define('R', ProjectEXItems.RED_MATTER.item())
+                    .define('O', Items.OBSIDIAN)
+                    .pattern("ORO").pattern("RFR").pattern("ORO")
+                    .unlockedBy("has_dark_matter_furnace", has(ProjectEXBlocks.DARK_MATTER_FURNACE))
+                    .save(output, id("red_matter_furnace"));
                 matterToolRecipe(ProjectEXItems.DARK_MATTER_PICKAXE, ProjectEXItems.DARK_MATTER.item());
                 matterToolRecipe(ProjectEXItems.DARK_MATTER_HAMMER, ProjectEXItems.DARK_MATTER.item());
                 matterToolRecipe(ProjectEXItems.RED_MATTER_PICKAXE, ProjectEXItems.RED_MATTER.item());

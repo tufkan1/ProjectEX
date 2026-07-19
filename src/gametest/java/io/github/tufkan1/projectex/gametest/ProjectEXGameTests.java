@@ -20,6 +20,7 @@ import io.github.tufkan1.projectex.internal.player.MatterEmcPayment;
 import io.github.tufkan1.projectex.content.recipe.KleinStarUpgradeRecipe;
 import io.github.tufkan1.projectex.content.machine.EmcMachineBlockEntity;
 import io.github.tufkan1.projectex.content.storage.AlchemyStorageBlockEntity;
+import io.github.tufkan1.projectex.content.matter.MatterFurnaceBlockEntity;
 import io.github.tufkan1.projectex.content.AlchemicalBagItem;
 import io.github.tufkan1.projectex.content.component.BagItemState;
 import io.github.tufkan1.projectex.menu.AlchemyStorageMenu;
@@ -27,6 +28,7 @@ import io.github.tufkan1.projectex.machine.MachineTier;
 import io.github.tufkan1.projectex.machine.MachineRedstoneMode;
 import io.github.tufkan1.projectex.menu.TransmutationMenu;
 import io.github.tufkan1.projectex.menu.EmcMachineMenu;
+import io.github.tufkan1.projectex.menu.MatterFurnaceMenu;
 import java.lang.reflect.Method;
 import java.util.List;
 import net.fabricmc.fabric.api.gametest.v1.CustomTestMethodInvoker;
@@ -743,6 +745,98 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
             "Matter hand-tool family size");
         helper.assertValueEqual(ProjectEXItems.MATTER_ARMOR.size(), 8,
             "Matter armor family size");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void redMatterFurnaceSmeltsAtTierSpeedWithExactBonusAndRemainder(GameTestHelper helper) {
+        BlockPos relative = new BlockPos(15, 1, 6);
+        helper.setBlock(relative, ProjectEXBlocks.RED_MATTER_FURNACE);
+        MatterFurnaceBlockEntity furnace = helper.getBlockEntity(relative, MatterFurnaceBlockEntity.class);
+        var top = ItemStorage.SIDED.find(helper.getLevel(), helper.absolutePos(relative), Direction.UP);
+        var side = ItemStorage.SIDED.find(helper.getLevel(), helper.absolutePos(relative), Direction.NORTH);
+        helper.assertTrue(top != null && side != null, "Matter furnace sided inputs were not exposed");
+        try (Transaction transaction = Transaction.openOuter()) {
+            helper.assertValueEqual(top.insert(ItemVariant.of(new ItemStack(Items.RAW_IRON)), 1, transaction),
+                1L, "Top furnace input insertion");
+            helper.assertValueEqual(side.insert(ItemVariant.of(new ItemStack(Items.LAVA_BUCKET)), 1, transaction),
+                1L, "Side furnace fuel insertion");
+            transaction.commit();
+        }
+
+        for (int tick = 0; tick < 5; tick++) {
+            MatterFurnaceBlockEntity.tickServer(
+                helper.getLevel(), helper.absolutePos(relative), furnace.getBlockState(), furnace
+            );
+        }
+
+        helper.assertTrue(furnace.getItem(MatterFurnaceBlockEntity.INPUT_SLOT).isEmpty(),
+            "Red matter furnace did not consume exactly one input");
+        helper.assertTrue(furnace.getItem(MatterFurnaceBlockEntity.FUEL_SLOT).is(Items.BUCKET),
+            "Matter furnace did not retain the exact lava-bucket remainder");
+        helper.assertTrue(furnace.getItem(MatterFurnaceBlockEntity.OUTPUT_START).is(Items.IRON_INGOT)
+                && furnace.getItem(MatterFurnaceBlockEntity.OUTPUT_START).getCount() == 2,
+            "Red matter furnace did not commit its deterministic two-output result");
+
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        BlockPos absolute = helper.absolutePos(relative);
+        player.setPos(absolute.getX() + 0.5, absolute.getY() + 1.0, absolute.getZ() + 0.5);
+        helper.getBlockState(relative).useWithoutItem(
+            helper.getLevel(), player,
+            new BlockHitResult(Vec3.atCenterOf(absolute), Direction.UP, absolute, false)
+        );
+        helper.assertTrue(player.containerMenu instanceof MatterFurnaceMenu menu
+                && menu.tier() == io.github.tufkan1.projectex.matter.MatterTier.RED,
+            "Red matter furnace did not open its synchronized accessible menu");
+        player.closeContainer();
+
+        ItemStack drop = net.minecraft.world.level.block.Block.getDrops(
+            furnace.getBlockState(), helper.getLevel(), absolute, furnace
+        ).stream().filter(stack -> stack.is(ProjectEXBlocks.RED_MATTER_FURNACE.asItem()))
+            .findFirst().orElseThrow();
+        BlockPos replacement = new BlockPos(16, 1, 6);
+        helper.setBlock(replacement, ProjectEXBlocks.RED_MATTER_FURNACE);
+        MatterFurnaceBlockEntity restored = helper.getBlockEntity(replacement, MatterFurnaceBlockEntity.class);
+        restored.applyComponentsFromItemStack(drop);
+        helper.assertTrue(restored.getItem(MatterFurnaceBlockEntity.OUTPUT_START).is(Items.IRON_INGOT)
+                && restored.getItem(MatterFurnaceBlockEntity.OUTPUT_START).getCount() == 2,
+            "Matter furnace lost its exact inventory during break/place");
+        var bottom = ItemStorage.SIDED.find(
+            helper.getLevel(), helper.absolutePos(replacement), Direction.DOWN
+        );
+        helper.assertTrue(bottom != null, "Matter furnace bottom output was not exposed");
+        try (Transaction transaction = Transaction.openOuter()) {
+            helper.assertValueEqual(bottom.extract(
+                ItemVariant.of(new ItemStack(Items.IRON_INGOT)), 1, transaction
+            ), 1L, "Bottom furnace output extraction");
+            transaction.commit();
+        }
+        helper.succeed();
+    }
+
+    @GameTest
+    public void fullMatterFurnaceOutputConsumesNoFuelOrInput(GameTestHelper helper) {
+        BlockPos relative = new BlockPos(18, 1, 6);
+        helper.setBlock(relative, ProjectEXBlocks.RED_MATTER_FURNACE);
+        MatterFurnaceBlockEntity furnace = helper.getBlockEntity(relative, MatterFurnaceBlockEntity.class);
+        furnace.setItem(MatterFurnaceBlockEntity.INPUT_SLOT, new ItemStack(Items.RAW_IRON, 3));
+        furnace.setItem(MatterFurnaceBlockEntity.FUEL_SLOT, new ItemStack(Items.COAL, 2));
+        for (int slot = MatterFurnaceBlockEntity.OUTPUT_START;
+             slot < MatterFurnaceBlockEntity.OUTPUT_START + 18; slot++) {
+            furnace.setItem(slot, new ItemStack(Items.DIAMOND, 64));
+        }
+
+        for (int tick = 0; tick < 10; tick++) {
+            MatterFurnaceBlockEntity.tickServer(
+                helper.getLevel(), helper.absolutePos(relative), furnace.getBlockState(), furnace
+            );
+        }
+
+        helper.assertValueEqual(furnace.getItem(MatterFurnaceBlockEntity.INPUT_SLOT).getCount(), 3,
+            "Blocked furnace input count");
+        helper.assertValueEqual(furnace.getItem(MatterFurnaceBlockEntity.FUEL_SLOT).getCount(), 2,
+            "Blocked furnace fuel count");
+        helper.assertValueEqual(furnace.burnRemaining(), 0, "Blocked furnace burn time");
         helper.succeed();
     }
 

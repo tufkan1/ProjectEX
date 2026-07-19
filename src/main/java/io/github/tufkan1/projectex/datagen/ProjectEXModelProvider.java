@@ -70,6 +70,8 @@ public final class ProjectEXModelProvider implements DataProvider {
         Map.entry("alchemical_chest", "minecraft:block/obsidian"),
         Map.entry("dark_matter_block", "minecraft:block/coal_block"),
         Map.entry("red_matter_block", "minecraft:block/redstone_block")
+        , Map.entry("dark_matter_furnace", "minecraft:block/blast_furnace_side")
+        , Map.entry("red_matter_furnace", "minecraft:block/crying_obsidian")
     );
 
     private final Path assetsRoot;

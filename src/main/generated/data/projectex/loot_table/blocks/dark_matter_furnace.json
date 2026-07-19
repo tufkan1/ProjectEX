@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:block",
+  "functions": [
+    {
+      "function": "minecraft:copy_components",
+      "include": [
+        "minecraft:container"
+      ],
+      "source": "block_entity"
+    }
+  ],
+  "pools": [
+    {
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "projectex:dark_matter_furnace"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}

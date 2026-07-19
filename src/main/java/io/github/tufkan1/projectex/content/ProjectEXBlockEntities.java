@@ -3,6 +3,7 @@ package io.github.tufkan1.projectex.content;
 import io.github.tufkan1.projectex.ProjectEX;
 import io.github.tufkan1.projectex.content.machine.EmcMachineBlockEntity;
 import io.github.tufkan1.projectex.content.storage.AlchemyStorageBlockEntity;
+import io.github.tufkan1.projectex.content.matter.MatterFurnaceBlockEntity;
 import java.util.Set;
 import net.fabricmc.fabric.api.transfer.v1.item.ContainerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
@@ -38,6 +39,13 @@ public final class ProjectEXBlockEntities {
             ProjectEXBlocks.ALCHEMICAL_CHEST
         ))
     );
+    public static final BlockEntityType<MatterFurnaceBlockEntity> MATTER_FURNACE = Registry.register(
+        BuiltInRegistries.BLOCK_ENTITY_TYPE,
+        ResourceKey.create(Registries.BLOCK_ENTITY_TYPE, ProjectEX.id("matter_furnace")),
+        new BlockEntityType<>(MatterFurnaceBlockEntity::new, Set.of(
+            ProjectEXBlocks.DARK_MATTER_FURNACE, ProjectEXBlocks.RED_MATTER_FURNACE
+        ))
+    );
 
     private ProjectEXBlockEntities() {
     }
@@ -50,6 +58,10 @@ public final class ProjectEXBlockEntities {
         ItemStorage.SIDED.registerForBlockEntity(
             (storage, direction) -> ContainerStorage.of(storage, direction),
             ALCHEMY_STORAGE
+        );
+        ItemStorage.SIDED.registerForBlockEntity(
+            (furnace, direction) -> ContainerStorage.of(furnace, direction),
+            MATTER_FURNACE
         );
     }
 }

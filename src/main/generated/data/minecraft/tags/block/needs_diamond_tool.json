@@ -11,6 +11,8 @@
     "projectex:condenser_mk2",
     "projectex:alchemical_chest",
     "projectex:dark_matter_block",
-    "projectex:red_matter_block"
+    "projectex:red_matter_block",
+    "projectex:dark_matter_furnace",
+    "projectex:red_matter_furnace"
   ]
 }
