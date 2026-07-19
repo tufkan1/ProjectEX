@@ -27,7 +27,7 @@ public final class KleinStarUpgradeRecipe extends CustomRecipe {
         if (plan == null) {
             return ItemStack.EMPTY;
         }
-        ItemStack result = new ItemStack(ProjectEXItems.kleinStars().get(plan.target().ordinal()).item());
+        ItemStack result = new ItemStack(ProjectEXItems.kleinStar(plan.target()).item());
         result.set(
             ProjectEXComponents.PORTABLE_EMC,
             new PortableEmcState(PortableEmcState.CURRENT_VERSION, plan.stored())
@@ -55,10 +55,14 @@ public final class KleinStarUpgradeRecipe extends CustomRecipe {
                 }
                 source = star.tier();
                 stars++;
-                stored = stored.add(stack.getOrDefault(
+                EmcValue stackStored = stack.getOrDefault(
                     ProjectEXComponents.PORTABLE_EMC,
                     PortableEmcState.EMPTY
-                ).stored());
+                ).stored();
+                if (stackStored.compareTo(star.tier().capacity()) > 0) {
+                    return null;
+                }
+                stored = stored.add(stackStored);
             } else if (stack.is(ProjectEXItems.AETERNALIS_FUEL.item())) {
                 catalysts++;
             } else {

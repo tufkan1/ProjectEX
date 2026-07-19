@@ -7,6 +7,7 @@ import io.github.tufkan1.projectex.content.ProjectEXBlocks;
 import io.github.tufkan1.projectex.content.ProjectEXBlockEntities;
 import io.github.tufkan1.projectex.content.ProjectEXComponents;
 import io.github.tufkan1.projectex.content.ProjectEXItems;
+import io.github.tufkan1.projectex.content.KleinStarTierReloadListener;
 import io.github.tufkan1.projectex.content.storage.ProjectEXEmcStorage;
 import io.github.tufkan1.projectex.content.recipe.ProjectEXRecipeSerializers;
 import io.github.tufkan1.projectex.emc.mapping.minecraft.MinecraftRecipeMappingService;
@@ -38,6 +39,9 @@ public final class ProjectEX implements ModInitializer {
         );
         ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(
             id("matter_tiers"), new MatterTierReloadListener()
+        );
+        ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(
+            id("star_tiers"), new KleinStarTierReloadListener()
         );
         ProjectEXComponents.register();
         ProjectEXBlocks.register();

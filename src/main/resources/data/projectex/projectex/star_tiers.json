@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "tiers": [
+    { "id": "klein_star_ein", "capacity": "50000" },
+    { "id": "klein_star_zwei", "capacity": "200000" },
+    { "id": "klein_star_drei", "capacity": "800000" },
+    { "id": "klein_star_vier", "capacity": "3200000" },
+    { "id": "klein_star_sphere", "capacity": "12800000" },
+    { "id": "klein_star_omega", "capacity": "51200000" },
+    { "id": "magnum_star_ein", "capacity": "204800000" },
+    { "id": "magnum_star_zwei", "capacity": "819200000" },
+    { "id": "magnum_star_drei", "capacity": "3276800000" },
+    { "id": "magnum_star_vier", "capacity": "13107200000" },
+    { "id": "magnum_star_sphere", "capacity": "52428800000" },
+    { "id": "magnum_star_omega", "capacity": "209715200000" },
+    { "id": "colossal_star_ein", "capacity": "838860800000" },
+    { "id": "colossal_star_zwei", "capacity": "3355443200000" },
+    { "id": "colossal_star_drei", "capacity": "13421772800000" },
+    { "id": "colossal_star_vier", "capacity": "53687091200000" },
+    { "id": "colossal_star_sphere", "capacity": "214748364800000" },
+    { "id": "colossal_star_omega", "capacity": "858993459200000" },
+    { "id": "gargantuan_star_ein", "capacity": "3435973836800000" },
+    { "id": "gargantuan_star_zwei", "capacity": "13743895347200000" },
+    { "id": "gargantuan_star_drei", "capacity": "54975581388800000" },
+    { "id": "gargantuan_star_vier", "capacity": "219902325555200000" },
+    { "id": "gargantuan_star_sphere", "capacity": "879609302220800000" },
+    { "id": "gargantuan_star_omega", "capacity": "3518437208883200000" }
+  ]
+}
