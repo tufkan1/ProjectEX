@@ -18,6 +18,7 @@ the Minecraft version.
 - Minecraft 26.2 recipe adapter with safe exclusions and post-reload derivation.
 - Versioned query-only EMC API with immutable snapshots and reload subscriptions.
 - Versioned UUID-keyed player EMC/knowledge persistence with migration and recovery backup.
+- Atomic server-authoritative learn, burn, and create evaluator with access and rate guards.
 
 ## [0.1.0-alpha.1] - Unreleased
 
