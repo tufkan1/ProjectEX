@@ -6,6 +6,19 @@ the Minecraft version.
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-07-19
+
+### Fixed
+
+- Energy Condenser and alchemical chest block/item models now inherit the original
+  full chest geometry and rotate with their placement direction.
+- Condenser, alchemical storage, collector, relay, matter-furnace, transmutation,
+  alchemical-book, and automation screens no longer stretch, tint, or cover source artwork.
+- Menu slot coordinates now use the source tier's native panel dimensions from the moment
+  the server opens the screen; ProjectEX access and redstone controls live outside source panels.
+- Matter furnaces expose only their tier's original output layout instead of drawing eighteen
+  overlapping output positions.
+
 ## [1.1.0] - 2026-07-19
 
 ### Added

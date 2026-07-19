@@ -37,7 +37,8 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
 /** Persistent exact-inventory runtime for the two matter furnace tiers. */
-public final class MatterFurnaceBlockEntity extends BlockEntity implements WorldlyContainer, MenuProvider {
+public final class MatterFurnaceBlockEntity extends BlockEntity implements WorldlyContainer, MenuProvider,
+    net.fabricmc.fabric.api.menu.v1.ExtendedMenuProvider<Integer> {
     public static final int INPUT_SLOT = 0;
     public static final int FUEL_SLOT = 1;
     public static final int OUTPUT_START = 2;
@@ -59,6 +60,10 @@ public final class MatterFurnaceBlockEntity extends BlockEntity implements World
     }
 
     public MatterTier tier() { return MatterTierConfig.resolve(tier); }
+
+    @Override public Integer getScreenOpeningData(net.minecraft.server.level.ServerPlayer player) {
+        return tier().id().equals(MatterTier.RED.id()) ? 1 : 0;
+    }
     public int burnRemaining() { return burnRemaining; }
     public int burnTotal() { return burnTotal; }
     public int cookProgress() { return cookProgress; }

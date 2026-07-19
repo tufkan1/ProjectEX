@@ -53,7 +53,8 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.ItemContainerContents;
 
 /** Versioned, sided and server-authoritative collector/relay block entity. */
-public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyContainer, MenuProvider {
+public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyContainer, MenuProvider,
+    net.fabricmc.fabric.api.menu.v1.ExtendedMenuProvider<Integer> {
     public static final int INPUT_SLOT = 0;
     public static final int OUTPUT_SLOT = 1;
     private static final int[] INPUT = {INPUT_SLOT};
@@ -108,6 +109,10 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
 
     public MachineTier tier() {
         return tier;
+    }
+
+    @Override public Integer getScreenOpeningData(net.minecraft.server.level.ServerPlayer player) {
+        return tier().ordinal();
     }
 
     public MachineState machineState() {

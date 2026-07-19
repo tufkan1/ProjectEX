@@ -1,7 +1,19 @@
 {
   "variants": {
-    "": {
+    "facing=east": {
+      "model": "projectex:block/condenser_mk2",
+      "y": 90
+    },
+    "facing=north": {
       "model": "projectex:block/condenser_mk2"
+    },
+    "facing=south": {
+      "model": "projectex:block/condenser_mk2",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "projectex:block/condenser_mk2",
+      "y": 270
     }
   }
 }

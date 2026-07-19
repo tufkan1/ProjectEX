@@ -1,3 +1,6 @@
 {
-  "parent": "projectexpansion:block/condenser_mk3"
+  "parent": "projectexpansion:item/condenser_mk3",
+  "textures": {
+    "particle": "projectexpansion:block/condenser_mk3"
+  }
 }

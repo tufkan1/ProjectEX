@@ -10,6 +10,8 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.fabricmc.fabric.api.menu.v1.ExtendedMenuType;
 
 /** Common menu type registration. */
 public final class ProjectEXMenus {
@@ -21,22 +23,22 @@ public final class ProjectEXMenus {
     public static final MenuType<EmcMachineMenu> EMC_MACHINE = Registry.register(
         BuiltInRegistries.MENU,
         ProjectEX.id("emc_machine"),
-        new MenuType<>(EmcMachineMenu::new, FeatureFlags.VANILLA_SET)
+        new ExtendedMenuType<>(EmcMachineMenu::new, ByteBufCodecs.VAR_INT)
     );
     public static final MenuType<AlchemyStorageMenu> ALCHEMY_STORAGE = Registry.register(
         BuiltInRegistries.MENU,
         ProjectEX.id("alchemy_storage"),
-        new MenuType<>(AlchemyStorageMenu::new, FeatureFlags.VANILLA_SET)
+        new ExtendedMenuType<>(AlchemyStorageMenu::new, ByteBufCodecs.VAR_INT)
     );
     public static final MenuType<MatterFurnaceMenu> MATTER_FURNACE = Registry.register(
         BuiltInRegistries.MENU,
         ProjectEX.id("matter_furnace"),
-        new MenuType<>(MatterFurnaceMenu::new, FeatureFlags.VANILLA_SET)
+        new ExtendedMenuType<>(MatterFurnaceMenu::new, ByteBufCodecs.VAR_INT)
     );
     public static final MenuType<AutomationMenu> AUTOMATION = Registry.register(
         BuiltInRegistries.MENU,
         ProjectEX.id("automation"),
-        new MenuType<>(AutomationMenu::new, FeatureFlags.VANILLA_SET)
+        new ExtendedMenuType<>(AutomationMenu::new, ByteBufCodecs.VAR_INT)
     );
 
     private ProjectEXMenus() {

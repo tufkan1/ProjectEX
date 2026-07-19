@@ -51,7 +51,8 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
 /** Persistent identity/configuration boundary for one automation block. */
-public final class AutomationBlockEntity extends BlockEntity implements MenuProvider {
+public final class AutomationBlockEntity extends BlockEntity implements MenuProvider,
+    net.fabricmc.fabric.api.menu.v1.ExtendedMenuProvider<Integer> {
     private final AutomationBlockKind kind;
     private final ExpansionMachineTier tier;
     private AutomationBlockState state = AutomationBlockState.empty();
@@ -70,6 +71,10 @@ public final class AutomationBlockEntity extends BlockEntity implements MenuProv
 
     public AutomationBlockKind kind() { return kind; }
     public ExpansionMachineTier tier() { return tier; }
+
+    @Override public Integer getScreenOpeningData(net.minecraft.server.level.ServerPlayer player) {
+        return (tier.ordinal() << 8) | kind.ordinal();
+    }
     public AutomationBlockState automationState() { return state; }
 
     public void claim(UUID owner) {

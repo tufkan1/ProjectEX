@@ -12,6 +12,7 @@ import io.github.tufkan1.projectex.menu.AlchemyStorageMenu;
 import io.github.tufkan1.projectex.storage.CondenserTransaction;
 import io.github.tufkan1.projectex.storage.CondenserVariant;
 import io.github.tufkan1.projectex.storage.StorageKind;
+import net.fabricmc.fabric.api.menu.v1.ExtendedMenuProvider;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +27,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
@@ -43,7 +45,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 
 /** Exact, versioned inventory implementation for condensers and alchemical storage. */
 public final class AlchemyStorageBlockEntity extends BlockEntity
-    implements WorldlyContainer, MenuProvider {
+    implements WorldlyContainer, MenuProvider, ExtendedMenuProvider<Integer> {
     public static final int TARGET_SLOT = 0;
 
     private final StorageKind kind;
@@ -67,6 +69,8 @@ public final class AlchemyStorageBlockEntity extends BlockEntity
     }
 
     public StorageKind kind() { return kind; }
+
+    @Override public Integer getScreenOpeningData(ServerPlayer player) { return kind.ordinal(); }
     public AlchemyStorageState storageState() { return state; }
 
     public void claim(UUID owner) {

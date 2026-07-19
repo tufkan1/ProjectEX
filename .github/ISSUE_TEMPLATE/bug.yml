@@ -12,7 +12,7 @@ body:
     id: projectex
     attributes:
       label: ProjectEX version
-      placeholder: "1.1.0 (artifact: projectex-fabric-26.2-1.1.0.jar)"
+      placeholder: "1.1.1 (artifact: projectex-fabric-26.2-1.1.1.jar)"
     validations:
       required: true
   - type: input

@@ -40,7 +40,7 @@ public final class TransmutationScreen extends AbstractContainerScreen<Transmuta
     private long seenActionResponse = -2;
 
     public TransmutationScreen(TransmutationMenu menu, Inventory inventory, Component title) {
-        super(menu, inventory, title, 248, 232);
+        super(menu, inventory, title, 408, 196);
         inventoryLabelX = 44;
         inventoryLabelY = 140;
     }
@@ -51,7 +51,7 @@ public final class TransmutationScreen extends AbstractContainerScreen<Transmuta
         resultButtons.clear();
         super.init();
         search = addRenderableWidget(new EditBox(
-            font, leftPos + 8, topPos + 20, 232, 18,
+            font, leftPos + 236, topPos + 20, 164, 18,
             Component.translatable("screen.projectex.search")
         ));
         search.setMaxLength(AlchemyNetworkProtocol.MAX_SEARCH_LENGTH);
@@ -61,29 +61,29 @@ public final class TransmutationScreen extends AbstractContainerScreen<Transmuta
 
         for (int index = 0; index < PAGE_SIZE; index++) {
             int buttonIndex = index;
-            int column = index % 3;
-            int row = index / 3;
+            int column = index % 2;
+            int row = index / 2;
             Button button = Button.builder(Component.empty(), ignored -> select(buttonIndex))
-                .bounds(leftPos + 8 + column * 78, topPos + 44 + row * 22, 74, 20)
+                .bounds(leftPos + 236 + column * 83, topPos + 43 + row * 22, 80, 20)
                 .build();
             resultButtons.add(addRenderableWidget(button));
         }
         previous = addRenderableWidget(Button.builder(Component.literal("<"), ignored -> changePage(-1))
-            .bounds(leftPos + 8, topPos + 90, 36, 20).build());
+            .bounds(leftPos + 236, topPos + 111, 36, 20).build());
         next = addRenderableWidget(Button.builder(Component.literal(">"), ignored -> changePage(1))
-            .bounds(leftPos + 48, topPos + 90, 36, 20).build());
+            .bounds(leftPos + 275, topPos + 111, 36, 20).build());
         create = addRenderableWidget(Button.builder(
             Component.translatable("screen.projectex.create"), ignored -> createSelected())
-            .bounds(leftPos + 88, topPos + 90, 48, 20).build());
+            .bounds(leftPos + 314, topPos + 111, 86, 20).build());
         favorite = addRenderableWidget(Button.builder(
             Component.translatable("screen.projectex.favorite"), ignored -> favoriteSelected())
-            .bounds(leftPos + 140, topPos + 90, 48, 20).build());
+            .bounds(leftPos + 236, topPos + 135, 80, 20).build());
         addRenderableWidget(Button.builder(
             Component.translatable("screen.projectex.learn"), ignored -> actOnHeld(0))
-            .bounds(leftPos + 192, topPos + 90, 48, 20).build());
+            .bounds(leftPos + 320, topPos + 135, 80, 20).build());
         addRenderableWidget(Button.builder(
             Component.translatable("screen.projectex.burn"), ignored -> actOnHeld(1))
-            .bounds(leftPos + 192, topPos + 114, 48, 20).build());
+            .bounds(leftPos + 320, topPos + 159, 80, 20).build());
         setInitialFocus(search);
         requestPage(0);
         refreshButtons();
@@ -129,26 +129,25 @@ public final class TransmutationScreen extends AbstractContainerScreen<Transmuta
     public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         super.extractBackground(graphics, mouseX, mouseY, partialTick);
         ProjectEXGuiTextures.draw(graphics, ProjectEXGuiTextures.TRANSMUTATION,
-            leftPos, topPos, imageWidth, imageHeight);
-        graphics.fill(leftPos, topPos, leftPos + imageWidth, topPos + imageHeight, 0x38101010);
-        graphics.outline(leftPos, topPos, imageWidth, imageHeight, 0xFF8A6A2F);
+            leftPos, topPos, 228, 196);
+        graphics.fill(leftPos + 228, topPos, leftPos + imageWidth, topPos + imageHeight, 0xEE17120C);
+        graphics.outline(leftPos + 228, topPos, imageWidth - 228, imageHeight, 0xFF8A6A2F);
     }
 
     @Override
     protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
-        graphics.text(font, title, titleLabelX, titleLabelY, 0xFFE8D5A5, false);
-        graphics.text(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0xFFE8D5A5, false);
+        graphics.text(font, title, 236, 7, 0xFFE8D5A5, false);
         ClientAlchemySessionState.Snapshot alchemy = ProjectEXClient.alchemy().snapshot();
         ClientKnowledgeBrowserState.Snapshot browser = ProjectEXClient.knowledge().snapshot();
         graphics.text(font, Component.translatable(
-            "screen.projectex.balance", alchemy.balance().toString()), 100, 6, 0xFFFFFFFF, false);
+            "screen.projectex.balance", alchemy.balance().toString()), 236, 183, 0xFFFFFFFF, false);
         graphics.text(font, Component.translatable(
             "screen.projectex.page", browser.totalPages() == 0 ? 0 : browser.page() + 1,
-            browser.totalPages(), browser.totalEntries()), 8, 116, 0xFFE8D5A5, false);
+            browser.totalPages(), browser.totalEntries()), 236, 100, 0xFFE8D5A5, false);
         alchemy.lastFailure().or(() -> browser.lastFailure()).ifPresent(failure ->
             graphics.text(font, Component.translatable(
                 "screen.projectex.failure", failureMessage(failure)),
-                8, 128, 0xFFFF7070, false));
+                236, 88, 0xFFFF7070, false));
     }
 
     @Override

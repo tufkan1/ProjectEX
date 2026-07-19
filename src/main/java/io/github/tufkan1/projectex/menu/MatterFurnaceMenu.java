@@ -13,14 +13,25 @@ import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-/** Accessible furnace menu with two inputs, eighteen output positions, and synced progress. */
+/** Accessible furnace menu using each source tier's native output layout and synced progress. */
 public final class MatterFurnaceMenu extends AbstractContainerMenu {
     private static final int FURNACE_SLOTS = 20;
     private final Container furnace;
     private final ContainerData data;
+    private final int machineSlotCount;
 
     public MatterFurnaceMenu(int id, Inventory inventory) {
         this(id, inventory, new SimpleContainer(FURNACE_SLOTS), new SimpleContainerData(4));
+    }
+
+    public MatterFurnaceMenu(int id, Inventory inventory, Integer tierOrdinal) {
+        this(id, inventory, new SimpleContainer(FURNACE_SLOTS), fixedData(tierOrdinal));
+    }
+
+    private static ContainerData fixedData(int tierOrdinal) {
+        SimpleContainerData data = new SimpleContainerData(4);
+        data.set(0, tierOrdinal);
+        return data;
     }
 
     public MatterFurnaceMenu(int id, Inventory inventory, MatterFurnaceBlockEntity furnace) {
@@ -46,16 +57,25 @@ public final class MatterFurnaceMenu extends AbstractContainerMenu {
         checkContainerSize(furnace, FURNACE_SLOTS);
         checkContainerDataCount(data, 4);
         furnace.startOpen(inventory.player);
-        addSlot(inputSlot(furnace, MatterFurnaceBlockEntity.INPUT_SLOT, 17, 28));
-        addSlot(inputSlot(furnace, MatterFurnaceBlockEntity.FUEL_SLOT, 17, 55));
-        for (int row = 0; row < 2; row++) for (int column = 0; column < 9; column++) {
-            int slot = MatterFurnaceBlockEntity.OUTPUT_START + row * 9 + column;
-            addSlot(new Slot(furnace, slot, 44 + column * 18, 28 + row * 18) {
-                @Override public boolean mayPlace(ItemStack stack) { return false; }
-            });
+        boolean red = data.get(0) == 1;
+        machineSlotCount = 2 + (red ? 13 : 9);
+        int inputX = red ? 65 : 49;
+        addSlot(inputSlot(furnace, MatterFurnaceBlockEntity.INPUT_SLOT, inputX, 17));
+        addSlot(inputSlot(furnace, MatterFurnaceBlockEntity.FUEL_SLOT, inputX, 53));
+        addOutput(furnace, MatterFurnaceBlockEntity.OUTPUT_START, red ? 125 : 109, 35);
+        int columns = red ? 3 : 2;
+        for (int column = 0; column < columns; column++) for (int row = 0; row < 4; row++) {
+            int slot = MatterFurnaceBlockEntity.OUTPUT_START + 1 + column * 4 + row;
+            addOutput(furnace, slot, (red ? 147 : 131) + column * 18, 8 + row * 18);
         }
-        addStandardInventorySlots(inventory, 26, 106);
+        addStandardInventorySlots(inventory, red ? 24 : 8, 84);
         addDataSlots(data);
+    }
+
+    private void addOutput(Container furnace, int slot, int x, int y) {
+        addSlot(new Slot(furnace, slot, x, y) {
+                @Override public boolean mayPlace(ItemStack stack) { return false; }
+        });
     }
 
     private static Slot inputSlot(Container container, int slot, int x, int y) {
@@ -79,8 +99,8 @@ public final class MatterFurnaceMenu extends AbstractContainerMenu {
         if (!slot.hasItem()) return ItemStack.EMPTY;
         ItemStack stack = slot.getItem();
         ItemStack original = stack.copy();
-        if (slotIndex < FURNACE_SLOTS) {
-            if (!moveItemStackTo(stack, FURNACE_SLOTS, slots.size(), true)) return ItemStack.EMPTY;
+        if (slotIndex < machineSlotCount) {
+            if (!moveItemStackTo(stack, machineSlotCount, slots.size(), true)) return ItemStack.EMPTY;
         } else if (slots.get(MatterFurnaceBlockEntity.FUEL_SLOT).mayPlace(stack)) {
             if (!moveItemStackTo(stack, MatterFurnaceBlockEntity.FUEL_SLOT,
                     MatterFurnaceBlockEntity.FUEL_SLOT + 1, false)) return ItemStack.EMPTY;

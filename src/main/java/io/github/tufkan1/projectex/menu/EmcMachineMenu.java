@@ -25,6 +25,17 @@ public final class EmcMachineMenu extends AbstractContainerMenu {
         this(containerId, inventory, new SimpleContainer(MACHINE_SLOTS), new SimpleContainerData(5), null);
     }
 
+    public EmcMachineMenu(int containerId, Inventory inventory, Integer tierOrdinal) {
+        this(containerId, inventory, new SimpleContainer(MACHINE_SLOTS),
+            fixedData(tierOrdinal), null);
+    }
+
+    private static ContainerData fixedData(int tierOrdinal) {
+        SimpleContainerData data = new SimpleContainerData(5);
+        data.set(2, tierOrdinal);
+        return data;
+    }
+
     public EmcMachineMenu(
         int containerId,
         Inventory inventory,
@@ -73,19 +84,31 @@ public final class EmcMachineMenu extends AbstractContainerMenu {
         checkContainerSize(machine, MACHINE_SLOTS);
         checkContainerDataCount(data, 5);
         machine.startOpen(inventory.player);
-        addSlot(new Slot(machine, EmcMachineBlockEntity.INPUT_SLOT, 53, 35) {
+        MachineTier initialTier = tier();
+        int level = Math.min(3, initialTier.level());
+        boolean relay = initialTier.type() == MachineTier.MachineType.RELAY;
+        int inputX = relay ? switch (level) { case 1 -> 67; case 2 -> 84; default -> 104; }
+            : switch (level) { case 1 -> 38; case 2 -> 54; default -> 72; };
+        int outputX = relay ? switch (level) { case 1 -> 127; case 2 -> 144; default -> 164; }
+            : switch (level) { case 1 -> 124; case 2 -> 140; default -> 158; };
+        int inputY = relay ? switch (level) { case 1 -> 43; case 2 -> 44; default -> 58; } : 62;
+        int outputY = relay ? inputY : 58;
+        int inventoryX = relay ? switch (level) { case 1 -> 8; case 2 -> 16; default -> 26; }
+            : switch (level) { case 1 -> 8; case 2 -> 20; default -> 30; };
+        int inventoryY = relay ? switch (level) { case 1 -> 95; case 2 -> 101; default -> 113; } : 84;
+        addSlot(new Slot(machine, EmcMachineBlockEntity.INPUT_SLOT, inputX, inputY) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return machine.canPlaceItem(getContainerSlot(), stack);
             }
         });
-        addSlot(new Slot(machine, EmcMachineBlockEntity.OUTPUT_SLOT, 107, 35) {
+        addSlot(new Slot(machine, EmcMachineBlockEntity.OUTPUT_SLOT, outputX, outputY) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return machine.canPlaceItem(getContainerSlot(), stack);
             }
         });
-        addStandardInventorySlots(inventory, 8, 84);
+        addStandardInventorySlots(inventory, inventoryX, inventoryY);
         addDataSlots(data);
     }
 

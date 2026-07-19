@@ -14,8 +14,6 @@ final class ProjectEXGuiTextures {
     static final Identifier CONDENSER_3_OUTPUT = expansion("condenser_mk3_output");
     static final Identifier DARK_FURNACE = projecte("dmfurnace");
     static final Identifier RED_FURNACE = projecte("rmfurnace");
-    static final Identifier EMC_IMPORT = expansion("emc_import");
-    static final Identifier ALCHEMICAL_BOOK = expansion("arcane_transmutation_tablet");
 
     private ProjectEXGuiTextures() {}
 
@@ -23,8 +21,19 @@ final class ProjectEXGuiTextures {
     static Identifier relay(int level) { return projecte("relay" + Math.min(3, level)); }
 
     static void draw(GuiGraphicsExtractor graphics, Identifier texture, int x, int y, int width, int height) {
+        draw(graphics, texture, x, y, width, height, 256, 256);
+    }
+
+    static void draw(GuiGraphicsExtractor graphics, Identifier texture, int x, int y,
+                     int width, int height, int textureWidth, int textureHeight) {
         graphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, 0, 0,
-            width, height, 256, 256);
+            width, height, textureWidth, textureHeight);
+    }
+
+    static void region(GuiGraphicsExtractor graphics, Identifier texture, int x, int y,
+                       int u, int v, int width, int height, int textureWidth, int textureHeight) {
+        graphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, u, v,
+            width, height, textureWidth, textureHeight);
     }
 
     private static Identifier projecte(String name) {

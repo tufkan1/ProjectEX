@@ -5,6 +5,7 @@ import io.github.tufkan1.projectex.content.component.BagItemState;
 import io.github.tufkan1.projectex.menu.AlchemyStorageMenu;
 import io.github.tufkan1.projectex.storage.StorageKind;
 import io.github.tufkan1.projectex.internal.storage.BagInventorySavedData;
+import net.fabricmc.fabric.api.menu.v1.ExtendedMenuProvider;
 import java.util.List;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
@@ -62,7 +63,10 @@ public final class AlchemicalBagItem extends Item {
             );
         }
         BagContainer contents = new BagContainer(identity, player, savedData, shared);
-        serverPlayer.openMenu(new MenuProvider() {
+        serverPlayer.openMenu(new ExtendedMenuProvider<Integer>() {
+            @Override public Integer getScreenOpeningData(ServerPlayer player) {
+                return StorageKind.ALCHEMICAL_BAG.ordinal();
+            }
             @Override public Component getDisplayName() { return stack.getHoverName(); }
             @Override public AbstractContainerMenu createMenu(int id, Inventory inventory, Player opener) {
                 return new AlchemyStorageMenu(id, inventory, contents, StorageKind.ALCHEMICAL_BAG);

@@ -22,6 +22,17 @@ public final class AutomationMenu extends AbstractContainerMenu {
         this(containerId, inventory, null, new SimpleContainerData(DATA_COUNT));
     }
 
+    public AutomationMenu(int containerId, Inventory inventory, Integer openingData) {
+        this(containerId, inventory, null, fixedData(openingData));
+    }
+
+    private static ContainerData fixedData(int openingData) {
+        SimpleContainerData data = new SimpleContainerData(DATA_COUNT);
+        data.set(0, openingData >>> 8);
+        data.set(1, openingData & 0xFF);
+        return data;
+    }
+
     public AutomationMenu(int containerId, Inventory inventory, AutomationBlockEntity automation) {
         this(containerId, inventory, automation, new ContainerData() {
             @Override public int get(int index) {

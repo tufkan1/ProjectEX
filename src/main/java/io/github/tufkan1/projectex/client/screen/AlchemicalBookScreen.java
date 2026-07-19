@@ -14,7 +14,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
-/** Keyboard/narrator-friendly editor over the original ProjectExpansion tablet panel. */
+/** Responsive editor matching ProjectExpansion's textureless alchemical-book screen. */
 @Environment(EnvType.CLIENT)
 public final class AlchemicalBookScreen extends Screen {
     private static final int PAGE_SIZE = 6;
@@ -87,7 +87,7 @@ public final class AlchemicalBookScreen extends Screen {
         int left = (width - 300) / 2;
         int top = (height - 210) / 2;
         ProjectEXClient.alchemicalBook().view().ifPresent(view -> {
-            graphics.text(font, title, left + 10, top + 8, 0xFFFFE3A0, false);
+            graphics.text(font, title, left + 10, top + 8, 0xFFFFFFFF, false);
             graphics.text(font, Component.translatable("screen.projectex.alchemical_book.balance", view.balance()),
                 left + 180, top + 8, 0xFFFFFFFF, false);
             if (!view.failure().isEmpty()) graphics.text(font, Component.translatable(
@@ -99,13 +99,7 @@ public final class AlchemicalBookScreen extends Screen {
     @Override public void extractBackground(
         GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick
     ) {
-        int left = (width - 300) / 2;
-        int top = (height - 210) / 2;
-        graphics.fill(left, top, left + 300, top + 210, 0xEE17120C);
-        ProjectEXGuiTextures.draw(graphics, ProjectEXGuiTextures.ALCHEMICAL_BOOK,
-            left + 22, top, 256, 210);
-        graphics.fill(left, top, left + 300, top + 210, 0x3517120C);
-        graphics.outline(left, top, 300, 210, 0xFFD5A94E);
+        super.extractBackground(graphics, mouseX, mouseY, partialTick);
     }
 
     @Override public Component getNarrationMessage() {

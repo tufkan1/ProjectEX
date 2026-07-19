@@ -121,16 +121,23 @@ public final class ProjectEXModelProvider implements DataProvider {
         Map.entry("relay_mk1", "projecte:block/relay_mk1"),
         Map.entry("relay_mk2", "projecte:block/relay_mk2"),
         Map.entry("relay_mk3", "projecte:block/relay_mk3"),
-        Map.entry("condenser_mk1", "projecte:block/condenser_mk1"),
-        Map.entry("condenser_mk2", "projecte:block/condenser_mk2"),
-        Map.entry("condenser_mk3", "projectexpansion:block/condenser_mk3"),
-        Map.entry("alchemical_chest", "projecte:block/alchemical_chest"),
-        Map.entry("advanced_alchemical_chest", "projectexpansion:block/advanced_alchemical_chest/purple"),
+        Map.entry("condenser_mk1", "projecte:item/condenser_mk1"),
+        Map.entry("condenser_mk2", "projecte:item/condenser_mk2"),
+        Map.entry("condenser_mk3", "projectexpansion:item/condenser_mk3"),
+        Map.entry("alchemical_chest", "projecte:item/alchemical_chest"),
+        Map.entry("advanced_alchemical_chest", "projectexpansion:item/purple_advanced_alchemical_chest"),
         Map.entry("dark_matter_block", "projecte:block/dark_matter_block"),
         Map.entry("red_matter_block", "projecte:block/red_matter_block"),
         Map.entry("dark_matter_furnace", "projecte:block/dm_furnace"),
         Map.entry("red_matter_furnace", "projecte:block/rm_furnace"),
         Map.entry("dark_matter_pedestal", "projecte:block/dm_pedestal")
+    );
+    private static final Map<String, String> STORAGE_PARTICLES = Map.of(
+        "condenser_mk1", "projecte:block/condenser_mk1",
+        "condenser_mk2", "projecte:block/condenser_mk2",
+        "condenser_mk3", "projectexpansion:block/condenser_mk3",
+        "alchemical_chest", "projecte:block/alchemical_chest",
+        "advanced_alchemical_chest", "projectexpansion:block/advanced_alchemical_chest/purple"
     );
 
     private final Path assetsRoot;
@@ -159,10 +166,26 @@ public final class ProjectEXModelProvider implements DataProvider {
         );
         machineBlocks.put("transmutation_interface", "projectexpansion:block/transmutation_interface");
         machineBlocks.forEach((block, sourceModel) -> {
-            String blockModel = """
+            boolean storage = block.startsWith("condenser_")
+                || block.equals("alchemical_chest") || block.equals("advanced_alchemical_chest");
+            String blockModel = storage ? """
+                {
+                  "parent": "%s",
+                  "textures": { "particle": "%s" }
+                }
+                """.formatted(sourceModel, STORAGE_PARTICLES.get(block)) : """
                 { "parent": "%s" }
                 """.formatted(sourceModel);
-            String blockState = """
+            String blockState = storage ? """
+                {
+                  "variants": {
+                    "facing=north": { "model": "projectex:block/%1$s" },
+                    "facing=east": { "model": "projectex:block/%1$s", "y": 90 },
+                    "facing=south": { "model": "projectex:block/%1$s", "y": 180 },
+                    "facing=west": { "model": "projectex:block/%1$s", "y": 270 }
+                  }
+                }
+                """.formatted(block) : """
                 {
                   "variants": {
                     "": {

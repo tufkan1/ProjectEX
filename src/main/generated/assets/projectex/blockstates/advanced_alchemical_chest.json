@@ -1,7 +1,19 @@
 {
   "variants": {
-    "": {
+    "facing=east": {
+      "model": "projectex:block/advanced_alchemical_chest",
+      "y": 90
+    },
+    "facing=north": {
       "model": "projectex:block/advanced_alchemical_chest"
+    },
+    "facing=south": {
+      "model": "projectex:block/advanced_alchemical_chest",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "projectex:block/advanced_alchemical_chest",
+      "y": 270
     }
   }
 }

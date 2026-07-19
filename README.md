@@ -53,7 +53,7 @@ Artifacts are written to `build/libs`. Run unit tests with `./gradlew test` and
 launch a development client with `./gradlew runClient`.
 
 Release filenames always identify both the supported game version and mod version,
-for example `projectex-fabric-26.2-1.1.0.jar`. A jar built for one Minecraft feature
+for example `projectex-fabric-26.2-1.1.1.jar`. A jar built for one Minecraft feature
 release is never presented as universally compatible with later releases.
 
 Verified public builds are available from [GitHub Releases](https://github.com/tufkan1/ProjectEX/releases).

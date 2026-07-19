@@ -17,15 +17,20 @@ import net.minecraft.world.item.ItemStack;
 /** Server-paged menu for bounded condenser and alchemical storage layouts. */
 public final class AlchemyStorageMenu extends AbstractContainerMenu {
     private static final int VIEW_SLOTS = 54;
-    private static final int STORAGE_MENU_SLOTS = 1 + VIEW_SLOTS;
 
     private final Container storage;
     private final ContainerData data;
     private final AlchemyStorageBlockEntity storageEntity;
     private final PageContainer page;
+    private final int storageMenuSlots;
 
     public AlchemyStorageMenu(int containerId, Inventory inventory) {
         this(containerId, inventory, new SimpleContainer(105), new SimpleContainerData(3), null);
+    }
+
+    public AlchemyStorageMenu(int containerId, Inventory inventory, Integer kindOrdinal) {
+        this(containerId, inventory, new SimpleContainer(105),
+            fixedData(decodeKind(kindOrdinal)), null);
     }
 
     public AlchemyStorageMenu(
@@ -77,22 +82,32 @@ public final class AlchemyStorageMenu extends AbstractContainerMenu {
         page = new PageContainer(storage, kindOrdinal, () -> data.get(1), directClientView);
         Container target = new TargetContainer(storage, kindOrdinal, directClientView);
 
-        addSlot(new Slot(target, 0, 8, 18) {
-            @Override public boolean mayPlace(ItemStack stack) {
-                return target.canPlaceItem(0, stack);
-            }
-        });
+        StorageKind initialKind = decode(kindOrdinal);
+        storageMenuSlots = VIEW_SLOTS + (initialKind.condenser() ? 1 : 0);
+        boolean mk3 = initialKind == StorageKind.CONDENSER_MK3;
+        int targetX = mk3 ? 66 : 12;
+        int viewX = mk3 ? 102 : 48;
+        int viewY = initialKind.condenser() ? 26 : 23;
+        int inventoryX = mk3 ? 111 : 48;
+        int inventoryY = mk3 ? 172 : initialKind.condenser() ? 154 : 152;
+        if (initialKind.condenser()) {
+            addSlot(new Slot(target, 0, targetX, 6) {
+                @Override public boolean mayPlace(ItemStack stack) {
+                    return target.canPlaceItem(0, stack);
+                }
+            });
+        }
         for (int row = 0; row < 6; row++) {
             for (int column = 0; column < 9; column++) {
                 int index = column + row * 9;
-                addSlot(new Slot(page, index, 8 + column * 18, 40 + row * 18) {
+                addSlot(new Slot(page, index, viewX + column * 18, viewY + row * 18) {
                     @Override public boolean mayPlace(ItemStack stack) {
                         return page.canPlaceItem(getContainerSlot(), stack);
                     }
                 });
             }
         }
-        addStandardInventorySlots(inventory, 8, 166);
+        addStandardInventorySlots(inventory, inventoryX, inventoryY);
         addDataSlots(data);
     }
 
@@ -129,11 +144,10 @@ public final class AlchemyStorageMenu extends AbstractContainerMenu {
         if (!slot.hasItem()) return ItemStack.EMPTY;
         ItemStack stack = slot.getItem();
         ItemStack copy = stack.copy();
-        if (slotIndex < STORAGE_MENU_SLOTS) {
-            if (!moveItemStackTo(stack, STORAGE_MENU_SLOTS, slots.size(), true)) return ItemStack.EMPTY;
+        if (slotIndex < storageMenuSlots) {
+            if (!moveItemStackTo(stack, storageMenuSlots, slots.size(), true)) return ItemStack.EMPTY;
         } else {
-            int targetEnd = kind().condenser() ? STORAGE_MENU_SLOTS : STORAGE_MENU_SLOTS;
-            if (!moveItemStackTo(stack, 0, targetEnd, false)) return ItemStack.EMPTY;
+            if (!moveItemStackTo(stack, 0, storageMenuSlots, false)) return ItemStack.EMPTY;
         }
         if (stack.isEmpty()) slot.setByPlayer(ItemStack.EMPTY); else slot.setChanged();
         return copy;
@@ -146,6 +160,11 @@ public final class AlchemyStorageMenu extends AbstractContainerMenu {
         int value = ordinal.getAsInt();
         return value >= 0 && value < StorageKind.values().length
             ? StorageKind.values()[value] : StorageKind.ALCHEMICAL_CHEST;
+    }
+
+    private static StorageKind decodeKind(int ordinal) {
+        return ordinal >= 0 && ordinal < StorageKind.values().length
+            ? StorageKind.values()[ordinal] : StorageKind.ALCHEMICAL_CHEST;
     }
 
     private static final class TargetContainer extends DelegatingContainer {
@@ -170,7 +189,7 @@ public final class AlchemyStorageMenu extends AbstractContainerMenu {
             super(backing); this.kind = kind; this.page = page; this.directClientView = directClientView;
         }
         @Override protected int map(int slot) {
-            if (directClientView) return slot + 1;
+            if (directClientView) return slot + (decode(kind).condenser() ? 1 : 0);
             StorageKind layout = decode(kind);
             int mapped = layout.storageSlot(page.getAsInt(), slot);
             return mapped >= 0 && mapped < backing.getContainerSize() ? mapped : -1;
