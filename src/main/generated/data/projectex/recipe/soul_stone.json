@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "G": "minecraft:glowstone_dust",
+    "L": "minecraft:lapis_lazuli",
+    "R": "projectex:red_matter"
+  },
+  "pattern": [
+    "GGG",
+    "RLR",
+    "GGG"
+  ],
+  "result": {
+    "id": "projectex:soul_stone"
+  }
+}

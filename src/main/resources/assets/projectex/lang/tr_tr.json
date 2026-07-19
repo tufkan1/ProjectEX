@@ -305,5 +305,9 @@
   "item.projectex.destruction_catalyst": "Yıkım Katalizörü",
   "item.projectex.destructive_catalyst.result": "%s blok yıkıldı; %s EMC harcandı",
   "tag.block.projectex.destructive_catalyst_allowed": "Yıkım Katalizörüyle kırılabilir bloklar",
-  "tag.block.projectex.destructive_catalyst_denied": "Yıkım Katalizörüne kapalı bloklar"
+  "tag.block.projectex.destructive_catalyst_denied": "Yıkım Katalizörüne kapalı bloklar",
+  "item.projectex.body_stone": "Beden Taşı",
+  "item.projectex.soul_stone": "Ruh Taşı",
+  "item.projectex.life_stone": "Yaşam Taşı",
+  "item.projectex.vitality_stone.result": "%s EMC karşılığında canlılık yenilendi"
 }
