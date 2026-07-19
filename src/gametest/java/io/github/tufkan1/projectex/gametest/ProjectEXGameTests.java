@@ -81,6 +81,25 @@ import io.github.tufkan1.projectex.teleport.AlchemicalBookTier;
 @SuppressWarnings("removal")
 public final class ProjectEXGameTests implements CustomTestMethodInvoker {
     @GameTest
+    public void versionedConfigAndMigrationBaselineRunOnDedicatedServer(GameTestHelper helper) {
+        var config = io.github.tufkan1.projectex.config.ProjectEXConfig.report();
+        helper.assertValueEqual(config.schemaVersion(), 1, "ProjectEX config schema version");
+        helper.assertTrue(config.settingCount() >= 17, "ProjectEX config setting count");
+        helper.assertTrue(config.files().size() >= 2, "Server config files were not created");
+
+        var migration = new io.github.tufkan1.projectex.migration.ProjectEXMigrationService(
+            helper.getLevel().getServer().getWorldPath(
+                net.minecraft.world.level.storage.LevelResource.ROOT),
+            net.fabricmc.loader.api.FabricLoader.getInstance().getConfigDir());
+        var applied = migration.apply();
+        helper.assertValueEqual(applied.targetFormat(), 1, "ProjectEX migration target format");
+        helper.assertTrue(applied.complete(), "ProjectEX migration did not publish its baseline marker");
+        helper.assertTrue(!applied.backupId().isBlank(), "ProjectEX migration did not create a backup");
+        helper.assertValueEqual(migration.status().sourceFormat(), 1, "Published migration format");
+        helper.succeed();
+    }
+
+    @GameTest
     public void boundAlchemicalBookPersistsForOwnerAndIsReadOnlyForVisitor(GameTestHelper helper) {
         ServerPlayer owner = helper.makeMockServerPlayerInLevel();
         ServerPlayer visitor = helper.makeMockServerPlayerInLevel();

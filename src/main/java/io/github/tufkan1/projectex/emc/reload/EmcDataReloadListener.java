@@ -33,10 +33,17 @@ public final class EmcDataReloadListener extends SimpleReloadListener<ResolvedEm
             identifier -> identifier.getPath().endsWith(".json")
         );
         List<EmcDataSource> sources = new ArrayList<>();
-        resources.entrySet().stream()
-            .sorted(Map.Entry.comparingByKey())
-            .forEach(entry -> parseStack(entry.getKey(), entry.getValue(), sources));
-        return EmcDataResolver.resolve(sources);
+        try {
+            resources.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEach(entry -> parseStack(entry.getKey(), entry.getValue(), sources));
+            ResolvedEmcData resolved = EmcDataResolver.resolve(sources);
+            EmcReloadDiagnostics.success(resources.size(), sources.size(), resolved.values().size());
+            return resolved;
+        } catch (RuntimeException exception) {
+            EmcReloadDiagnostics.failure(resources.size(), sources.size(), exception);
+            throw exception;
+        }
     }
 
     @Override

@@ -42,6 +42,7 @@ import io.github.tufkan1.projectex.client.screen.AlchemicalBookScreen;
 import io.github.tufkan1.projectex.network.AlchemicalBookAction;
 import io.github.tufkan1.projectex.network.AlchemicalBookActionPayload;
 import io.github.tufkan1.projectex.network.AlchemicalBookViewPayload;
+import io.github.tufkan1.projectex.config.ProjectEXConfig;
 
 /** Client-only networking state; screens consume this instead of trusting local calculations. */
 @Environment(EnvType.CLIENT)
@@ -63,9 +64,10 @@ public final class ProjectEXClient implements ClientModInitializer {
     @Override
     @SuppressWarnings("deprecation") // Fabric's 26.2 registry remains the supported public hook.
     public void onInitializeClient() {
+        ProjectEXConfig.initializeClient();
         favoriteStore = new ClientFavoriteStore(
             FabricLoader.getInstance().getConfigDir().resolve("projectex-favorites.json"));
-        KNOWLEDGE.replaceFavorites(favoriteStore.load());
+        if (ProjectEXConfig.rememberFavorites()) KNOWLEDGE.replaceFavorites(favoriteStore.load());
         MenuScreens.register(ProjectEXMenus.TRANSMUTATION, TransmutationScreen::new);
         MenuScreens.register(ProjectEXMenus.EMC_MACHINE, EmcMachineScreen::new);
         MenuScreens.register(ProjectEXMenus.ALCHEMY_STORAGE, AlchemyStorageScreen::new);
@@ -226,7 +228,8 @@ public final class ProjectEXClient implements ClientModInitializer {
         if (!KNOWLEDGE.toggleFavorite(itemId)) {
             return false;
         }
-        if (favoriteStore != null && !favoriteStore.save(KNOWLEDGE.snapshot().favorites())) {
+        if (ProjectEXConfig.rememberFavorites() && favoriteStore != null
+            && !favoriteStore.save(KNOWLEDGE.snapshot().favorites())) {
             ProjectEX.LOGGER.warn("Could not persist ProjectEX client favorites");
         }
         return true;
