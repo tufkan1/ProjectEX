@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_klein_star_omega": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projectex:klein_star_omega"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "projectex:knowledge_tome"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_klein_star_omega"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "projectex:knowledge_tome"
+    ]
+  }
+}

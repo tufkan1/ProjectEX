@@ -298,5 +298,7 @@
   "item.projectex.evertide_amulet": "Evertide Tılsımı",
   "item.projectex.volcanite_amulet": "Volcanite Tılsımı",
   "tag.block.projectex.elemental_amulet_allowed": "Element Tılsımıyla değiştirilebilir bloklar",
-  "tag.block.projectex.elemental_amulet_denied": "Element Tılsımına kapalı bloklar"
+  "tag.block.projectex.elemental_amulet_denied": "Element Tılsımına kapalı bloklar",
+  "item.projectex.knowledge_tome": "Bilgi Kitabı",
+  "item.projectex.knowledge_tome.learned": "Bilgi Kitabı %s kayıt öğretti (toplam %s)"
 }

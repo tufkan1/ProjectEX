@@ -79,6 +79,15 @@ public final class ProjectEXRecipeProvider extends FabricRecipeProvider {
                     .pattern("LLL").pattern("DDD").pattern("LLL")
                     .unlockedBy("has_dark_matter", has(ProjectEXItems.DARK_MATTER.item()))
                     .save(output, id("volcanite_amulet"));
+                shaped(RecipeCategory.TOOLS, ProjectEXItems.KNOWLEDGE_TOME.item())
+                    .define('B', Items.BOOK)
+                    .define('L', ProjectEXItems.LOW_COVALENCE_DUST.item())
+                    .define('M', ProjectEXItems.MEDIUM_COVALENCE_DUST.item())
+                    .define('H', ProjectEXItems.HIGH_COVALENCE_DUST.item())
+                    .define('K', ProjectEXItems.KLEIN_STAR_OMEGA.item())
+                    .pattern("HML").pattern("KBK").pattern("LMH")
+                    .unlockedBy("has_klein_star_omega", has(ProjectEXItems.KLEIN_STAR_OMEGA.item()))
+                    .save(output, id("knowledge_tome"));
                 shaped(RecipeCategory.MISC, ProjectEXBlocks.DARK_MATTER_PEDESTAL)
                     .define('D', ProjectEXBlocks.DARK_MATTER_BLOCK)
                     .define('R', ProjectEXItems.RED_MATTER.item())
