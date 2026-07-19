@@ -26,6 +26,7 @@ not imply copied implementation or byte-for-byte behavior.
 | Arcane Tablet | Implemented | ProjectExpansion | Versioned transmutation/crafting modes; reuses M2 sessions and vanilla 3×3 crafting with exact-stack authorization |
 | Knowledge Sharing Book | Implemented | ProjectExpansion | World-persistent HMAC snapshots, merge/replace preview, explicit narrated confirmation, held-book/revision/replay checks, server policy/team boundary, persistent audit |
 | Alchemical Books | Implemented | ProjectExpansion | Four tiers; stack/player-bound destinations, exact EMC costs, cross-dimension gates, one-shot back target, exact-stack ordered/rate-limited sessions, accessible UI |
+| Configuration and migrations | Implemented | ProjectEX | Versioned common/server/client schemas, public-alpha fixtures, atomic backup/marker workflow, recovery and audit commands |
 | Dark/red matter blocks, tools, and armor | Implemented | ProjectE | Data-pack runtime balance, server-raycast area mining, exact EMC payment/refund, public claim hook, bounded cooldowns, vanilla-attribute armor |
 | Dark/red matter furnaces | Implemented | ProjectE | Atomic multi-slot output, component identity, exact fuel remainder, sided Fabric automation, narrated progress UI |
 | Expansion collectors, relays, power flowers, and Compact Sun | Implemented | ProjectExpansion | Exact fixed-point/BigInteger accounting, schema-v1 carry state, bounded multiplier, no chunk tickets, original vanilla-reference models |

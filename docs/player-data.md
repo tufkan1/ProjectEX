@@ -28,6 +28,9 @@ The server log records the failure. Before making changes, stop the server and c
 - `/projectex player inspect <uuid>` reports balance and learned-item count.
 - `/projectex player reset <uuid>` removes one record and writes an operator audit log.
 
-The raw recovery backup is intentionally not printed to chat or logs because future
-schemas may contain user-controlled data. Backup removal/import tooling will require
-an explicit migration command before the first stable release.
+The raw recovery backup is intentionally not printed to chat or logs because schemas may
+contain user-controlled data. `/projectex player recovery export` writes it atomically to
+the world recovery directory; after verifying that file, an operator can use
+`/projectex player recovery clear`. See
+[`configuration-and-migrations.md`](configuration-and-migrations.md) for the full backup,
+dry-run, and offline rollback workflow.

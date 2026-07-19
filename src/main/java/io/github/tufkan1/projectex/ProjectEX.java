@@ -16,19 +16,15 @@ import io.github.tufkan1.projectex.internal.emc.EmcValueRegistry;
 import io.github.tufkan1.projectex.network.AlchemyNetworking;
 import io.github.tufkan1.projectex.network.UtilityNetworking;
 import io.github.tufkan1.projectex.network.KnowledgeSharingNetworking;
-import io.github.tufkan1.projectex.knowledge.KnowledgeSharingConfig;
 import io.github.tufkan1.projectex.network.AlchemicalBookNetworking;
-import io.github.tufkan1.projectex.teleport.AlchemicalBookConfig;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
-import io.github.tufkan1.projectex.machine.MachineRuntimeConfig;
 import io.github.tufkan1.projectex.matter.MatterTierReloadListener;
-import io.github.tufkan1.projectex.endgame.EndgameRuntimeConfig;
-import io.github.tufkan1.projectex.content.KnowledgeTomePolicy;
-import io.github.tufkan1.projectex.content.DestructiveCatalystPolicy;
 import io.github.tufkan1.projectex.endgame.FinalStarAccess;
+import io.github.tufkan1.projectex.config.ProjectEXConfig;
+import io.github.tufkan1.projectex.migration.ProjectEXMigrationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,12 +37,8 @@ public final class ProjectEX implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        MachineRuntimeConfig.reload();
-        EndgameRuntimeConfig.reload();
-        KnowledgeTomePolicy.reload();
-        DestructiveCatalystPolicy.reload();
-        KnowledgeSharingConfig.reload();
-        AlchemicalBookConfig.reload();
+        ProjectEXConfig.initializeServer();
+        ProjectEXMigrationService.register();
         ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(
             id("emc_values"),
             new EmcDataReloadListener(EMC_VALUES)
