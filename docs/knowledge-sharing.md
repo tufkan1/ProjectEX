@@ -14,3 +14,14 @@ verification again immediately before their atomic merge/replace commit.
 This core intentionally does not grant knowledge by itself. Runtime items, confirmation
 UI, audit events, server policy, and team adapters are consumers of this fail-closed
 format and are implemented as separate server-authoritative layers.
+
+## Preview and confirmation
+
+The workflow issues a random confirmation token only after signature and server-policy
+validation. Preview reports additions, removals, duplicates, final size, owner, mode,
+and expiry without exposing a mutable player state. Pending confirmations are capped at
+1,024 and expire after two minutes. Confirmation consumes the token on its first attempt,
+binds it to the recipient UUID and player-state revision, revalidates the snapshot, then
+consumes the snapshot replay identifier before returning an immutable merge/replace
+result. The caller performs the final saved-data commit and structured audit write in
+one server-thread operation.
