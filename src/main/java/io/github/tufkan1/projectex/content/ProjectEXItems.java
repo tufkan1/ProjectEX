@@ -118,6 +118,11 @@ public final class ProjectEXItems {
                 properties, ElementalAmuletItem.Element.LAVA),
             new Item.Properties().rarity(Rarity.RARE).fireResistant()
         );
+    public static final ProjectEXContentRegistry.RegisteredItem<KnowledgeTomeItem> KNOWLEDGE_TOME =
+        ProjectEXContentRegistry.registerItem(
+            "knowledge_tome", KnowledgeTomeItem::new,
+            new Item.Properties().rarity(Rarity.EPIC).fireResistant()
+        );
     public static final List<ProjectEXContentRegistry.RegisteredItem<DiviningRodItem>> DIVINING_RODS =
         java.util.stream.IntStream.range(0, 3).mapToObj(tier ->
             ProjectEXContentRegistry.registerItem(
@@ -230,6 +235,7 @@ public final class ProjectEXItems {
                 entries.accept(REPAIR_TALISMAN.item());
                 entries.accept(EVERTIDE_AMULET.item());
                 entries.accept(VOLCANITE_AMULET.item());
+                entries.accept(KNOWLEDGE_TOME.item());
                 DIVINING_RODS.forEach(entry -> entries.accept(entry.item()));
                 entries.accept(FINAL_STAR_SHARD.item());
                 entries.accept(FINAL_STAR.item());

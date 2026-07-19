@@ -222,5 +222,7 @@
   "item.projectex.evertide_amulet": "Evertide Amulet",
   "item.projectex.volcanite_amulet": "Volcanite Amulet",
   "tag.block.projectex.elemental_amulet_allowed": "Elemental Amulet replaceable blocks",
-  "tag.block.projectex.elemental_amulet_denied": "Elemental Amulet denied blocks"
+  "tag.block.projectex.elemental_amulet_denied": "Elemental Amulet denied blocks",
+  "item.projectex.knowledge_tome": "Knowledge Tome",
+  "item.projectex.knowledge_tome.learned": "Knowledge Tome learned %s entries (%s total)"
 }

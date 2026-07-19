@@ -13,6 +13,7 @@ not imply copied implementation or byte-for-byte behavior.
 | Transmutation Tablet, Repair Talisman, and Divining Rods | Implemented | ProjectE | Tablet reuses the hardened table session; repair cannot stack; rods are bounded, chunk-safe, tag-configurable, and expose a claim callback |
 | Dark Matter Pedestal | Baseline implemented | ProjectE | Owner/operator controls, explicit redstone modes, deterministic player cap, no chunk tickets; additional pedestal item effects remain planned |
 | Evertide and Volcanite Amulets | Baseline implemented | ProjectE | Protected one-block fluid placement, exact lava EMC debit, deterministic pedestal weather interval, no projectile entities |
+| Knowledge Tome | Implemented | ProjectE | Explicit disabled/consume/operator-only server policy, immutable snapshot expansion, atomic persistence, hard knowledge cap |
 | Klein Stars Ein–Omega | Implemented | ProjectE | Public Fabric item lookup and exact retained-EMC upgrade recipe |
 | Energy Collectors MK1–MK3 | Implemented | ProjectE | Integer/fixed-point budget, ownership, redstone modes, two-slot accessible UI |
 | Anti-Matter Relays MK1–MK3 | Implemented | ProjectE | Directed-cycle rejection, world tick budget, Fabric sided storage |

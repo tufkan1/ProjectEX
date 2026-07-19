@@ -67,9 +67,21 @@ fluid behind. Evertide does not place water in the Nether.
 On an active pedestal, Evertide starts a bounded rain period and Volcanite clears rain and
 thunder. Weather effects run every 1,200 ticks and do not scan chunks or entities.
 
+## Knowledge Tome policy
+
+Using a Knowledge Tome atomically learns every positive, item-only entry from one immutable
+server EMC snapshot while preserving the player's balance and existing component-specific
+knowledge. Survival use consumes the tome; creative use does not. A no-op or failed
+compare-and-set consumes nothing.
+
+Servers select `projectex.knowledgeTome.policy=consume`, `operator_only`, or `disabled` as a
+JVM property. The default is `consume` for recognizable survival progression. Unknown values
+fail startup instead of silently enabling this high-impact power. The learned set is checked
+against the persistent 100,000-entry safety cap before mutation.
+
 ## Remaining #39 families
 
-Additional pedestal effects, rings, knowledge tome policy, and
+Additional pedestal effects, rings, and
 destructive catalysts will build on this state/network contract. Their world adapters must
 add per-target protection callbacks, allow/deny tags, chunk-loaded bounds, per-tick work caps,
 and exact EMC charging before #39 is closed.

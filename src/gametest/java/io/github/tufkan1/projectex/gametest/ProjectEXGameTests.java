@@ -390,6 +390,39 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
     }
 
     @GameTest
+    public void knowledgeTomeAtomicallyLearnsCurrentSnapshotAndPreservesEmc(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        player.setGameMode(GameType.SURVIVAL);
+        ItemStack tome = new ItemStack(ProjectEXItems.KNOWLEDGE_TOME.item());
+        player.setItemInHand(InteractionHand.MAIN_HAND, tome);
+        PlayerAlchemySavedData data = PlayerAlchemySavedData.get(helper.getLevel().getServer());
+        data.update(player.getUUID(), ignored -> new io.github.tufkan1.projectex.player.PlayerAlchemyState(
+            EmcValue.of(123), new java.util.TreeSet<>(java.util.Set.of(
+                EmcKey.parse("minecraft:diamond")))));
+        java.util.Set<EmcKey> expected = ProjectEX.emc().snapshot().values().entrySet().stream()
+            .filter(entry -> entry.getKey().componentsJson() == null
+                && !entry.getValue().equals(EmcValue.ZERO))
+            .map(entry -> entry.getKey().item()).collect(java.util.stream.Collectors.toSet());
+
+        helper.assertTrue(ProjectEXItems.KNOWLEDGE_TOME.item().use(
+                helper.getLevel(), player, InteractionHand.MAIN_HAND)
+                == net.minecraft.world.InteractionResult.SUCCESS_SERVER,
+            "Knowledge Tome did not apply under the default consume policy");
+        var after = data.state(player.getUUID());
+        helper.assertTrue(after.knowledge().containsAll(expected)
+                && after.knowledge().size() >= expected.size(),
+            "Knowledge Tome did not atomically learn the current item-only EMC snapshot");
+        helper.assertTrue(after.balance().equals(EmcValue.of(123)),
+            "Knowledge Tome changed the player's EMC balance");
+        helper.assertTrue(tome.isEmpty(), "Survival Knowledge Tome was not consumed");
+        helper.assertTrue(helper.getLevel().getServer().getRecipeManager().byKey(
+            net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.RECIPE,
+                ProjectEX.id("knowledge_tome"))).isPresent(),
+            "Knowledge Tome survival recipe is missing");
+        helper.succeed();
+    }
+
+    @GameTest
     public void bundledEmcDataLoadsAtRuntime(GameTestHelper helper) {
         helper.assertValueEqual(
             ProjectEX.emc().find(EmcKey.parse("minecraft:diamond")).orElseThrow(),
