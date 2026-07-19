@@ -40,6 +40,8 @@ All state-changing actions become command objects executed on the logical server
 A transaction validates the current menu/session, resolves item identity and EMC
 from server state, calculates the complete result, then applies inventory and EMC
 changes as one operation. Failures return a typed result and change nothing.
+The loader-neutral evaluator accepts immutable snapshots; Minecraft menu/inventory
+adapters are responsible for committing the returned inventory/state pair together.
 
 ## Recipe mapping invariants
 
