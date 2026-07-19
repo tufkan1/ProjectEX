@@ -12,6 +12,7 @@ import io.github.tufkan1.projectex.content.ProjectEXBlockEntities;
 import io.github.tufkan1.projectex.content.ProjectEXBlocks;
 import io.github.tufkan1.projectex.content.ProjectEXItems;
 import io.github.tufkan1.projectex.content.ProjectEXComponents;
+import io.github.tufkan1.projectex.content.ProjectEXContentRegistry;
 import io.github.tufkan1.projectex.content.component.MachineItemState;
 import io.github.tufkan1.projectex.machine.FixedPointRate;
 import io.github.tufkan1.projectex.machine.FuelUpgradeRule;
@@ -57,6 +58,14 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
     public static final int OUTPUT_SLOT = 1;
     private static final int[] INPUT = {INPUT_SLOT};
     private static final int[] OUTPUT = {OUTPUT_SLOT};
+    private static final java.util.List<net.minecraft.world.item.Item> FUEL_PROGRESSION =
+        java.util.stream.Stream.concat(
+            java.util.stream.Stream.of(
+                ProjectEXItems.ALCHEMICAL_COAL.item(), ProjectEXItems.MOBIUS_FUEL.item(),
+                ProjectEXItems.AETERNALIS_FUEL.item()
+            ),
+            ProjectEXItems.EXPANSION_FUELS.stream().map(ProjectEXContentRegistry.RegisteredItem::item)
+        ).toList();
 
     private final MachineTier tier;
     private final NonNullList<ItemStack> items = NonNullList.withSize(2, ItemStack.EMPTY);
@@ -167,7 +176,7 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
         if (room.equals(EmcValue.ZERO)) {
             return;
         }
-        FixedPointRate rate = tier.fixedRate();
+        FixedPointRate rate = MachineRuntimeConfig.generationRate(tier);
         if (tier.type() == MachineTier.MachineType.POWER_FLOWER && level != null
             && level.getBlockState(worldPosition.below()).is(ProjectEXBlocks.COMPACT_SUN)) {
             rate = new FixedPointRate(
@@ -175,12 +184,10 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
                 rate.denominator()
             );
         }
-        EmcValue generationLimit = tier.type() == MachineTier.MachineType.POWER_FLOWER
-            ? room : room.min(tier.rate());
         FixedPointRate.Generation generation = rate.generate(
             state.deferredGeneration(),
             1,
-            generationLimit
+            room
         );
         buffer.insert(generation.produced());
         replaceStored(buffer.stored(), generation.deferredNumerator());
@@ -192,12 +199,8 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
             return;
         }
         ItemStack output = items.get(OUTPUT_SLOT);
-        net.minecraft.world.item.Item resultItem;
-        if (input.is(ProjectEXItems.ALCHEMICAL_COAL.item())) {
-            resultItem = ProjectEXItems.MOBIUS_FUEL.item();
-        } else if (input.is(ProjectEXItems.MOBIUS_FUEL.item())) {
-            resultItem = ProjectEXItems.AETERNALIS_FUEL.item();
-        } else {
+        net.minecraft.world.item.Item resultItem = fuelUpgradeResult(input);
+        if (resultItem == null) {
             return;
         }
         if (!output.isEmpty() && (!output.is(resultItem) || output.getCount() >= output.getMaxStackSize())) {
@@ -233,7 +236,8 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
             return;
         }
         MachineBuffer buffer = buffer();
-        EmcValue room = buffer.capacity().subtract(buffer.stored()).min(tier.rate());
+        EmcValue room = buffer.capacity().subtract(buffer.stored())
+            .min(MachineRuntimeConfig.transferLimit(tier));
         if (room.equals(EmcValue.ZERO)) {
             return;
         }
@@ -259,7 +263,10 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
             return;
         }
         MachineBuffer buffer = buffer();
-        var inserted = storage.insert(buffer.stored().min(tier.rate()), EmcTransferMode.EXECUTE);
+        var inserted = storage.insert(
+            buffer.stored().min(MachineRuntimeConfig.transferLimit(tier)),
+            EmcTransferMode.EXECUTE
+        );
         buffer.extract(inserted.transferred());
         replaceStored(buffer.stored(), state.deferredGeneration());
     }
@@ -285,7 +292,8 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
             MachineBuffer sourceBuffer = buffer();
             MachineBuffer targetBuffer = target.buffer();
             MachineNetworkTick.Transfer transfer = network.route(
-                nodeId(), sourceBuffer, target.nodeId(), targetBuffer, tier.rate()
+                nodeId(), sourceBuffer, target.nodeId(), targetBuffer,
+                MachineRuntimeConfig.transferLimit(tier)
             );
             if (!transfer.moved().equals(EmcValue.ZERO)) {
                 replaceStored(sourceBuffer.stored(), state.deferredGeneration());
@@ -421,8 +429,7 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
             return exposesEmcStorage(stack);
         }
         return switch (tier.type()) {
-            case COLLECTOR -> stack.is(ProjectEXItems.ALCHEMICAL_COAL.item())
-                || stack.is(ProjectEXItems.MOBIUS_FUEL.item());
+            case COLLECTOR -> fuelUpgradeResult(stack) != null;
             case RELAY -> exposesEmcStorage(stack) || valueOf(stack).isPresent();
             case POWER_FLOWER -> false;
         };
@@ -431,6 +438,15 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
     private boolean exposesEmcStorage(ItemStack stack) {
         return level instanceof ServerLevel server
             && EmcStorageApi.LOOKUP.find(stack, EmcStorageContext.automation(server)) != null;
+    }
+
+    private static net.minecraft.world.item.Item fuelUpgradeResult(ItemStack input) {
+        for (int index = 0; index < FUEL_PROGRESSION.size() - 1; index++) {
+            if (input.is(FUEL_PROGRESSION.get(index))) {
+                return FUEL_PROGRESSION.get(index + 1);
+            }
+        }
+        return null;
     }
 
     @Override

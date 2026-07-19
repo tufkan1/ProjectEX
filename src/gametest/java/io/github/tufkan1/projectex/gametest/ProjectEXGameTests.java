@@ -8,6 +8,7 @@ import io.github.tufkan1.projectex.api.storage.EmcStorageContext;
 import io.github.tufkan1.projectex.api.storage.EmcTransferMode;
 import io.github.tufkan1.projectex.content.ProjectEXBlocks;
 import io.github.tufkan1.projectex.content.ProjectEXComponents;
+import io.github.tufkan1.projectex.content.ProjectEXContentRegistry;
 import io.github.tufkan1.projectex.content.ProjectEXItems;
 import io.github.tufkan1.projectex.content.ExpansionMaterialTier;
 import io.github.tufkan1.projectex.endgame.FinalStarAccess;
@@ -57,6 +58,7 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 /** Runtime registration, resource reload, and physical menu smoke tests. */
 @SuppressWarnings("removal")
@@ -424,10 +426,24 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
         EmcMachineBlockEntity plain = machine(helper, plainPos);
         EmcMachineBlockEntity boosted = machine(helper, boostedPos);
 
-        for (int tick = 0; tick < 20; tick++) {
+        EmcMachineBlockEntity.tickServer(
+            helper.getLevel(), helper.absolutePos(plainPos), plain.getBlockState(), plain
+        );
+        var persisted = plain.saveWithFullMetadata(helper.getLevel().registryAccess());
+        var loaded = net.minecraft.world.level.block.entity.BlockEntity.loadStatic(
+            helper.absolutePos(plainPos), plain.getBlockState(), persisted,
+            helper.getLevel().registryAccess()
+        );
+        helper.assertTrue(loaded instanceof EmcMachineBlockEntity
+                && ((EmcMachineBlockEntity) loaded).machineState().equals(plain.machineState()),
+            "Power flower stored EMC or fractional remainder changed across reload");
+
+        for (int tick = 1; tick < 20; tick++) {
             EmcMachineBlockEntity.tickServer(
                 helper.getLevel(), helper.absolutePos(plainPos), plain.getBlockState(), plain
             );
+        }
+        for (int tick = 0; tick < 20; tick++) {
             EmcMachineBlockEntity.tickServer(
                 helper.getLevel(), helper.absolutePos(boostedPos), boosted.getBlockState(), boosted
             );
@@ -576,6 +592,56 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
             "Collector did not produce the next fuel tier");
         helper.assertTrue(collector.machineState().stored().equals(expectedStored),
             "Collector fuel upgrade did not spend the exact EMC difference");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void finalCollectorUpgradesEveryExpansionFuelBoundaryExactly(GameTestHelper helper) {
+        BlockPos relative = new BlockPos(16, 1, 0);
+        helper.setBlock(relative, ProjectEXBlocks.EXPANSION_COLLECTORS.get(
+            io.github.tufkan1.projectex.machine.ExpansionMachineTier.FINAL
+        ).block());
+        EmcMachineBlockEntity collector = machine(helper, relative);
+        java.util.List<net.minecraft.world.item.Item> inputs = new java.util.ArrayList<>();
+        inputs.add(ProjectEXItems.AETERNALIS_FUEL.item());
+        inputs.addAll(ProjectEXItems.EXPANSION_FUELS.stream()
+            .map(ProjectEXContentRegistry.RegisteredItem::item).limit(
+                ProjectEXItems.EXPANSION_FUELS.size() - 1L
+            ).toList());
+
+        for (int index = 0; index < ProjectEXItems.EXPANSION_FUELS.size(); index++) {
+            net.minecraft.world.item.Item input = inputs.get(index);
+            net.minecraft.world.item.Item expectedOutput = ProjectEXItems.EXPANSION_FUELS.get(index).item();
+            var before = collector.machineState();
+            EmcValue inputValue = ProjectEX.emc().find(new EmcKey(
+                BuiltInRegistries.ITEM.getKey(input).getNamespace(),
+                BuiltInRegistries.ITEM.getKey(input).getPath()
+            )).orElseThrow();
+            EmcValue outputValue = ProjectEX.emc().find(new EmcKey(
+                BuiltInRegistries.ITEM.getKey(expectedOutput).getNamespace(),
+                BuiltInRegistries.ITEM.getKey(expectedOutput).getPath()
+            )).orElseThrow();
+            var generation = io.github.tufkan1.projectex.machine.MachineRuntimeConfig
+                .generationRate(collector.tier()).generate(
+                    before.deferredGeneration(), 1,
+                    collector.tier().capacity().subtract(before.stored())
+                );
+            collector.setItem(EmcMachineBlockEntity.INPUT_SLOT, new ItemStack(input));
+            EmcMachineBlockEntity.tickServer(
+                helper.getLevel(), helper.absolutePos(relative), collector.getBlockState(), collector
+            );
+
+            helper.assertTrue(collector.getItem(EmcMachineBlockEntity.OUTPUT_SLOT).is(expectedOutput),
+                "Collector missed expansion fuel boundary " + index);
+            EmcValue expectedStored = before.stored().add(generation.produced())
+                .subtract(outputValue.subtract(inputValue));
+            helper.assertTrue(collector.machineState().stored().equals(expectedStored),
+                "Expansion fuel boundary did not spend its exact EMC difference: " + index);
+            helper.assertTrue(collector.machineState().deferredGeneration()
+                    .equals(generation.deferredNumerator()),
+                "Expansion fuel upgrade changed the fixed-point remainder: " + index);
+            collector.removeItemNoUpdate(EmcMachineBlockEntity.OUTPUT_SLOT);
+        }
         helper.succeed();
     }
 
