@@ -5,6 +5,24 @@
     "projectex:klein_star_drei",
     "projectex:klein_star_vier",
     "projectex:klein_star_sphere",
-    "projectex:klein_star_omega"
+    "projectex:klein_star_omega",
+    "projectex:magnum_star_ein",
+    "projectex:magnum_star_zwei",
+    "projectex:magnum_star_drei",
+    "projectex:magnum_star_vier",
+    "projectex:magnum_star_sphere",
+    "projectex:magnum_star_omega",
+    "projectex:colossal_star_ein",
+    "projectex:colossal_star_zwei",
+    "projectex:colossal_star_drei",
+    "projectex:colossal_star_vier",
+    "projectex:colossal_star_sphere",
+    "projectex:colossal_star_omega",
+    "projectex:gargantuan_star_ein",
+    "projectex:gargantuan_star_zwei",
+    "projectex:gargantuan_star_drei",
+    "projectex:gargantuan_star_vier",
+    "projectex:gargantuan_star_sphere",
+    "projectex:gargantuan_star_omega"
   ]
 }

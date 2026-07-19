@@ -56,7 +56,25 @@ public final class ProjectEXModelProvider implements DataProvider {
         Map.entry("klein_star_drei", "minecraft:item/diamond"),
         Map.entry("klein_star_vier", "minecraft:item/emerald"),
         Map.entry("klein_star_sphere", "minecraft:item/heart_of_the_sea"),
-        Map.entry("klein_star_omega", "minecraft:item/nether_star")
+        Map.entry("klein_star_omega", "minecraft:item/nether_star"),
+        Map.entry("magnum_star_ein", "minecraft:item/amethyst_shard"),
+        Map.entry("magnum_star_zwei", "minecraft:item/prismarine_crystals"),
+        Map.entry("magnum_star_drei", "minecraft:item/diamond"),
+        Map.entry("magnum_star_vier", "minecraft:item/emerald"),
+        Map.entry("magnum_star_sphere", "minecraft:item/heart_of_the_sea"),
+        Map.entry("magnum_star_omega", "minecraft:item/nether_star"),
+        Map.entry("colossal_star_ein", "minecraft:item/amethyst_shard"),
+        Map.entry("colossal_star_zwei", "minecraft:item/prismarine_crystals"),
+        Map.entry("colossal_star_drei", "minecraft:item/diamond"),
+        Map.entry("colossal_star_vier", "minecraft:item/emerald"),
+        Map.entry("colossal_star_sphere", "minecraft:item/heart_of_the_sea"),
+        Map.entry("colossal_star_omega", "minecraft:item/nether_star"),
+        Map.entry("gargantuan_star_ein", "minecraft:item/amethyst_shard"),
+        Map.entry("gargantuan_star_zwei", "minecraft:item/prismarine_crystals"),
+        Map.entry("gargantuan_star_drei", "minecraft:item/diamond"),
+        Map.entry("gargantuan_star_vier", "minecraft:item/emerald"),
+        Map.entry("gargantuan_star_sphere", "minecraft:item/heart_of_the_sea"),
+        Map.entry("gargantuan_star_omega", "minecraft:item/nether_star")
     );
     private static final Map<String, String> MACHINE_BLOCKS = Map.ofEntries(
         Map.entry("collector_mk1", "minecraft:block/glowstone"),

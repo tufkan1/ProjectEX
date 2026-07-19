@@ -304,6 +304,14 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
             ItemStack.EMPTY,
             ItemStack.EMPTY
         ));
+        CraftingInput individualOverflow = CraftingInput.of(3, 3, List.of(
+            star(ProjectEXItems.KLEIN_STAR_EIN.item(), 50_001),
+            star(ProjectEXItems.KLEIN_STAR_EIN.item(), 1),
+            star(ProjectEXItems.KLEIN_STAR_EIN.item(), 1),
+            star(ProjectEXItems.KLEIN_STAR_EIN.item(), 1),
+            new ItemStack(ProjectEXItems.AETERNALIS_FUEL.item()),
+            ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY
+        ));
 
         helper.assertTrue(!recipe.matches(overflow, helper.getLevel()),
             "Overflowing upgrade was accepted");
@@ -311,6 +319,30 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
             "Overflowing upgrade produced a duplicating output");
         helper.assertTrue(!recipe.matches(mixed, helper.getLevel()),
             "Mixed-tier upgrade was accepted");
+        helper.assertTrue(!recipe.matches(individualOverflow, helper.getLevel()),
+            "Individually overflowing source star was accepted");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void kleinOmegaUpgradeCrossesIntoMagnumAndPreservesExactEmc(GameTestHelper helper) {
+        KleinStarUpgradeRecipe recipe = new KleinStarUpgradeRecipe();
+        CraftingInput input = CraftingInput.of(3, 3, List.of(
+            star(ProjectEXItems.KLEIN_STAR_OMEGA.item(), 12_345_678),
+            star(ProjectEXItems.KLEIN_STAR_OMEGA.item(), 23_456_789),
+            star(ProjectEXItems.KLEIN_STAR_OMEGA.item(), 34_567_890),
+            star(ProjectEXItems.KLEIN_STAR_OMEGA.item(), 45_678_901),
+            new ItemStack(ProjectEXItems.AETERNALIS_FUEL.item()),
+            ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY, ItemStack.EMPTY
+        ));
+
+        helper.assertTrue(recipe.matches(input, helper.getLevel()),
+            "Klein Omega to Magnum boundary did not match");
+        ItemStack upgraded = recipe.assemble(input);
+        helper.assertTrue(upgraded.is(ProjectEXItems.MAGNUM_STAR_EIN.item()),
+            "Klein Omega did not upgrade into Magnum Ein");
+        helper.assertTrue(stored(upgraded).equals(EmcValue.of(116_049_258)),
+            "Boundary upgrade rounded or lost portable EMC");
         helper.succeed();
     }
 

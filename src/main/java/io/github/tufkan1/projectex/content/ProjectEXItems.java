@@ -76,6 +76,24 @@ public final class ProjectEXItems {
         star(KleinStarTier.SPHERE);
     public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> KLEIN_STAR_OMEGA =
         star(KleinStarTier.OMEGA);
+    public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> MAGNUM_STAR_EIN = star(KleinStarTier.MAGNUM_EIN);
+    public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> MAGNUM_STAR_ZWEI = star(KleinStarTier.MAGNUM_ZWEI);
+    public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> MAGNUM_STAR_DREI = star(KleinStarTier.MAGNUM_DREI);
+    public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> MAGNUM_STAR_VIER = star(KleinStarTier.MAGNUM_VIER);
+    public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> MAGNUM_STAR_SPHERE = star(KleinStarTier.MAGNUM_SPHERE);
+    public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> MAGNUM_STAR_OMEGA = star(KleinStarTier.MAGNUM_OMEGA);
+    public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> COLOSSAL_STAR_EIN = star(KleinStarTier.COLOSSAL_EIN);
+    public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> COLOSSAL_STAR_ZWEI = star(KleinStarTier.COLOSSAL_ZWEI);
+    public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> COLOSSAL_STAR_DREI = star(KleinStarTier.COLOSSAL_DREI);
+    public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> COLOSSAL_STAR_VIER = star(KleinStarTier.COLOSSAL_VIER);
+    public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> COLOSSAL_STAR_SPHERE = star(KleinStarTier.COLOSSAL_SPHERE);
+    public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> COLOSSAL_STAR_OMEGA = star(KleinStarTier.COLOSSAL_OMEGA);
+    public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> GARGANTUAN_STAR_EIN = star(KleinStarTier.GARGANTUAN_EIN);
+    public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> GARGANTUAN_STAR_ZWEI = star(KleinStarTier.GARGANTUAN_ZWEI);
+    public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> GARGANTUAN_STAR_DREI = star(KleinStarTier.GARGANTUAN_DREI);
+    public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> GARGANTUAN_STAR_VIER = star(KleinStarTier.GARGANTUAN_VIER);
+    public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> GARGANTUAN_STAR_SPHERE = star(KleinStarTier.GARGANTUAN_SPHERE);
+    public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> GARGANTUAN_STAR_OMEGA = star(KleinStarTier.GARGANTUAN_OMEGA);
     public static final List<ProjectEXContentRegistry.RegisteredItem<AlchemicalBagItem>> ALCHEMICAL_BAGS =
         java.util.Arrays.stream(DyeColor.values()).map(ProjectEXItems::bag).toList();
     public static final ProjectEXContentRegistry.RegisteredItem<MatterToolItem> DARK_MATTER_PICKAXE =
@@ -121,7 +139,13 @@ public final class ProjectEXItems {
             KLEIN_STAR_DREI,
             KLEIN_STAR_VIER,
             KLEIN_STAR_SPHERE,
-            KLEIN_STAR_OMEGA
+            KLEIN_STAR_OMEGA,
+            MAGNUM_STAR_EIN, MAGNUM_STAR_ZWEI, MAGNUM_STAR_DREI, MAGNUM_STAR_VIER,
+            MAGNUM_STAR_SPHERE, MAGNUM_STAR_OMEGA,
+            COLOSSAL_STAR_EIN, COLOSSAL_STAR_ZWEI, COLOSSAL_STAR_DREI, COLOSSAL_STAR_VIER,
+            COLOSSAL_STAR_SPHERE, COLOSSAL_STAR_OMEGA,
+            GARGANTUAN_STAR_EIN, GARGANTUAN_STAR_ZWEI, GARGANTUAN_STAR_DREI, GARGANTUAN_STAR_VIER,
+            GARGANTUAN_STAR_SPHERE, GARGANTUAN_STAR_OMEGA
         );
 
     private ProjectEXItems() {
@@ -152,6 +176,10 @@ public final class ProjectEXItems {
         return KLEIN_STARS;
     }
 
+    public static ProjectEXContentRegistry.RegisteredItem<KleinStarItem> kleinStar(KleinStarTier tier) {
+        return KLEIN_STARS.get(tier.ordinal());
+    }
+
     public static List<ProjectEXContentRegistry.RegisteredItem<AlchemicalBagItem>> alchemicalBags() {
         return ALCHEMICAL_BAGS;
     }
@@ -162,7 +190,7 @@ public final class ProjectEXItems {
 
     private static ProjectEXContentRegistry.RegisteredItem<KleinStarItem> star(KleinStarTier tier) {
         return ProjectEXContentRegistry.registerItem(
-            "klein_star_" + tier.serializedName(),
+            tier.serializedName(),
             properties -> new KleinStarItem(properties, tier),
             new Item.Properties().rarity(Rarity.UNCOMMON)
         );
