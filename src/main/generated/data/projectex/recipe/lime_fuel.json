@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "projectex:green_fuel",
+    "projectex:green_fuel",
+    "projectex:green_fuel",
+    "projectex:green_fuel"
+  ],
+  "result": {
+    "id": "projectex:lime_fuel"
+  }
+}

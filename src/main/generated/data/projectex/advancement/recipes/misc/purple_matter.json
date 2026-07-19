@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "projectex:purple_matter"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_tier_fuel": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projectex:purple_fuel"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_tier_fuel"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "projectex:purple_matter"
+    ]
+  }
+}

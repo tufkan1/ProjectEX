@@ -16,6 +16,8 @@ public final class ProjectEXTags {
         Registries.ITEM,
         ProjectEX.id("klein_stars")
     );
+    public static final TagKey<Item> FUELS = TagKey.create(Registries.ITEM, ProjectEX.id("fuels"));
+    public static final TagKey<Item> MATTERS = TagKey.create(Registries.ITEM, ProjectEX.id("matters"));
     public static final TagKey<Block> PHILOSOPHERS_STONE_ALLOWED = TagKey.create(
         Registries.BLOCK,
         ProjectEX.id("philosophers_stone_allowed")

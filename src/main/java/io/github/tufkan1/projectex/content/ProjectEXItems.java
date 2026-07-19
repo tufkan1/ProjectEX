@@ -13,6 +13,7 @@ import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.equipment.ArmorMaterial;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.item.equipment.EquipmentAssets;
+import net.fabricmc.fabric.api.registry.FuelValueEvents;
 
 /** First survival progression materials and active items. */
 public final class ProjectEXItems {
@@ -58,6 +59,18 @@ public final class ProjectEXItems {
             Item::new,
             new Item.Properties().rarity(Rarity.EPIC).fireResistant()
         );
+    public static final List<ProjectEXContentRegistry.RegisteredItem<Item>> EXPANSION_FUELS =
+        java.util.Arrays.stream(ExpansionMaterialTier.values()).map(tier -> material(
+            tier.fuelId(), tier.ordinal() < 4 ? Rarity.UNCOMMON
+                : tier.ordinal() < 9 ? Rarity.RARE : Rarity.EPIC
+        )).toList();
+    public static final List<ProjectEXContentRegistry.RegisteredItem<Item>> EXPANSION_MATTERS =
+        java.util.Arrays.stream(ExpansionMaterialTier.values()).map(tier -> material(
+            tier.matterId(), tier.ordinal() < 4 ? Rarity.UNCOMMON
+                : tier.ordinal() < 9 ? Rarity.RARE : Rarity.EPIC
+        )).toList();
+    public static final ProjectEXContentRegistry.RegisteredItem<Item> FADING_MATTER =
+        material("fading_matter", Rarity.EPIC);
     public static final ProjectEXContentRegistry.RegisteredItem<PhilosophersStoneItem> PHILOSOPHERS_STONE =
         ProjectEXContentRegistry.registerItem(
             "philosophers_stone",
@@ -122,16 +135,17 @@ public final class ProjectEXItems {
                 .map(type -> armor("red_matter_" + armorName(type), MatterTier.RED, type, RED_ARMOR_MATERIAL))
         ).toList();
 
-    private static final List<ProjectEXContentRegistry.RegisteredItem<? extends Item>> MATERIALS = List.of(
-        LOW_COVALENCE_DUST,
-        MEDIUM_COVALENCE_DUST,
-        HIGH_COVALENCE_DUST,
-        ALCHEMICAL_COAL,
-        MOBIUS_FUEL,
-        AETERNALIS_FUEL,
-        DARK_MATTER,
-        RED_MATTER
-    );
+    private static final List<ProjectEXContentRegistry.RegisteredItem<Item>> MATERIALS =
+        java.util.stream.Stream.concat(
+            java.util.stream.Stream.of(
+                LOW_COVALENCE_DUST, MEDIUM_COVALENCE_DUST, HIGH_COVALENCE_DUST,
+                ALCHEMICAL_COAL, MOBIUS_FUEL, AETERNALIS_FUEL, DARK_MATTER, RED_MATTER
+            ),
+            java.util.stream.Stream.concat(
+                EXPANSION_FUELS.stream(),
+                java.util.stream.Stream.concat(EXPANSION_MATTERS.stream(), java.util.stream.Stream.of(FADING_MATTER))
+            )
+        ).toList();
     private static final List<ProjectEXContentRegistry.RegisteredItem<KleinStarItem>> KLEIN_STARS =
         List.of(
             KLEIN_STAR_EIN,
@@ -152,6 +166,12 @@ public final class ProjectEXItems {
     }
 
     public static void register() {
+        FuelValueEvents.BUILD.register((builder, context) -> {
+            builder.add(ALCHEMICAL_COAL.item(), 1_600);
+            builder.add(MOBIUS_FUEL.item(), 6_400);
+            builder.add(AETERNALIS_FUEL.item(), 25_600);
+            EXPANSION_FUELS.forEach(fuel -> builder.add(fuel.item(), 25_600));
+        });
         CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.INGREDIENTS)
             .register(entries -> MATERIALS.forEach(entry -> entries.accept(entry.item())));
         CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.TOOLS_AND_UTILITIES)
@@ -168,7 +188,7 @@ public final class ProjectEXItems {
             });
     }
 
-    public static List<ProjectEXContentRegistry.RegisteredItem<? extends Item>> materials() {
+    public static List<ProjectEXContentRegistry.RegisteredItem<Item>> materials() {
         return MATERIALS;
     }
 
@@ -186,6 +206,12 @@ public final class ProjectEXItems {
 
     private static ProjectEXContentRegistry.RegisteredItem<Item> simple(String path) {
         return ProjectEXContentRegistry.registerItem(path, Item::new, new Item.Properties());
+    }
+
+    private static ProjectEXContentRegistry.RegisteredItem<Item> material(String path, Rarity rarity) {
+        return ProjectEXContentRegistry.registerItem(
+            path, Item::new, new Item.Properties().rarity(rarity).fireResistant()
+        );
     }
 
     private static ProjectEXContentRegistry.RegisteredItem<KleinStarItem> star(KleinStarTier tier) {

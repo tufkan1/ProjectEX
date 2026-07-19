@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "F": "projectex:violet_fuel",
+    "M": "projectex:purple_matter"
+  },
+  "pattern": [
+    "FMF",
+    "FMF",
+    "FMF"
+  ],
+  "result": {
+    "id": "projectex:violet_matter"
+  }
+}

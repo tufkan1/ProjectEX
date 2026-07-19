@@ -30,6 +30,14 @@ public final class ProjectEXItemTagProvider extends FabricTagsProvider.ItemTagsP
         builder(ProjectEXTags.KLEIN_STARS).addAll(
             ProjectEXItems.kleinStars().stream().map(ProjectEXItemTagProvider::key).toList()
         );
+        builder(ProjectEXTags.FUELS).add(
+            key(ProjectEXItems.ALCHEMICAL_COAL), key(ProjectEXItems.MOBIUS_FUEL),
+            key(ProjectEXItems.AETERNALIS_FUEL)
+        ).addAll(ProjectEXItems.EXPANSION_FUELS.stream().map(ProjectEXItemTagProvider::key).toList());
+        builder(ProjectEXTags.MATTERS).add(
+            key(ProjectEXItems.DARK_MATTER), key(ProjectEXItems.RED_MATTER),
+            key(ProjectEXItems.FADING_MATTER)
+        ).addAll(ProjectEXItems.EXPANSION_MATTERS.stream().map(ProjectEXItemTagProvider::key).toList());
         builder(ProjectEXTags.DARK_MATTER_REPAIR).add(key(ProjectEXItems.DARK_MATTER));
         builder(ProjectEXTags.RED_MATTER_REPAIR).add(key(ProjectEXItems.RED_MATTER));
     }
