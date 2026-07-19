@@ -19,6 +19,14 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+import net.minecraft.client.KeyMapping;
+import com.mojang.blaze3d.platform.InputConstants;
+import org.lwjgl.glfw.GLFW;
+import io.github.tufkan1.projectex.content.ChargeableUtilityItem;
+import io.github.tufkan1.projectex.network.UtilityStateAction;
+import io.github.tufkan1.projectex.network.UtilityStatePayload;
 
 /** Client-only networking state; screens consume this instead of trusting local calculations. */
 @Environment(EnvType.CLIENT)
@@ -26,6 +34,14 @@ public final class ProjectEXClient implements ClientModInitializer {
     private static final ClientAlchemySessionState ALCHEMY = new ClientAlchemySessionState();
     private static final ClientKnowledgeBrowserState KNOWLEDGE = new ClientKnowledgeBrowserState();
     private static ClientFavoriteStore favoriteStore;
+    private static final KeyMapping.Category UTILITY_CATEGORY =
+        KeyMapping.Category.register(ProjectEX.id("utilities"));
+    private static final KeyMapping CHARGE_KEY = KeyMappingHelper.registerKeyMapping(new KeyMapping(
+        "key.projectex.utility_charge", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, UTILITY_CATEGORY
+    ));
+    private static final KeyMapping MODE_KEY = KeyMappingHelper.registerKeyMapping(new KeyMapping(
+        "key.projectex.utility_mode", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, UTILITY_CATEGORY
+    ));
 
     @Override
     public void onInitializeClient() {
@@ -57,6 +73,10 @@ public final class ProjectEXClient implements ClientModInitializer {
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
             ALCHEMY.close();
             KNOWLEDGE.close();
+        });
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            while (CHARGE_KEY.consumeClick()) sendUtilityState(client, UtilityStateAction.CHARGE);
+            while (MODE_KEY.consumeClick()) sendUtilityState(client, UtilityStateAction.MODE);
         });
     }
 
@@ -114,5 +134,26 @@ public final class ProjectEXClient implements ClientModInitializer {
             ProjectEX.LOGGER.warn("Could not persist ProjectEX client favorites");
         }
         return true;
+    }
+
+    private static void sendUtilityState(
+        net.minecraft.client.Minecraft client,
+        UtilityStateAction action
+    ) {
+        if (client.player == null) return;
+        try {
+            if (!ClientPlayNetworking.canSend(UtilityStatePayload.TYPE)) return;
+        } catch (IllegalStateException exception) {
+            return;
+        }
+        int hand = client.player.getMainHandItem().getItem() instanceof ChargeableUtilityItem ? 0
+            : client.player.getOffhandItem().getItem() instanceof ChargeableUtilityItem ? 1 : -1;
+        if (hand >= 0) {
+            try {
+                ClientPlayNetworking.send(new UtilityStatePayload(action.ordinal(), hand));
+            } catch (IllegalStateException exception) {
+                ProjectEX.LOGGER.debug("Could not send utility state keybinding", exception);
+            }
+        }
     }
 }
