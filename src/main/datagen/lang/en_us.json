@@ -218,5 +218,9 @@
   "block.projectex.dark_matter_pedestal": "Dark Matter Pedestal",
   "block.projectex.dark_matter_pedestal.active": "Pedestal activated",
   "block.projectex.dark_matter_pedestal.inactive": "Pedestal deactivated",
-  "block.projectex.dark_matter_pedestal.redstone": "Pedestal redstone mode: %s"
+  "block.projectex.dark_matter_pedestal.redstone": "Pedestal redstone mode: %s",
+  "item.projectex.evertide_amulet": "Evertide Amulet",
+  "item.projectex.volcanite_amulet": "Volcanite Amulet",
+  "tag.block.projectex.elemental_amulet_allowed": "Elemental Amulet replaceable blocks",
+  "tag.block.projectex.elemental_amulet_denied": "Elemental Amulet denied blocks"
 }

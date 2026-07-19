@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "D": "projectex:dark_matter",
+    "L": "minecraft:lava_bucket"
+  },
+  "pattern": [
+    "LLL",
+    "DDD",
+    "LLL"
+  ],
+  "result": {
+    "id": "projectex:volcanite_amulet"
+  }
+}

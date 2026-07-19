@@ -78,6 +78,16 @@ public final class ProjectEXBlockTagProvider extends FabricTagsProvider.BlockTag
             key(Blocks.REPEATING_COMMAND_BLOCK), key(Blocks.CHAIN_COMMAND_BLOCK),
             key(Blocks.STRUCTURE_BLOCK), key(Blocks.JIGSAW), key(Blocks.END_PORTAL_FRAME)
         );
+        builder(ProjectEXTags.ELEMENTAL_AMULET_ALLOWED).add(
+            key(Blocks.AIR), key(Blocks.CAVE_AIR), key(Blocks.VOID_AIR),
+            key(Blocks.WATER), key(Blocks.LAVA), key(Blocks.FIRE), key(Blocks.SOUL_FIRE),
+            key(Blocks.SHORT_GRASS), key(Blocks.TALL_GRASS), key(Blocks.SNOW)
+        );
+        builder(ProjectEXTags.ELEMENTAL_AMULET_DENIED).add(
+            key(Blocks.BEDROCK), key(Blocks.BARRIER), key(Blocks.COMMAND_BLOCK),
+            key(Blocks.REPEATING_COMMAND_BLOCK), key(Blocks.CHAIN_COMMAND_BLOCK),
+            key(Blocks.STRUCTURE_BLOCK), key(Blocks.JIGSAW), key(Blocks.END_PORTAL_FRAME)
+        );
         builder(ProjectEXTags.INCORRECT_FOR_DARK_MATTER_TOOL).add(
             key(Blocks.BEDROCK), key(Blocks.BARRIER), key(Blocks.COMMAND_BLOCK),
             key(Blocks.REPEATING_COMMAND_BLOCK), key(Blocks.CHAIN_COMMAND_BLOCK),

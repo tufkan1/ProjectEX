@@ -67,6 +67,18 @@ public final class ProjectEXRecipeProvider extends FabricRecipeProvider {
                     .pattern("LMH").pattern("SPS").pattern("HML")
                     .unlockedBy("has_covalence_dust", has(ProjectEXItems.LOW_COVALENCE_DUST.item()))
                     .save(output, id("repair_talisman"));
+                shaped(RecipeCategory.TOOLS, ProjectEXItems.EVERTIDE_AMULET.item())
+                    .define('D', ProjectEXItems.DARK_MATTER.item())
+                    .define('W', Items.WATER_BUCKET)
+                    .pattern("WWW").pattern("DDD").pattern("WWW")
+                    .unlockedBy("has_dark_matter", has(ProjectEXItems.DARK_MATTER.item()))
+                    .save(output, id("evertide_amulet"));
+                shaped(RecipeCategory.TOOLS, ProjectEXItems.VOLCANITE_AMULET.item())
+                    .define('D', ProjectEXItems.DARK_MATTER.item())
+                    .define('L', Items.LAVA_BUCKET)
+                    .pattern("LLL").pattern("DDD").pattern("LLL")
+                    .unlockedBy("has_dark_matter", has(ProjectEXItems.DARK_MATTER.item()))
+                    .save(output, id("volcanite_amulet"));
                 shaped(RecipeCategory.MISC, ProjectEXBlocks.DARK_MATTER_PEDESTAL)
                     .define('D', ProjectEXBlocks.DARK_MATTER_BLOCK)
                     .define('R', ProjectEXItems.RED_MATTER.item())
