@@ -10,6 +10,9 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import org.lwjgl.glfw.GLFW;
+import io.github.tufkan1.projectex.network.KnowledgeSharePreviewPayload;
+import java.util.UUID;
+import net.minecraft.client.gui.screens.ConfirmScreen;
 
 /** End-to-end client/server smoke test for the learn, burn, and create journey. */
 @SuppressWarnings("UnstableApiUsage")
@@ -39,6 +42,13 @@ public final class ProjectEXClientGameTests implements FabricClientGameTest {
             context.waitFor(client -> ProjectEXClient.alchemy().snapshot().lastResponseId() >= 2);
             assertSuccessfulBalance(BigInteger.ZERO, "create");
             context.waitFor(ProjectEXClientGameTests::clientHasDiamond);
+
+            context.runOnClient(client -> ProjectEXClient.openKnowledgeConfirmation(
+                new KnowledgeSharePreviewPayload(UUID.randomUUID(), UUID.randomUUID(), 0,
+                    3, 0, 1, 4, System.currentTimeMillis() / 1_000L + 120)));
+            context.waitForScreen(ConfirmScreen.class);
+            context.clickScreenButton("Cancel");
+            context.waitForScreen(TransmutationScreen.class);
         }
     }
 

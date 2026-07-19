@@ -33,6 +33,22 @@ public record KnowledgeSnapshot(
 
     @Override public byte[] signature() { return Arrays.copyOf(signature, signature.length); }
 
+    @Override public boolean equals(Object other) {
+        return other instanceof KnowledgeSnapshot snapshot
+            && version == snapshot.version
+            && issuedAt == snapshot.issuedAt
+            && expiresAt == snapshot.expiresAt
+            && snapshotId.equals(snapshot.snapshotId)
+            && ownerId.equals(snapshot.ownerId)
+            && knowledge.equals(snapshot.knowledge)
+            && Arrays.equals(signature, snapshot.signature);
+    }
+
+    @Override public int hashCode() {
+        int result = Objects.hash(version, snapshotId, ownerId, issuedAt, expiresAt, knowledge);
+        return 31 * result + Arrays.hashCode(signature);
+    }
+
     public KnowledgeSnapshot withSignature(byte[] value) {
         return new KnowledgeSnapshot(version, snapshotId, ownerId, issuedAt, expiresAt, knowledge, value);
     }

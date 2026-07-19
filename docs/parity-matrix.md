@@ -24,6 +24,7 @@ not imply copied implementation or byte-for-byte behavior.
 | Alchemical Chest and Bags | Implemented | ProjectE | 104-slot chest and bags; copied bag identities mirror one UUID/world-backed inventory |
 | Advanced Alchemical Chest | Implemented | ProjectExpansion | 243 slots, five server pages, lossless smithing migration, owner-configured 64-entry allow/deny filter, deterministic bounded sort, comparator and Fabric transfer |
 | Arcane Tablet | Implemented | ProjectExpansion | Versioned transmutation/crafting modes; reuses M2 sessions and vanilla 3×3 crafting with exact-stack authorization |
+| Knowledge Sharing Book | Implemented | ProjectExpansion | World-persistent HMAC snapshots, merge/replace preview, explicit narrated confirmation, held-book/revision/replay checks, server policy/team boundary, persistent audit |
 | Dark/red matter blocks, tools, and armor | Implemented | ProjectE | Data-pack runtime balance, server-raycast area mining, exact EMC payment/refund, public claim hook, bounded cooldowns, vanilla-attribute armor |
 | Dark/red matter furnaces | Implemented | ProjectE | Atomic multi-slot output, component identity, exact fuel remainder, sided Fabric automation, narrated progress UI |
 | Expansion collectors, relays, power flowers, and Compact Sun | Implemented | ProjectExpansion | Exact fixed-point/BigInteger accounting, schema-v1 carry state, bounded multiplier, no chunk tickets, original vanilla-reference models |

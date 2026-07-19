@@ -27,6 +27,7 @@ same pull request that introduces any derived material.
 | Final Star names and non-depleting food concept | ProjectExpansion `ItemFinalStar`, `ItemFinalStarShard`, and `ItemInfiniteSteak` | `168bcf2491b9fde679295fd412ad9c93fd3d93f1` | MIT | Behavior research only; public Fabric capability, slot resolver, cooldown lease, config validation, atomic EMC payment, server hunger logic, tests, and placeholder models are original ProjectEX work |
 | Sixteen expansion machine tiers and power-flower composition | ProjectExpansion `Matter` | `168bcf2491b9fde679295fd412ad9c93fd3d93f1` | MIT | Balance research only; arbitrary-precision catalog, exact fixed-point conversion, documentation, and tests are original ProjectEX work |
 | Expansion collector/relay/power-flower/Compact Sun identities and recipes | ProjectExpansion generated recipes and block registrations | `168bcf2491b9fde679295fd412ad9c93fd3d93f1` | MIT | Naming and recipe-shape research only; Fabric blocks, state handling, tick logic, configuration, datagen, tests, translations, and vanilla-reference placeholder models are original ProjectEX work |
+| Knowledge Sharing Book identity and recipe shape | ProjectExpansion `ItemKnowledgeSharingBook` and generated recipe | `168bcf2491b9fde679295fd412ad9c93fd3d93f1` | MIT | Identity and recipe-shape research only; signed snapshots, persistent secret/replay/audit data, policy and team boundary, two-phase protocol, confirmation UI, codecs, tests, translations, and placeholder model are original ProjectEX work |
 
 ## Rules
 

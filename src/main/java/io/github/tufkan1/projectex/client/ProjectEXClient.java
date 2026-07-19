@@ -30,6 +30,14 @@ import org.lwjgl.glfw.GLFW;
 import io.github.tufkan1.projectex.content.ChargeableUtilityItem;
 import io.github.tufkan1.projectex.network.UtilityStateAction;
 import io.github.tufkan1.projectex.network.UtilityStatePayload;
+import io.github.tufkan1.projectex.network.KnowledgeShareDecisionPayload;
+import io.github.tufkan1.projectex.network.KnowledgeSharePreviewPayload;
+import io.github.tufkan1.projectex.network.KnowledgeShareResultPayload;
+import java.util.UUID;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.ConfirmScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 
 /** Client-only networking state; screens consume this instead of trusting local calculations. */
 @Environment(EnvType.CLIENT)
@@ -45,6 +53,7 @@ public final class ProjectEXClient implements ClientModInitializer {
     private static final KeyMapping MODE_KEY = KeyMappingHelper.registerKeyMapping(new KeyMapping(
         "key.projectex.utility_mode", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, UTILITY_CATEGORY
     ));
+    private static UUID pendingKnowledgeConfirmation;
 
     @Override
     @SuppressWarnings("deprecation") // Fabric's 26.2 registry remains the supported public hook.
@@ -76,14 +85,59 @@ public final class ProjectEXClient implements ClientModInitializer {
                 ProjectEX.LOGGER.warn("Discarded unexpected ProjectEX knowledge page payload");
             }
         });
+        ClientPlayNetworking.registerGlobalReceiver(KnowledgeSharePreviewPayload.TYPE, (payload, context) ->
+            openKnowledgeConfirmation(payload));
+        ClientPlayNetworking.registerGlobalReceiver(KnowledgeShareResultPayload.TYPE, (payload, context) -> {
+            Minecraft client = Minecraft.getInstance();
+            if (client.player != null) {
+                client.player.sendSystemMessage(payload.success()
+                    ? Component.translatable("message.projectex.knowledge_share.confirmed",
+                        payload.learned(), payload.total())
+                    : Component.translatable("message.projectex.knowledge_share.failed", payload.reason()));
+            }
+        });
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
             ALCHEMY.close();
             KNOWLEDGE.close();
+            pendingKnowledgeConfirmation = null;
         });
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (CHARGE_KEY.consumeClick()) sendUtilityState(client, UtilityStateAction.CHARGE);
             while (MODE_KEY.consumeClick()) sendUtilityState(client, UtilityStateAction.MODE);
         });
+    }
+
+    public static void openKnowledgeConfirmation(KnowledgeSharePreviewPayload payload) {
+        Minecraft client = Minecraft.getInstance();
+        Screen previous = client.gui.screen();
+        if (pendingKnowledgeConfirmation != null) {
+            sendKnowledgeDecision(pendingKnowledgeConfirmation, false);
+        }
+        pendingKnowledgeConfirmation = payload.token();
+        Component mode = Component.translatable("item.projectex.knowledge_sharing_book.mode."
+            + (payload.mode() == 0 ? "merge" : "replace"));
+        client.setScreenAndShow(new ConfirmScreen(accepted -> {
+            if (payload.token().equals(pendingKnowledgeConfirmation)) {
+                sendKnowledgeDecision(payload.token(), accepted);
+                pendingKnowledgeConfirmation = null;
+            }
+            client.setScreenAndShow(previous);
+        }, Component.translatable("screen.projectex.knowledge_share.title"),
+            Component.translatable("screen.projectex.knowledge_share.summary", mode,
+                payload.added(), payload.removed(), payload.duplicates(), payload.resultSize(),
+                payload.ownerId().toString()),
+            Component.translatable("screen.projectex.knowledge_share.confirm"),
+            Component.translatable("screen.projectex.knowledge_share.cancel")));
+    }
+
+    private static void sendKnowledgeDecision(UUID token, boolean accepted) {
+        try {
+            if (ClientPlayNetworking.canSend(KnowledgeShareDecisionPayload.TYPE)) {
+                ClientPlayNetworking.send(new KnowledgeShareDecisionPayload(token, accepted));
+            }
+        } catch (IllegalStateException exception) {
+            ProjectEX.LOGGER.debug("Could not send knowledge sharing decision", exception);
+        }
     }
 
     public static boolean sendAction(int operationId, String itemId, int count) {
