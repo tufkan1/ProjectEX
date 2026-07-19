@@ -16,7 +16,7 @@ implementation informed by the behavior of ProjectE and ProjectExpansion.
 | Fabric Loader | 0.19.3 or newer |
 | Fabric API | 0.155.2+26.2 |
 | Java | 25 |
-| Gradle | Wrapper 9.5.1 |
+| Gradle | Wrapper 9.6.1 |
 
 Each Minecraft feature release receives an explicit compatibility decision and
 CI validation. “26.2+” means the project will actively port forward; it does not
@@ -45,6 +45,7 @@ launch a development client with `./gradlew runClient`.
 - [Task backlog](TASKS.md) — issue-ready work packages and acceptance criteria
 - [Architecture](docs/architecture.md) — module boundaries and technical rules
 - [EMC data format](docs/emc-data-format.md) — versioned pack-author format and conflict rules
+- [Public EMC API](docs/emc-api.md) — query lifecycle, consumer examples, and compatibility policy
 - [Contributing](CONTRIBUTING.md) — development and pull request workflow
 - [Support](SUPPORT.md) — where questions and bug reports belong
 - [Security](SECURITY.md) — private vulnerability reporting policy

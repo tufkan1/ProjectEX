@@ -8,7 +8,7 @@ import com.google.gson.JsonParser;
 import io.github.tufkan1.projectex.api.emc.EmcKey;
 import io.github.tufkan1.projectex.api.emc.EmcMatch;
 import io.github.tufkan1.projectex.api.emc.EmcValue;
-import io.github.tufkan1.projectex.api.emc.EmcValueRegistry;
+import io.github.tufkan1.projectex.internal.emc.EmcValueRegistry;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;

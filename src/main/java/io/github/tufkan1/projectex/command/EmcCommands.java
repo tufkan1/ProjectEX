@@ -5,10 +5,10 @@ import static net.minecraft.commands.Commands.literal;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import io.github.tufkan1.projectex.ProjectEX;
+import io.github.tufkan1.projectex.api.emc.EmcApi;
 import io.github.tufkan1.projectex.api.emc.EmcKey;
 import io.github.tufkan1.projectex.api.emc.EmcMatch;
 import io.github.tufkan1.projectex.api.emc.EmcValue;
-import io.github.tufkan1.projectex.api.emc.EmcValueRegistry;
 import java.util.Optional;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.commands.Commands;
@@ -29,7 +29,7 @@ public final class EmcCommands {
                 .then(literal("emc")
                     .then(argument("item", StringArgumentType.word())
                         .suggests((context, builder) -> SharedSuggestionProvider.suggest(
-                            ProjectEX.emcValues().snapshot().keySet().stream()
+                            ProjectEX.emc().snapshot().values().keySet().stream()
                                 .map(match -> match.item().toString())
                                 .distinct(),
                             builder
@@ -49,7 +49,7 @@ public final class EmcCommands {
     }
 
     private static int status(net.minecraft.commands.CommandSourceStack source) {
-        int count = ProjectEX.emcValues().size();
+        int count = ProjectEX.emc().snapshot().size();
         source.sendSuccess(() -> Component.translatable("commands.projectex.status", count), false);
         return count;
     }
@@ -64,13 +64,13 @@ public final class EmcCommands {
         }
 
         EmcMatch match = EmcMatch.item(key);
-        EmcValueRegistry registry = ProjectEX.emcValues();
+        EmcApi registry = ProjectEX.emc();
         Optional<EmcValue> value = registry.find(match);
         if (value.isEmpty()) {
             source.sendFailure(Component.translatable("commands.projectex.no_value", key.toString()));
             return 0;
         }
-        String provenance = registry.findSource(match).orElse("unknown");
+        String provenance = registry.snapshot().findSource(match).orElse("unknown");
         source.sendSuccess(() -> Component.translatable(
             "commands.projectex.value",
             key.toString(),
@@ -90,9 +90,9 @@ public final class EmcCommands {
     }
 
     private static int dump(net.minecraft.commands.CommandSourceStack source) {
-        String report = EmcDiagnostics.toJson(ProjectEX.emcValues());
+        String report = EmcDiagnostics.toJson(ProjectEX.emc());
         ProjectEX.LOGGER.info("ProjectEX EMC diagnostics: {}", report);
-        int count = ProjectEX.emcValues().size();
+        int count = ProjectEX.emc().snapshot().size();
         source.sendSuccess(() -> Component.translatable("commands.projectex.dumped", count), false);
         return count;
     }

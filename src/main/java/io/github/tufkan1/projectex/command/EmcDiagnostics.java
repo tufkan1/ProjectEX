@@ -2,9 +2,10 @@ package io.github.tufkan1.projectex.command;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.github.tufkan1.projectex.api.emc.EmcApi;
 import io.github.tufkan1.projectex.api.emc.EmcMatch;
+import io.github.tufkan1.projectex.api.emc.EmcSnapshot;
 import io.github.tufkan1.projectex.api.emc.EmcValue;
-import io.github.tufkan1.projectex.api.emc.EmcValueRegistry;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -15,9 +16,10 @@ public final class EmcDiagnostics {
     private EmcDiagnostics() {
     }
 
-    public static String toJson(EmcValueRegistry registry) {
-        Map<EmcMatch, EmcValue> values = registry.snapshot();
-        Map<EmcMatch, String> sources = registry.sourcesSnapshot();
+    public static String toJson(EmcApi registry) {
+        EmcSnapshot snapshot = registry.snapshot();
+        Map<EmcMatch, EmcValue> values = snapshot.values();
+        Map<EmcMatch, String> sources = snapshot.sources();
         Map<String, Entry> output = new TreeMap<>();
         values.forEach((match, value) -> output.put(match.toString(),
             new Entry(value.amount().toString(), sources.getOrDefault(match, "unknown"))));
