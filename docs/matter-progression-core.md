@@ -11,8 +11,9 @@ per-block EMC cost, cooldown, furnace timing/output layout, bonus-output probabi
 and the armor reduction cap. The built-in dark/red defaults are compatibility-oriented
 starting values researched against ProjectE commit
 `15d4ce65bd06eb4222709b984255fbf5080e78bc`. Runtime blocks, tools, and armor consume
-these validated definitions. Data-pack override loading remains a separate compatibility
-step; unsafe definitions are already rejected by the tier constructor.
+these validated definitions. Winning schema-v1 data-pack resources are prepared and
+published as one immutable snapshot on reload; malformed or unsafe definitions leave
+the previous snapshot active. See `matter-tier-data.md` for the complete contract.
 
 ## Area action contract
 

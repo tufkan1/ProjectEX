@@ -9,6 +9,7 @@ import io.github.tufkan1.projectex.internal.player.MatterEmcPayment;
 import io.github.tufkan1.projectex.matter.MatterActionAuditEvent;
 import io.github.tufkan1.projectex.matter.MatterActionPlanner;
 import io.github.tufkan1.projectex.matter.MatterTier;
+import io.github.tufkan1.projectex.matter.MatterTierConfig;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -43,7 +44,7 @@ public final class MatterToolItem extends Item {
         this.kind = kind;
     }
 
-    public MatterTier tier() { return tier; }
+    public MatterTier tier() { return MatterTierConfig.resolve(tier); }
     public Kind kind() { return kind; }
 
     @Override @SuppressWarnings("deprecation")
@@ -52,8 +53,9 @@ public final class MatterToolItem extends Item {
         Consumer<Component> textConsumer, TooltipFlag flags
     ) {
         MatterToolState state = stack.getOrDefault(ProjectEXComponents.MATTER_TOOL_STATE, MatterToolState.DEFAULT);
+        MatterTier current = tier();
         textConsumer.accept(Component.translatable(
-            "item.projectex.matter_tool.charge", state.charge(), tier.maxCharge()
+            "item.projectex.matter_tool.charge", state.charge(), current.maxCharge()
         ).withStyle(ChatFormatting.GRAY));
         textConsumer.accept(Component.translatable(
             "item.projectex.matter_tool.controls"
@@ -64,11 +66,11 @@ public final class MatterToolItem extends Item {
         ItemStack stack = player.getItemInHand(hand);
         if (level.isClientSide()) return InteractionResult.SUCCESS;
         MatterToolState current = stack.getOrDefault(ProjectEXComponents.MATTER_TOOL_STATE, MatterToolState.DEFAULT);
-        MatterToolState updated = current.next(tier.maxCharge());
+        MatterToolState updated = current.next(tier().maxCharge());
         stack.set(ProjectEXComponents.MATTER_TOOL_STATE, updated);
         if (player instanceof ServerPlayer serverPlayer) {
             serverPlayer.sendOverlayMessage(Component.translatable(
-                "item.projectex.matter_tool.charge", updated.charge(), tier.maxCharge()
+                "item.projectex.matter_tool.charge", updated.charge(), tier().maxCharge()
             ));
         }
         return InteractionResult.SUCCESS_SERVER;
@@ -84,13 +86,19 @@ public final class MatterToolItem extends Item {
         BlockHitResult raycast = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
         if (raycast.getType() != HitResult.Type.BLOCK) return InteractionResult.PASS;
         MatterToolState state = stack.getOrDefault(ProjectEXComponents.MATTER_TOOL_STATE, MatterToolState.DEFAULT);
-        Result result = mine(level, player, stack, raycast.getBlockPos(), state.charge());
+        int charge = Math.min(state.charge(), tier().maxCharge());
+        if (charge != state.charge()) {
+            stack.set(ProjectEXComponents.MATTER_TOOL_STATE,
+                new MatterToolState(MatterToolState.CURRENT_VERSION, charge));
+        }
+        Result result = mine(level, player, stack, raycast.getBlockPos(), charge);
         if (result.committed == 0) return InteractionResult.FAIL;
-        player.getCooldowns().addCooldown(stack, tier.actionCooldownTicks());
+        player.getCooldowns().addCooldown(stack, tier().actionCooldownTicks());
         return InteractionResult.SUCCESS_SERVER;
     }
 
     private Result mine(ServerLevel level, ServerPlayer player, ItemStack tool, BlockPos origin, int charge) {
+        MatterTier currentTier = tier();
         MatterActionPlanner.Position planOrigin = position(origin);
         List<BlockPos> blocks = cube(origin, charge);
         List<MatterActionPlanner.Position> candidates = blocks.stream()
@@ -101,7 +109,7 @@ public final class MatterToolItem extends Item {
             })
             .map(MatterToolItem::position).toList();
         var plan = MatterActionPlanner.plan(
-            tier, player.getUUID(), planOrigin, candidates,
+            currentTier, player.getUUID(), planOrigin, candidates,
             candidate -> {
                 BlockPos pos = blockPos(candidate);
                 return MatterAreaActionProtection.EVENT.invoker().canAct(new MatterAreaActionContext(
@@ -124,11 +132,11 @@ public final class MatterToolItem extends Item {
                 committed++;
             }
         }
-        EmcValue spent = tier.emcPerAreaBlock().multiply(committed);
+        EmcValue spent = currentTier.emcPerAreaBlock().multiply(committed);
         EmcValue refund = plan.emcCost().subtract(spent);
         if (!refund.equals(EmcValue.ZERO)) MatterEmcPayment.credit(player, refund);
         MatterActionAuditEvent audit = new MatterActionAuditEvent(
-            player.getUUID(), tier.id(), kind.name().toLowerCase(java.util.Locale.ROOT),
+            player.getUUID(), currentTier.id(), kind.name().toLowerCase(java.util.Locale.ROOT),
             candidates.size(), committed, plan.protectionDenied().size(), spent, level.getGameTime()
         );
         ProjectEX.LOGGER.info(
@@ -137,6 +145,11 @@ public final class MatterToolItem extends Item {
             audit.protectionDenied(), audit.emcSpent()
         );
         return new Result(committed, spent);
+    }
+
+    @Override public float getDestroySpeed(ItemStack stack, net.minecraft.world.level.block.state.BlockState state) {
+        return stack.isCorrectToolForDrops(state) ? (float) tier().miningSpeed()
+            : super.getDestroySpeed(stack, state);
     }
 
     private static List<BlockPos> cube(BlockPos origin, int radius) {

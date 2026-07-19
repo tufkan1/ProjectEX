@@ -26,6 +26,7 @@ import io.github.tufkan1.projectex.content.component.BagItemState;
 import io.github.tufkan1.projectex.menu.AlchemyStorageMenu;
 import io.github.tufkan1.projectex.machine.MachineTier;
 import io.github.tufkan1.projectex.machine.MachineRedstoneMode;
+import io.github.tufkan1.projectex.matter.MatterTierConfig;
 import io.github.tufkan1.projectex.menu.TransmutationMenu;
 import io.github.tufkan1.projectex.menu.EmcMachineMenu;
 import io.github.tufkan1.projectex.menu.MatterFurnaceMenu;
@@ -86,6 +87,10 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
         );
         helper.assertTrue(ProjectEX.emc().snapshot().size() >= 20,
             "Bundled EMC snapshot is incomplete");
+        helper.assertValueEqual(MatterTierConfig.snapshot().size(), 2,
+            "Bundled matter tier definition count");
+        helper.assertValueEqual(MatterTierConfig.snapshot().get("red_matter").furnaceCookTicks(), 5,
+            "Bundled red matter cook time");
         helper.succeed();
     }
 
@@ -786,7 +791,7 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
             new BlockHitResult(Vec3.atCenterOf(absolute), Direction.UP, absolute, false)
         );
         helper.assertTrue(player.containerMenu instanceof MatterFurnaceMenu menu
-                && menu.tier() == io.github.tufkan1.projectex.matter.MatterTier.RED,
+                && menu.tier().id().equals(io.github.tufkan1.projectex.matter.MatterTier.RED.id()),
             "Red matter furnace did not open its synchronized accessible menu");
         player.closeContainer();
 
