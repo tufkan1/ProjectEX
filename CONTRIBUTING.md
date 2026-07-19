@@ -41,6 +41,8 @@ another contributor.
 Pure domain behavior receives unit tests. Minecraft integration receives GameTests or
 integration fixtures. Blocks and menus require dedicated-server coverage. Bug fixes
 must add a regression test unless the PR explains why automation is impractical.
+The normal `build` task runs server GameTests. Changes to screens or client networking
+must also pass `./gradlew runClientGameTest`; CI repeats that journey headlessly.
 
 ## Upstream code and assets
 

@@ -59,3 +59,37 @@ jobs:
           path: build/libs/*.jar
           if-no-files-found: error
           retention-days: 14
+
+  client-game-test:
+    name: Client GameTest / Fabric 26.2
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Java 25
+        uses: actions/setup-java@v5
+        with:
+          distribution: microsoft
+          java-version: "25"
+
+      - name: Set up Gradle cache
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Grant wrapper execute permission
+        run: chmod +x ./gradlew
+
+      - name: Run headless client journey
+        run: ./gradlew --stacktrace runProductionClientGameTest
+
+      - name: Upload client test evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: client-gametest-${{ github.sha }}
+          path: |
+            build/run/clientGameTest/logs/
+            build/run/clientGameTest/screenshots/
+          if-no-files-found: ignore
+          retention-days: 14
