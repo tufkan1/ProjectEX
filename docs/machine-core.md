@@ -41,6 +41,32 @@ Global network work can be bounded with the server JVM properties
 `projectex.machine.maxEmcPerWorldTick` (a positive decimal EMC value). Invalid
 values fail startup instead of silently disabling safety limits.
 
+The verified maximum topology profile is 10,000 loaded nodes with 9,999 accepted
+edges and one rejected cycle-closing edge in a single ledger. The stress test
+uses a 10,000-transfer/10,000-EMC budget and proves exact conservation without
+recursive graph traversal. Larger physical networks remain safe because the
+world budget stops additional routes, but 10,000 loaded nodes is the supported
+performance envelope until a larger profile is added to CI.
+
+Adjacent transfers query only the server chunk source. An unloaded neighbor is
+not routed to and no chunk ticket is created; the source retains its EMC. Stored
+EMC and the fractional generation numerator are both schema-v1 fields, so a
+save/reload at a chunk boundary resumes with the exact pre-unload value.
+
+## Exact rate configuration
+
+The following JVM properties accept either a decimal (`1.5`) or a rational
+(`3/2`) between `0.001` and `1000000`:
+
+- `projectex.machine.collectorRateMultiplier`
+- `projectex.machine.relayTransferMultiplier`
+- `projectex.machine.powerFlowerRateMultiplier`
+
+Rates never pass through floating point. Configuration reload builds and
+validates one immutable snapshot before publishing it; one malformed property
+cannot partially update a running server. Fractional production remains in the
+persisted numerator until it becomes whole EMC.
+
 ## Persistence
 
 Machine state schema version 1 stores tier identity, exact EMC, deferred generation,

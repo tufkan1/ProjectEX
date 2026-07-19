@@ -46,3 +46,12 @@ changing generation.
 No block-state migration is required for existing MK1-MK3 machines. Expansion
 machines use the same schema-v1 fields and strict tier-bound decoding, so a block
 item cannot be placed into a different tier to increase its stored capacity.
+
+Collectors upgrade the complete forward fuel chain:
+
+`Alchemical Coal -> Mobius Fuel -> Aeternalis Fuel -> Magenta ... -> White Fuel`
+
+Every boundary reads the current data-pack EMC values and spends exactly
+`output - input`; missing, reversed, or unaffordable mappings commit nothing.
+Changing a rate multiplier changes generation/transfer throughput only and never
+changes recipe value or an already persisted machine balance.

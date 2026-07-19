@@ -3,7 +3,7 @@ package io.github.tufkan1.projectex.machine;
 import io.github.tufkan1.projectex.api.emc.EmcValue;
 import java.math.BigInteger;
 
-/** Validated server JVM overrides for global machine-network tick budgets. */
+/** Atomically loaded JVM overrides for machine rates and global network budgets. */
 public final class MachineRuntimeConfig {
     public static final String MAX_TRANSFERS_PROPERTY =
         "projectex.machine.maxTransfersPerWorldTick";
@@ -11,25 +11,56 @@ public final class MachineRuntimeConfig {
         "projectex.machine.maxEmcPerWorldTick";
     public static final String COMPACT_SUN_MULTIPLIER_PROPERTY =
         "projectex.machine.compactSunMultiplier";
+    public static final String COLLECTOR_RATE_MULTIPLIER_PROPERTY =
+        "projectex.machine.collectorRateMultiplier";
+    public static final String RELAY_TRANSFER_MULTIPLIER_PROPERTY =
+        "projectex.machine.relayTransferMultiplier";
+    public static final String POWER_FLOWER_RATE_MULTIPLIER_PROPERTY =
+        "projectex.machine.powerFlowerRateMultiplier";
     private static final int DEFAULT_MAX_TRANSFERS = 65_536;
     private static final EmcValue DEFAULT_MAX_EMC = new EmcValue(BigInteger.ONE.shiftLeft(256));
-    private static volatile MachineTickBudget networkBudget = loadBudget();
-    private static volatile int compactSunMultiplier = loadCompactSunMultiplier();
+    private static volatile Settings settings = loadSettings();
 
     private MachineRuntimeConfig() {
     }
 
     public static MachineTickBudget networkBudget() {
-        return networkBudget;
-    }
-
-    public static void reload() {
-        networkBudget = loadBudget();
-        compactSunMultiplier = loadCompactSunMultiplier();
+        return settings.networkBudget;
     }
 
     public static int compactSunMultiplier() {
-        return compactSunMultiplier;
+        return settings.compactSunMultiplier;
+    }
+
+    public static FixedPointRate generationRate(MachineTier tier) {
+        return switch (tier.type()) {
+            case COLLECTOR -> settings.collectorRate.apply(tier.fixedRate());
+            case POWER_FLOWER -> settings.powerFlowerRate.apply(tier.fixedRate());
+            case RELAY -> tier.fixedRate();
+        };
+    }
+
+    public static EmcValue transferLimit(MachineTier tier) {
+        EmcValue scaled = switch (tier.type()) {
+            case COLLECTOR -> settings.collectorRate.applyFloor(tier.rate());
+            case RELAY -> settings.relayTransfer.applyFloor(tier.rate());
+            case POWER_FLOWER -> settings.powerFlowerRate.applyFloor(tier.rate());
+        };
+        return scaled.equals(EmcValue.ZERO) ? EmcValue.of(1) : scaled;
+    }
+
+    public static void reload() {
+        settings = loadSettings();
+    }
+
+    private static Settings loadSettings() {
+        return new Settings(
+            loadBudget(),
+            loadCompactSunMultiplier(),
+            MachineRateMultiplier.parse(System.getProperty(COLLECTOR_RATE_MULTIPLIER_PROPERTY)),
+            MachineRateMultiplier.parse(System.getProperty(RELAY_TRANSFER_MULTIPLIER_PROPERTY)),
+            MachineRateMultiplier.parse(System.getProperty(POWER_FLOWER_RATE_MULTIPLIER_PROPERTY))
+        );
     }
 
     private static MachineTickBudget loadBudget() {
@@ -81,5 +112,14 @@ public final class MachineRuntimeConfig {
         } catch (NumberFormatException exception) {
             throw new IllegalArgumentException("Invalid Compact Sun multiplier", exception);
         }
+    }
+
+    private record Settings(
+        MachineTickBudget networkBudget,
+        int compactSunMultiplier,
+        MachineRateMultiplier collectorRate,
+        MachineRateMultiplier relayTransfer,
+        MachineRateMultiplier powerFlowerRate
+    ) {
     }
 }
