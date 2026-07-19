@@ -55,6 +55,14 @@ upgrade treats the Alchemical Chest as the base stack, so vanilla's component-pr
 transform carries all 104 legacy slots and ownership into the larger layout; the 139 new
 slots start empty. Break/place remains lossless across all 243 slots.
 
+Opening the advanced chest applies a deterministic item-id/component sort over at most
+243 stacks. Its insertion policy carries at most 64 registry identifiers and cycles
+between allow-all, allow-list, and deny-list modes. The owner configures it in-world:
+sneak-use with an empty hand cycles the mode, while sneak-use with an item toggles that
+item in the list. Player menu insertion and Fabric hopper insertion share the same
+policy check. Existing contents are never deleted when a policy changes, and sorting
+does not merge or mutate stacks.
+
 ## Bag persistence and copy rule
 
 All 16 dye colors create a versioned UUID, owner, and paged 104-slot inventory on first server use. Contents are

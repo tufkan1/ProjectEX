@@ -1309,12 +1309,26 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
         helper.assertTrue(upgraded.comparatorSignal() > 0,
             "Advanced Alchemical Chest comparator ignored migrated contents");
 
+        BlockPos absolute = helper.absolutePos(upgradedPos);
+        owner.setPos(absolute.getX() + 0.5, absolute.getY() + 1.0, absolute.getZ() + 0.5);
+        helper.assertTrue(upgraded.cycleAdvancedFilter(owner)
+                && upgraded.toggleAdvancedFilter(new ItemStack(Items.COAL), owner),
+            "Advanced Alchemical Chest owner could not configure its bounded allow list");
+        helper.assertTrue(upgraded.canPlaceItem(2, new ItemStack(Items.COAL))
+                && !upgraded.canPlaceItem(2, new ItemStack(Items.DIAMOND)),
+            "Advanced Alchemical Chest allow-list policy was not enforced on insertion");
+        upgraded.sortAdvanced();
+        helper.assertTrue(upgraded.getItem(0).is(Items.COAL) && upgraded.getItem(1).is(Items.DIAMOND),
+            "Advanced Alchemical Chest did not apply deterministic item-id sorting");
+
         var storage = ItemStorage.SIDED.find(
             helper.getLevel(), helper.absolutePos(upgradedPos), Direction.NORTH);
         helper.assertTrue(storage != null, "Advanced Alchemical Chest did not expose Fabric item storage");
         try (Transaction transaction = Transaction.openOuter()) {
-            helper.assertTrue(storage.insert(ItemVariant.of(new ItemStack(Items.EMERALD)), 1, transaction) == 1,
-                "Advanced Alchemical Chest rejected hopper-compatible insertion");
+            helper.assertTrue(storage.insert(ItemVariant.of(new ItemStack(Items.COAL)), 1, transaction) == 1,
+                "Advanced Alchemical Chest rejected allowed hopper-compatible insertion");
+            helper.assertTrue(storage.insert(ItemVariant.of(new ItemStack(Items.EMERALD)), 1, transaction) == 0,
+                "Advanced Alchemical Chest filter was bypassed by Fabric automation");
             transaction.commit();
         }
         AlchemyStorageMenu menu = new AlchemyStorageMenu(0, owner.getInventory(), upgraded);
