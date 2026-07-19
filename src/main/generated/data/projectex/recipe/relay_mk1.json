@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "D": "minecraft:diamond",
+    "G": "minecraft:glass",
+    "O": "minecraft:obsidian"
+  },
+  "pattern": [
+    "OGO",
+    "DOD",
+    "OGO"
+  ],
+  "result": {
+    "id": "projectex:relay_mk1"
+  }
+}

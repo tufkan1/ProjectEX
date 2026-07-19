@@ -33,6 +33,7 @@ the Minecraft version.
 - Six-tier Klein Star progression with exact retained-EMC upgrades and synchronized tooltips.
 - Versioned Fabric item EMC storage API with simulation, automation policy, migration, and overflow safety.
 - Exploit-resistant machine core with exact fixed-point generation, ownership/redstone policy, bounded transfers, and cycle rejection.
+- Three Energy Collector and Anti-Matter Relay tiers with sided automation, retained break/place state, comparator output, accessible menus, and cycle-safe adjacency transfer.
 
 ## [0.1.0-alpha.1] - Unreleased
 

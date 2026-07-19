@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": "projectex:collector_mk1",
+    "D": "projectex:dark_matter",
+    "G": "minecraft:glowstone"
+  },
+  "pattern": [
+    "GDG",
+    "DCD",
+    "GDG"
+  ],
+  "result": {
+    "id": "projectex:collector_mk2"
+  }
+}

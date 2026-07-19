@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": "projectex:collector_mk2",
+    "G": "minecraft:glowstone",
+    "R": "projectex:red_matter"
+  },
+  "pattern": [
+    "GRG",
+    "RCR",
+    "GRG"
+  ],
+  "result": {
+    "id": "projectex:collector_mk3"
+  }
+}

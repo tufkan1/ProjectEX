@@ -32,6 +32,11 @@ world state into these types; they do not implement separate arithmetic rules.
 These are compatibility-oriented starting values. Pack/server configuration may
 apply stricter tick budgets, but cannot bypass capacity or conservation checks.
 
+Global network work can be bounded with the server JVM properties
+`projectex.machine.maxTransfersPerWorldTick` (1–1,000,000) and
+`projectex.machine.maxEmcPerWorldTick` (a positive decimal EMC value). Invalid
+values fail startup instead of silently disabling safety limits.
+
 ## Persistence
 
 Machine state schema version 1 stores tier identity, exact EMC, deferred generation,
@@ -44,3 +49,21 @@ migration boundary for explicit recovery by the Minecraft adapter.
 A collector fuel upgrade declares input/output identities and their EMC values. Its
 cost is exactly `output - input`; rules that reduce value are invalid. The upgrade
 commits only when the item matches and the machine buffer can pay the full cost.
+
+## Minecraft block contract
+
+All six baseline tiers are registered blocks backed by one versioned block-entity
+type. Collectors generate their exact tier rate, upgrade Alchemical Coal to Mobius
+Fuel and Mobius Fuel to Aeternalis Fuel, charge a Klein Star in the output slot, and
+then offer remaining EMC to adjacent machines. Relays burn valued input items or
+extract from a portable EMC store, charge the output store, and route the remainder.
+
+Horizontal automation exposes only the input slot. Top and bottom automation expose
+only the output slot through Fabric Transfer API. Comparator output is proportional
+to the internal EMC buffer. The menu synchronizes integer EMC/capacity/tier values
+from the server and contains no client-side transaction path.
+
+Breaking a machine copies versioned machine state and container contents onto the
+block item. Placement restores both through vanilla data components, preserving EMC,
+owner, redstone mode, deferred generation, and inventory without a second loose-item
+drop.

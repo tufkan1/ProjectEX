@@ -1,5 +1,11 @@
 {
   "values": [
-    "projectex:transmutation_table"
+    "projectex:transmutation_table",
+    "projectex:collector_mk1",
+    "projectex:collector_mk2",
+    "projectex:collector_mk3",
+    "projectex:relay_mk1",
+    "projectex:relay_mk2",
+    "projectex:relay_mk3"
   ]
 }

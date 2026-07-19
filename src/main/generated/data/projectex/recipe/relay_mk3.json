@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "L": "projectex:relay_mk2",
+    "O": "minecraft:obsidian",
+    "R": "projectex:red_matter"
+  },
+  "pattern": [
+    "ORO",
+    "RLR",
+    "ORO"
+  ],
+  "result": {
+    "id": "projectex:relay_mk3"
+  }
+}
