@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": "projectex:aeternalis_fuel",
+    "D": "minecraft:diamond_block"
+  },
+  "pattern": [
+    "AAA",
+    "ADA",
+    "AAA"
+  ],
+  "result": {
+    "id": "projectex:dark_matter"
+  }
+}

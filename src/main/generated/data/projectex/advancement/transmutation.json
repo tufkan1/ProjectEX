@@ -1,4 +1,5 @@
 {
+  "parent": "projectex:philosophers_stone",
   "criteria": {
     "has_transmutation_table": {
       "conditions": {

@@ -36,7 +36,22 @@ public final class ProjectEXContentRegistry {
         return new RegisteredBlock(id, block, item);
     }
 
+    public static <T extends Item> RegisteredItem<T> registerItem(
+        String path,
+        Function<Item.Properties, T> factory,
+        Item.Properties properties
+    ) {
+        Identifier id = ProjectEX.id(path);
+        ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, id);
+        T item = factory.apply(properties.setId(itemKey));
+        Registry.register(BuiltInRegistries.ITEM, itemKey, item);
+        return new RegisteredItem<>(id, item);
+    }
+
     /** Stable identifiers and typed values used by runtime code and datagen. */
     public record RegisteredBlock(Identifier id, Block block, BlockItem item) {
+    }
+
+    public record RegisteredItem<T extends Item>(Identifier id, T item) {
     }
 }

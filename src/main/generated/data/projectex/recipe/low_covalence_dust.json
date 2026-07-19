@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:charcoal",
+    "minecraft:cobblestone",
+    "minecraft:cobblestone",
+    "minecraft:cobblestone",
+    "minecraft:cobblestone",
+    "minecraft:cobblestone",
+    "minecraft:cobblestone",
+    "minecraft:cobblestone",
+    "minecraft:cobblestone"
+  ],
+  "result": {
+    "count": 40,
+    "id": "projectex:low_covalence_dust"
+  }
+}

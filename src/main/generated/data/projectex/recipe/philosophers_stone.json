@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "D": "minecraft:diamond",
+    "G": "minecraft:glowstone_dust",
+    "R": "minecraft:redstone"
+  },
+  "pattern": [
+    "RGR",
+    "GDG",
+    "RGR"
+  ],
+  "result": {
+    "id": "projectex:philosophers_stone"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "projectex:mobius_fuel",
+    "projectex:mobius_fuel",
+    "projectex:mobius_fuel",
+    "projectex:mobius_fuel",
+    "minecraft:diamond"
+  ],
+  "result": {
+    "id": "projectex:aeternalis_fuel"
+  }
+}

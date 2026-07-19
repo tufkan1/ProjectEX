@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_aeternalis_fuel": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projectex:aeternalis_fuel"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "projectex:dark_matter"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_aeternalis_fuel"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "projectex:dark_matter"
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "criteria": {
+    "has_philosophers_stone": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projectex:philosophers_stone"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projectex.philosophers_stone.description"
+    },
+    "icon": {
+      "id": "projectex:philosophers_stone"
+    },
+    "title": {
+      "translate": "advancements.projectex.philosophers_stone.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_philosophers_stone"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

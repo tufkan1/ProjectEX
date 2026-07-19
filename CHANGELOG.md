@@ -28,6 +28,8 @@ the Minecraft version.
 - Automated server GameTests for physical menu access and runtime EMC reload.
 - Deterministic arrow-key result navigation and localized narrated server failures.
 - Headless client GameTest for the complete learn, burn, and create network journey.
+- Typed content registration and reproducible recipe/tag/loot/model/language/advancement datagen.
+- Core covalence dust, fuel, matter progression and a protected server-authoritative Philosopher's Stone.
 
 ## [0.1.0-alpha.1] - Unreleased
 
