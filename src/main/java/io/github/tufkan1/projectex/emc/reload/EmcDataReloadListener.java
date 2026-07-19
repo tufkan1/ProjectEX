@@ -1,10 +1,10 @@
 package io.github.tufkan1.projectex.emc.reload;
 
 import io.github.tufkan1.projectex.ProjectEX;
-import io.github.tufkan1.projectex.api.emc.EmcValueRegistry;
 import io.github.tufkan1.projectex.emc.data.EmcDataException;
 import io.github.tufkan1.projectex.emc.data.EmcDataFile;
 import io.github.tufkan1.projectex.emc.data.EmcDataParser;
+import io.github.tufkan1.projectex.internal.emc.EmcValueRegistry;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public final class EmcDataReloadListener extends SimpleReloadListener<ResolvedEm
 
     @Override
     protected void apply(ResolvedEmcData prepared, PreparableReloadListener.SharedState state) {
-        registry.replaceAll(prepared.values(), prepared.sources());
+        registry.stageAll(prepared.values(), prepared.sources());
         ProjectEX.LOGGER.info("Loaded {} EMC values from {} winning data sources",
             prepared.values().size(), prepared.sources().values().stream().distinct().count());
     }

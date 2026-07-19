@@ -1,9 +1,10 @@
 package io.github.tufkan1.projectex;
 
-import io.github.tufkan1.projectex.api.emc.EmcValueRegistry;
+import io.github.tufkan1.projectex.api.emc.EmcApi;
 import io.github.tufkan1.projectex.command.EmcCommands;
 import io.github.tufkan1.projectex.emc.mapping.minecraft.MinecraftRecipeMappingService;
 import io.github.tufkan1.projectex.emc.reload.EmcDataReloadListener;
+import io.github.tufkan1.projectex.internal.emc.EmcValueRegistry;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.resources.Identifier;
@@ -25,15 +26,16 @@ public final class ProjectEX implements ModInitializer {
             new EmcDataReloadListener(EMC_VALUES)
         );
         EmcCommands.register();
-        MinecraftRecipeMappingService.register();
-        LOGGER.info("ProjectEX {} is initializing with {} EMC values", version(), EMC_VALUES.size());
+        MinecraftRecipeMappingService.register(EMC_VALUES);
+        LOGGER.info("ProjectEX {} is initializing with {} EMC values", version(), EMC_VALUES.snapshot().size());
     }
 
     public static Identifier id(String path) {
         return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 
-    public static EmcValueRegistry emcValues() {
+    /** Stable query-only entry point for other mods. */
+    public static EmcApi emc() {
         return EMC_VALUES;
     }
 

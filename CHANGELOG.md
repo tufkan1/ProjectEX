@@ -16,6 +16,7 @@ the Minecraft version.
 - Server-side EMC query, status, reload, and machine-readable diagnostics commands.
 - Deterministic recipe-graph EMC mapping core with cycle and free-EMC protection.
 - Minecraft 26.2 recipe adapter with safe exclusions and post-reload derivation.
+- Versioned query-only EMC API with immutable snapshots and reload subscriptions.
 
 ## [0.1.0-alpha.1] - Unreleased
 

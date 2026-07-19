@@ -14,6 +14,8 @@
 | Package | Responsibility |
 | --- | --- |
 | `api.emc` | Public identifiers, values, queries, and immutable views |
+| `api.fabric` | Supported Minecraft/Fabric adapters for public domain types |
+| `internal.emc` | Mutable publication state; never a consumer dependency |
 | `emc.data` | JSON schema, reload, validation, provenance, and reports |
 | `emc.mapping` | Recipe graph evaluation and exploit-resistant calculation |
 | `alchemy` | Atomic learn/burn/create domain transactions |
@@ -28,8 +30,9 @@
 
 EMC uses non-negative `BigInteger` values. Machine rates may later use a separate
 rational/fixed-point type; decimals must never silently enter item valuation. The
-current registry replaces a sorted immutable snapshot under a write lock so readers
-cannot observe partial reload state.
+internal registry stages data-pack results, adds recipe-derived values, and then
+publishes one sorted immutable snapshot under a write lock. Readers and reload
+listeners cannot observe the intermediate pre-recipe generation.
 
 ## Transaction boundary
 

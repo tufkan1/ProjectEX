@@ -3,10 +3,11 @@ package io.github.tufkan1.projectex.emc.mapping.minecraft;
 import io.github.tufkan1.projectex.ProjectEX;
 import io.github.tufkan1.projectex.api.emc.EmcKey;
 import io.github.tufkan1.projectex.api.emc.EmcMatch;
+import io.github.tufkan1.projectex.api.emc.EmcSnapshot;
 import io.github.tufkan1.projectex.api.emc.EmcValue;
-import io.github.tufkan1.projectex.api.emc.EmcValueRegistry;
 import io.github.tufkan1.projectex.emc.mapping.EmcMappingResult;
 import io.github.tufkan1.projectex.emc.mapping.RecipeEmcMapper;
+import io.github.tufkan1.projectex.internal.emc.EmcValueRegistry;
 import java.util.Map;
 import java.util.TreeMap;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -17,17 +18,17 @@ public final class MinecraftRecipeMappingService {
     private MinecraftRecipeMappingService() {
     }
 
-    public static void register() {
+    public static void register(EmcValueRegistry registry) {
         ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, success) -> {
             if (success) {
-                rebuild(server);
+                rebuild(server, registry);
             }
         });
     }
 
-    static void rebuild(MinecraftServer server) {
-        EmcValueRegistry registry = ProjectEX.emcValues();
-        ExplicitSnapshot explicit = explicitValues(registry.snapshot(), registry.sourcesSnapshot());
+    static void rebuild(MinecraftServer server, EmcValueRegistry registry) {
+        EmcSnapshot staged = registry.stagedSnapshot();
+        ExplicitSnapshot explicit = explicitValues(staged.values(), staged.sources());
         Map<EmcMatch, EmcValue> explicitSnapshot = explicit.values();
         Map<EmcMatch, String> explicitSources = explicit.sources();
         Map<EmcKey, EmcValue> baseValues = new TreeMap<>();
