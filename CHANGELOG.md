@@ -36,6 +36,7 @@ the Minecraft version.
 - Three Energy Collector and Anti-Matter Relay tiers with sided automation, retained break/place state, comparator output, accessible menus, and cycle-safe adjacency transfer.
 - Energy Condenser MK1/MK2 and the 104-slot Alchemical Chest with exact EMC conservation, component-safe targets, separated sided automation, retained state, and server-owned paging.
 - Sixteen color-keyed Alchemical Bags with owner-bound UUIDs, world-backed shared inventories, legacy component migration, and copy/nesting duplication defenses.
+- Data-ready dark/red matter safety core with bounded protection-aware area plans, all-or-nothing furnace output/fuel remainder accounting, armor caps, and audit contracts.
 
 ## [0.1.0-alpha.1] - Unreleased
 
