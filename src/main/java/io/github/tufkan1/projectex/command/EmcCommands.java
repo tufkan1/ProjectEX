@@ -10,6 +10,7 @@ import io.github.tufkan1.projectex.api.emc.EmcKey;
 import io.github.tufkan1.projectex.api.emc.EmcMatch;
 import io.github.tufkan1.projectex.api.emc.EmcValue;
 import io.github.tufkan1.projectex.internal.player.PlayerAlchemySavedData;
+import io.github.tufkan1.projectex.menu.TransmutationMenu;
 import io.github.tufkan1.projectex.player.PlayerAlchemyState;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,6 +19,8 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.UuidArgument;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.server.commands.ReloadCommand;
 
 /** Server-side ProjectEX diagnostics and operator commands. */
@@ -48,6 +51,8 @@ public final class EmcCommands {
                 .then(literal("dump")
                     .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                     .executes(context -> dump(context.getSource())))
+                .then(literal("transmutation")
+                    .executes(context -> openTransmutation(context.getSource())))
                 .then(literal("player")
                     .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                     .then(literal("inspect")
@@ -123,6 +128,15 @@ public final class EmcCommands {
             state.knowledge().size()
         ), false);
         return state.knowledge().size();
+    }
+
+    private static int openTransmutation(net.minecraft.commands.CommandSourceStack source)
+        throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        return player.openMenu(new SimpleMenuProvider(
+            (containerId, inventory, ignored) -> new TransmutationMenu(containerId, inventory, player),
+            Component.translatable("menu.projectex.transmutation")
+        )).isPresent() ? 1 : 0;
     }
 
     private static int resetPlayer(net.minecraft.commands.CommandSourceStack source, UUID playerId) {

@@ -10,5 +10,16 @@
   "commands.projectex.player.reset": "%s oyuncusunun ProjectEX verisi sıfırlandı.",
   "commands.projectex.player.empty": "%s oyuncusunun ProjectEX verisi yoktu.",
   "commands.projectex.player.recovery_required": "Oyuncu verisi kurtarma yedeği mevcut: %s",
-  "commands.projectex.player.recovery_clean": "Oyuncu simya verisinde bekleyen kurtarma yedeği yok."
+  "commands.projectex.player.recovery_clean": "Oyuncu simya verisinde bekleyen kurtarma yedeği yok.",
+  "menu.projectex.transmutation": "Dönüşüm",
+  "screen.projectex.search": "Öğrenilmiş eşyaları ara",
+  "screen.projectex.create": "Oluştur",
+  "screen.projectex.favorite": "Favori",
+  "screen.projectex.unfavorite": "Favoriden çıkar",
+  "screen.projectex.learn": "Eldekini öğren",
+  "screen.projectex.burn": "Eldekini yak",
+  "screen.projectex.balance": "EMC: %s",
+  "screen.projectex.page": "Sayfa %s/%s · %s sonuç",
+  "screen.projectex.failure": "Sunucu yanıtı: %s",
+  "screen.projectex.narration": "Bakiye %s EMC. Sayfa %s / %s. %s sonuç. Durum %s."
 }

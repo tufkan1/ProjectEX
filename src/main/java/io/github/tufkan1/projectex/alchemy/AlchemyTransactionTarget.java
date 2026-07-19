@@ -16,6 +16,11 @@ public interface AlchemyTransactionTarget {
 
     AlchemyInventory inventory();
 
+    /** Allows a concrete inventory adapter to expose request-specific insertion capacity. */
+    default AlchemyInventory inventoryFor(AlchemyTransaction request) {
+        return inventory();
+    }
+
     boolean commit(
         PlayerAlchemyState expectedPlayer,
         AlchemyInventory expectedInventory,

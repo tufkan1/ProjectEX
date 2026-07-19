@@ -4,9 +4,9 @@ ProjectEX is a community-driven alchemy and EMC mod being built for Fabric,
 starting with Minecraft Java Edition 26.2. It is a clean, maintainable
 implementation informed by the behavior of ProjectE and ProjectExpansion.
 
-> **Status: pre-alpha foundation.** The project builds and the core EMC value
-> types are tested, but there is no playable content yet. Do not use development
-> builds in important worlds.
+> **Status: early alpha.** The EMC platform and command-opened transmutation vertical
+> slice are playable, but content progression and world blocks are still incomplete.
+> Do not use development builds in important worlds.
 
 ## Compatibility
 

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 import io.github.tufkan1.projectex.api.emc.EmcValue;
+import io.github.tufkan1.projectex.player.PlayerAlchemyState;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
@@ -42,5 +43,17 @@ class PlayerAlchemySavedDataTest {
             .getOrThrow();
 
         assertEquals(EmcValue.of(4096), reloaded.state(player).balance());
+    }
+
+    @Test
+    void compareAndSetRejectsStalePlayerStateWithoutMutation() {
+        UUID player = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        PlayerAlchemySavedData data = new PlayerAlchemySavedData();
+        var initial = data.update(player, state -> state.credit(EmcValue.of(128)));
+        var replacement = initial.credit(EmcValue.of(128));
+
+        assertTrue(data.compareAndSet(player, initial, replacement));
+        assertTrue(!data.compareAndSet(player, initial, PlayerAlchemyState.EMPTY));
+        assertEquals(replacement, data.state(player));
     }
 }

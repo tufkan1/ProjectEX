@@ -1,6 +1,8 @@
 package io.github.tufkan1.projectex.client;
 
 import io.github.tufkan1.projectex.ProjectEX;
+import io.github.tufkan1.projectex.client.screen.TransmutationScreen;
+import io.github.tufkan1.projectex.content.ProjectEXMenus;
 import io.github.tufkan1.projectex.network.AlchemyActionPayload;
 import io.github.tufkan1.projectex.network.AlchemyKnowledgePagePayload;
 import io.github.tufkan1.projectex.network.AlchemyKnowledgeRequestPayload;
@@ -11,6 +13,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.gui.screens.MenuScreens;
 
 /** Client-only networking state; screens consume this instead of trusting local calculations. */
 @Environment(EnvType.CLIENT)
@@ -20,6 +23,7 @@ public final class ProjectEXClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        MenuScreens.register(ProjectEXMenus.TRANSMUTATION, TransmutationScreen::new);
         ClientPlayNetworking.registerGlobalReceiver(AlchemySessionPayload.TYPE, (payload, context) -> {
             if (!ALCHEMY.open(payload)) {
                 ProjectEX.LOGGER.warn("Discarded malformed ProjectEX alchemy session payload");

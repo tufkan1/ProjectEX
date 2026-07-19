@@ -82,6 +82,7 @@ class ServerAlchemyTransactionExecutorTest {
         assertEquals(EmcValue.of(128), target.player.balance());
         assertEquals(0, target.inventory.count(COAL));
         assertEquals(1, target.commitCalls);
+        assertTrue(target.inventoryForCalled);
     }
 
     private static AlchemyRequestContext context(UUID player) {
@@ -93,6 +94,7 @@ class ServerAlchemyTransactionExecutorTest {
         private AlchemyInventory inventory;
         private boolean rejectCommit;
         private int commitCalls;
+        private boolean inventoryForCalled;
 
         private Target(PlayerAlchemyState player, AlchemyInventory inventory) {
             this.player = player;
@@ -111,6 +113,12 @@ class ServerAlchemyTransactionExecutorTest {
 
         @Override
         public AlchemyInventory inventory() {
+            return inventory;
+        }
+
+        @Override
+        public AlchemyInventory inventoryFor(AlchemyTransaction request) {
+            inventoryForCalled = true;
             return inventory;
         }
 

@@ -28,7 +28,7 @@ public final class ServerAlchemyTransactionExecutor {
         Objects.requireNonNull(request, "request");
         Objects.requireNonNull(emc, "emc");
         PlayerAlchemyState player = target.playerState();
-        AlchemyInventory inventory = target.inventory();
+        AlchemyInventory inventory = target.inventoryFor(request);
         AlchemyTransactionResult result;
         if (!target.playerId().equals(context.playerId())) {
             result = AlchemyTransactionResult.failure(
