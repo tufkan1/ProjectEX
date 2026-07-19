@@ -14,6 +14,7 @@ the Minecraft version.
 - Versioned EMC data-pack schema, strict parser, safety limits, and fixture tests.
 - Deterministic priority/conflict/alias resolution and atomic server data reload.
 - Server-side EMC query, status, reload, and machine-readable diagnostics commands.
+- Deterministic recipe-graph EMC mapping core with cycle and free-EMC protection.
 
 ## [0.1.0-alpha.1] - Unreleased
 

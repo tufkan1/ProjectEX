@@ -38,6 +38,15 @@ A transaction validates the current menu/session, resolves item identity and EMC
 from server state, calculates the complete result, then applies inventory and EMC
 changes as one operation. Failures return a typed result and change nothing.
 
+## Recipe mapping invariants
+
+The normalized recipe mapper treats explicit values as immutable roots, chooses the
+lowest known tag alternative deterministically, accounts for counts and returned
+containers, and rounds per-output costs upward. Derived dependency closures prevent
+direct or indirect feedback recipes from lowering their own value. Zero/negative net
+cost equations are ignored. Minecraft recipe serializers are adapted into this model
+outside the mapping package so unsupported recipe types can be excluded explicitly.
+
 ## Compatibility boundary
 
 Minecraft-facing adapters convert `Identifier`, registry entries, recipes, and item
