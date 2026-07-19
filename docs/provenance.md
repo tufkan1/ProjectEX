@@ -15,6 +15,7 @@ same pull request that introduces any derived material.
 | Dark/red matter tier and furnace balance concepts | ProjectE `EnumMatterType` / `DMFurnaceBlockEntity` | `15d4ce65bd06eb4222709b984255fbf5080e78bc` | MIT | Behavior research only; bounded planning, exact furnace evaluator, armor policy, audit model, and tests are original ProjectEX work |
 | Dark/red matter generated models | ProjectEX datagen with vanilla coal/redstone/netherite/furnace texture identifiers | N/A | MIT / Minecraft EULA | Original JSON layout using runtime-provided vanilla textures as explicit placeholders; no ProjectE or ProjectExpansion art imported |
 | Expanded fuel/matter naming and Magnum/Colossal/Gargantuan star progression | ProjectExpansion `Fuel`, `Matter`, `Star`, and `ItemStar` | `168bcf2491b9fde679295fd412ad9c93fd3d93f1` | MIT | Naming and balance research only; Fabric registration, arbitrary-precision data schema, atomic reload, recipe logic, tests, and vanilla placeholder references are original ProjectEX work |
+| Final Star names and non-depleting food concept | ProjectExpansion `ItemFinalStar`, `ItemFinalStarShard`, and `ItemInfiniteSteak` | `168bcf2491b9fde679295fd412ad9c93fd3d93f1` | MIT | Behavior research only; public Fabric capability, slot resolver, cooldown lease, config validation, atomic EMC payment, server hunger logic, tests, and placeholder models are original ProjectEX work |
 
 ## Rules
 

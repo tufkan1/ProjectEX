@@ -124,6 +124,23 @@ public final class ProjectEXRecipeProvider extends FabricRecipeProvider {
                     .pattern("FMF").pattern("FMF").pattern("FMF")
                     .unlockedBy("has_white_matter", has(previousMatter))
                     .save(output, id("fading_matter"));
+                shaped(RecipeCategory.TOOLS, ProjectEXItems.FINAL_STAR_SHARD.item())
+                    .define('S', ProjectEXItems.GARGANTUAN_STAR_OMEGA.item())
+                    .define('N', Items.NETHER_STAR)
+                    .pattern("SSS").pattern("SNS").pattern("SSS")
+                    .unlockedBy("has_gargantuan_omega", has(ProjectEXItems.GARGANTUAN_STAR_OMEGA.item()))
+                    .save(output, id("final_star_shard"));
+                shaped(RecipeCategory.TOOLS, ProjectEXItems.FINAL_STAR.item())
+                    .define('S', ProjectEXItems.FINAL_STAR_SHARD.item())
+                    .define('E', Items.DRAGON_EGG)
+                    .pattern("SSS").pattern("SES").pattern("SSS")
+                    .unlockedBy("has_final_star_shard", has(ProjectEXItems.FINAL_STAR_SHARD.item()))
+                    .save(output, id("final_star"));
+                shaped(RecipeCategory.FOOD, ProjectEXItems.INFINITE_STEAK.item())
+                    .define('S', Items.COOKED_BEEF).define('F', ProjectEXItems.FINAL_STAR_SHARD.item())
+                    .pattern("SSS").pattern("SFS").pattern("SSS")
+                    .unlockedBy("has_final_star_shard", has(ProjectEXItems.FINAL_STAR_SHARD.item()))
+                    .save(output, id("infinite_steak"));
 
                 shaped(RecipeCategory.TOOLS, ProjectEXItems.KLEIN_STAR_EIN.item())
                     .define('A', ProjectEXItems.AETERNALIS_FUEL.item())
