@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "B": "minecraft:book",
+    "N": "minecraft:nether_star",
+    "V": "projectex:violet_matter"
+  },
+  "pattern": [
+    "VNV",
+    "VBV",
+    "VNV"
+  ],
+  "result": {
+    "id": "projectex:knowledge_sharing_book"
+  }
+}

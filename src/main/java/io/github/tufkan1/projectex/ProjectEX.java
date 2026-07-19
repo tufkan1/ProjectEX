@@ -15,6 +15,8 @@ import io.github.tufkan1.projectex.emc.reload.EmcDataReloadListener;
 import io.github.tufkan1.projectex.internal.emc.EmcValueRegistry;
 import io.github.tufkan1.projectex.network.AlchemyNetworking;
 import io.github.tufkan1.projectex.network.UtilityNetworking;
+import io.github.tufkan1.projectex.network.KnowledgeSharingNetworking;
+import io.github.tufkan1.projectex.knowledge.KnowledgeSharingConfig;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.resources.Identifier;
@@ -41,6 +43,7 @@ public final class ProjectEX implements ModInitializer {
         EndgameRuntimeConfig.reload();
         KnowledgeTomePolicy.reload();
         DestructiveCatalystPolicy.reload();
+        KnowledgeSharingConfig.reload();
         ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(
             id("emc_values"),
             new EmcDataReloadListener(EMC_VALUES)
@@ -62,6 +65,7 @@ public final class ProjectEX implements ModInitializer {
         EmcCommands.register();
         AlchemyNetworking.register();
         UtilityNetworking.register();
+        KnowledgeSharingNetworking.register();
         MinecraftRecipeMappingService.register(EMC_VALUES);
         LOGGER.info("ProjectEX {} is initializing with {} EMC values", version(), EMC_VALUES.snapshot().size());
     }

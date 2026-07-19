@@ -79,6 +79,17 @@ public final class KnowledgeShareWorkflow {
         return new ConfirmResult(Optional.of(new PlayerAlchemyState(current.balance(), result)), Failure.NONE);
     }
 
+    public synchronized boolean cancel(UUID token, UUID recipient) {
+        Pending request = pending.get(token);
+        if (request == null || !request.recipient.equals(recipient)) return false;
+        pending.remove(token);
+        return true;
+    }
+
+    public synchronized void cancelRecipient(UUID recipient) {
+        pending.entrySet().removeIf(entry -> entry.getValue().recipient.equals(recipient));
+    }
+
     private void prune(Instant now) {
         pending.entrySet().removeIf(entry -> entry.getValue().expiresAt <= now.getEpochSecond());
     }

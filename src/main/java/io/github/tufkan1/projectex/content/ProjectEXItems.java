@@ -128,6 +128,11 @@ public final class ProjectEXItems {
             "knowledge_tome", KnowledgeTomeItem::new,
             new Item.Properties().rarity(Rarity.EPIC).fireResistant()
         );
+    public static final ProjectEXContentRegistry.RegisteredItem<KnowledgeSharingBookItem> KNOWLEDGE_SHARING_BOOK =
+        ProjectEXContentRegistry.registerItem(
+            "knowledge_sharing_book", KnowledgeSharingBookItem::new,
+            new Item.Properties().rarity(Rarity.RARE)
+        );
     public static final ProjectEXContentRegistry.RegisteredItem<DestructiveCatalystItem> NOVA_CATALYST =
         ProjectEXContentRegistry.registerItem(
             "nova_catalyst", properties -> new DestructiveCatalystItem(
@@ -260,6 +265,7 @@ public final class ProjectEXItems {
                 entries.accept(EVERTIDE_AMULET.item());
                 entries.accept(VOLCANITE_AMULET.item());
                 entries.accept(KNOWLEDGE_TOME.item());
+                entries.accept(KNOWLEDGE_SHARING_BOOK.item());
                 entries.accept(NOVA_CATALYST.item());
                 entries.accept(DESTRUCTION_CATALYST.item());
                 entries.accept(BODY_STONE.item());

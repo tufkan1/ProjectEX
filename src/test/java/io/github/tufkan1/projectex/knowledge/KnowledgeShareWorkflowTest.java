@@ -87,6 +87,30 @@ final class KnowledgeShareWorkflowTest {
                 NOW.plusSeconds(KnowledgeShareWorkflow.CONFIRMATION_SECONDS + 1)).failure());
     }
 
+    @Test
+    void cancellationAndDisconnectInvalidatePendingTokensWithoutMutation() {
+        KnowledgeSnapshotSigner signer = new KnowledgeSnapshotSigner(new byte[32]);
+        KnowledgeShareWorkflow workflow = new KnowledgeShareWorkflow(signer, new KnowledgeReplayGuard(32));
+        UUID recipient = UUID.randomUUID();
+        PlayerAlchemyState current = state(COAL);
+        KnowledgeSnapshot snapshot = signer.create(UUID.randomUUID(), List.of(EMERALD), NOW,
+            Duration.ofHours(1), UUID.randomUUID());
+        var cancelled = workflow.preview(snapshot, recipient, current, 1,
+            KnowledgeShareWorkflow.Mode.MERGE, KnowledgeShareWorkflow.SharingPolicy.ENABLED, false, NOW)
+            .preview().orElseThrow();
+        assertTrue(workflow.cancel(cancelled.confirmationToken(), recipient));
+        assertEquals(KnowledgeShareWorkflow.Failure.UNKNOWN_OR_REPLAYED_CONFIRMATION,
+            workflow.confirm(cancelled.confirmationToken(), recipient, current, 1, NOW).failure());
+
+        var disconnected = workflow.preview(snapshot, recipient, current, 1,
+            KnowledgeShareWorkflow.Mode.MERGE, KnowledgeShareWorkflow.SharingPolicy.ENABLED, false, NOW)
+            .preview().orElseThrow();
+        workflow.cancelRecipient(recipient);
+        assertEquals(KnowledgeShareWorkflow.Failure.UNKNOWN_OR_REPLAYED_CONFIRMATION,
+            workflow.confirm(disconnected.confirmationToken(), recipient, current, 1, NOW).failure());
+        assertEquals(new TreeSet<>(List.of(COAL)), current.knowledge());
+    }
+
     private static PlayerAlchemyState state(EmcKey... keys) {
         return new PlayerAlchemyState(EmcValue.of(99), new TreeSet<>(List.of(keys)));
     }

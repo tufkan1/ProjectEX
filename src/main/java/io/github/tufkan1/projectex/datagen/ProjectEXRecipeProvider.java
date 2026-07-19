@@ -68,6 +68,13 @@ public final class ProjectEXRecipeProvider extends FabricRecipeProvider {
                     .pattern("TWT").pattern("MSM").pattern("TCT")
                     .unlockedBy("has_transmutation_tablet", has(ProjectEXItems.TRANSMUTATION_TABLET.item()))
                     .save(output, id("arcane_tablet"));
+                shaped(RecipeCategory.TOOLS, ProjectEXItems.KNOWLEDGE_SHARING_BOOK.item())
+                    .define('V', ProjectEXItems.EXPANSION_MATTERS.get(3).item())
+                    .define('N', Items.NETHER_STAR)
+                    .define('B', Items.BOOK)
+                    .pattern("VNV").pattern("VBV").pattern("VNV")
+                    .unlockedBy("has_violet_matter", has(ProjectEXItems.EXPANSION_MATTERS.get(3).item()))
+                    .save(output, id("knowledge_sharing_book"));
                 shaped(RecipeCategory.TOOLS, ProjectEXItems.REPAIR_TALISMAN.item())
                     .define('L', ProjectEXItems.LOW_COVALENCE_DUST.item())
                     .define('M', ProjectEXItems.MEDIUM_COVALENCE_DUST.item())

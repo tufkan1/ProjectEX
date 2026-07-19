@@ -63,10 +63,66 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import io.github.tufkan1.projectex.content.component.KnowledgeBookState;
+import io.github.tufkan1.projectex.internal.knowledge.KnowledgeSecuritySavedData;
+import io.github.tufkan1.projectex.internal.knowledge.KnowledgeSharingRuntime;
+import io.github.tufkan1.projectex.knowledge.KnowledgeShareWorkflow;
+import io.github.tufkan1.projectex.player.PlayerAlchemyState;
+import java.time.Instant;
 
 /** Runtime registration, resource reload, and physical menu smoke tests. */
 @SuppressWarnings("removal")
 public final class ProjectEXGameTests implements CustomTestMethodInvoker {
+    @GameTest
+    public void signedKnowledgeBookRequiresHeldExplicitConfirmationAndRejectsReplay(GameTestHelper helper) {
+        ServerPlayer owner = helper.makeMockServerPlayerInLevel();
+        ServerPlayer recipient = helper.makeMockServerPlayerInLevel();
+        PlayerAlchemySavedData data = PlayerAlchemySavedData.get(helper.getLevel().getServer());
+        EmcKey coal = EmcKey.parse("minecraft:coal");
+        EmcKey diamond = EmcKey.parse("minecraft:diamond");
+        data.update(owner.getUUID(), ignored -> new PlayerAlchemyState(
+            EmcValue.of(1), new java.util.TreeSet<>(java.util.Set.of(coal, diamond))));
+        data.update(recipient.getUUID(), ignored -> new PlayerAlchemyState(
+            EmcValue.of(99), new java.util.TreeSet<>(java.util.Set.of(coal))));
+
+        KnowledgeSharingRuntime runtime = KnowledgeSharingRuntime.get(helper.getLevel().getServer());
+        Instant now = Instant.now();
+        KnowledgeBookState book = new KnowledgeBookState(KnowledgeBookState.CURRENT_VERSION,
+            runtime.capture(owner, now), KnowledgeShareWorkflow.Mode.MERGE);
+        ItemStack stack = new ItemStack(ProjectEXItems.KNOWLEDGE_SHARING_BOOK.item());
+        stack.set(ProjectEXComponents.KNOWLEDGE_BOOK_STATE, book);
+        recipient.setItemInHand(InteractionHand.MAIN_HAND, stack);
+
+        var cancelledPreview = runtime.preview(recipient, book, now).preview().orElseThrow();
+        var cancelled = runtime.decide(recipient, cancelledPreview.token(), false, now);
+        helper.assertTrue(!cancelled.success(), "Cancelled knowledge preview succeeded");
+        helper.assertValueEqual(data.state(recipient.getUUID()).knowledge(),
+            new java.util.TreeSet<>(java.util.Set.of(coal)), "Cancellation changed knowledge");
+
+        var missingPreview = runtime.preview(recipient, book, now).preview().orElseThrow();
+        recipient.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        var missing = runtime.decide(recipient, missingPreview.token(), true, now);
+        helper.assertValueEqual(missing.reason(), "book_missing", "Missing-book confirmation reason");
+        helper.assertValueEqual(data.state(recipient.getUUID()).knowledge(),
+            new java.util.TreeSet<>(java.util.Set.of(coal)), "Missing book changed knowledge");
+
+        recipient.setItemInHand(InteractionHand.MAIN_HAND, stack);
+        var preview = runtime.preview(recipient, book, now).preview().orElseThrow();
+        var confirmed = runtime.decide(recipient, preview.token(), true, now);
+        helper.assertTrue(confirmed.success(), "Explicit knowledge confirmation failed");
+        helper.assertValueEqual(data.state(recipient.getUUID()).knowledge(),
+            new java.util.TreeSet<>(java.util.Set.of(coal, diamond)), "Confirmed merge result");
+        helper.assertValueEqual(data.state(recipient.getUUID()).balance(), EmcValue.of(99),
+            "Knowledge confirmation changed EMC");
+
+        var replayPreview = runtime.preview(recipient, book, now).preview().orElseThrow();
+        var replay = runtime.decide(recipient, replayPreview.token(), true, now);
+        helper.assertValueEqual(replay.reason(), "snapshot_replayed", "Snapshot replay reason");
+        helper.assertTrue(KnowledgeSecuritySavedData.get(helper.getLevel().getServer()).auditEvents().stream()
+            .anyMatch(event -> event.contains("SNAPSHOT_REPLAYED")), "Replay denial was not audited");
+        helper.succeed();
+    }
+
     @GameTest
     public void emcLinkUsesClaimedSidedTransactionalAccountStorage(GameTestHelper helper) {
         BlockPos relative = new BlockPos(19, 1, 6);
