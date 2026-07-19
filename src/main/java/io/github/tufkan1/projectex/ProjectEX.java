@@ -1,8 +1,11 @@
 package io.github.tufkan1.projectex;
 
 import io.github.tufkan1.projectex.api.emc.EmcValueRegistry;
+import io.github.tufkan1.projectex.emc.reload.EmcDataReloadListener;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.packs.PackType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +18,10 @@ public final class ProjectEX implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(
+            id("emc_values"),
+            new EmcDataReloadListener(EMC_VALUES)
+        );
         LOGGER.info("ProjectEX {} is initializing with {} EMC values", version(), EMC_VALUES.size());
     }
 
