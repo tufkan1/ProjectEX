@@ -22,6 +22,7 @@ not imply copied implementation or byte-for-byte behavior.
 | Condensers MK1/MK2 | Implemented | ProjectE | Exact persistent buffer, component-safe targets, separated sided automation, server paging |
 | Condenser MK3 | Implemented | ProjectExpansion | 512-item tick budget, 91 inputs, 180 outputs, exact buffer conservation, six server-owned pages |
 | Alchemical Chest and Bags | Implemented | ProjectE | 104-slot chest and bags; copied bag identities mirror one UUID/world-backed inventory |
+| Advanced Alchemical Chest | Implemented | ProjectExpansion | 243 slots, five server pages, component-preserving smithing migration, ownership, comparator and Fabric transfer |
 | Dark/red matter blocks, tools, and armor | Implemented | ProjectE | Data-pack runtime balance, server-raycast area mining, exact EMC payment/refund, public claim hook, bounded cooldowns, vanilla-attribute armor |
 | Dark/red matter furnaces | Implemented | ProjectE | Atomic multi-slot output, component identity, exact fuel remainder, sided Fabric automation, narrated progress UI |
 | Expansion collectors, relays, power flowers, and Compact Sun | Implemented | ProjectExpansion | Exact fixed-point/BigInteger accounting, schema-v1 carry state, bounded multiplier, no chunk tickets, original vanilla-reference models |

@@ -14,6 +14,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.SmithingTransformRecipeBuilder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Recipe;
@@ -369,6 +370,15 @@ public final class ProjectEXRecipeProvider extends FabricRecipeProvider {
                     .pattern("DMD").pattern("MCM").pattern("DMD")
                     .unlockedBy("has_dark_matter", has(ProjectEXItems.DARK_MATTER.item()))
                     .save(output, id("alchemical_chest"));
+                SmithingTransformRecipeBuilder.smithing(
+                        net.minecraft.world.item.crafting.Ingredient.of(ProjectEXItems.HIGH_COVALENCE_DUST.item()),
+                        net.minecraft.world.item.crafting.Ingredient.of(ProjectEXBlocks.ALCHEMICAL_CHEST),
+                        net.minecraft.world.item.crafting.Ingredient.of(ProjectEXItems.EXPANSION_MATTERS.get(0).item()),
+                        RecipeCategory.MISC,
+                        ProjectEXBlocks.ADVANCED_ALCHEMICAL_CHEST.asItem()
+                    )
+                    .unlocks("has_alchemical_chest", has(ProjectEXBlocks.ALCHEMICAL_CHEST))
+                    .save(output, id("advanced_alchemical_chest"));
                 shaped(RecipeCategory.MISC, ProjectEXBlocks.CONDENSER_MK1)
                     .define('C', Items.CHEST)
                     .define('D', Items.DIAMOND_BLOCK).define('O', Items.OBSIDIAN)

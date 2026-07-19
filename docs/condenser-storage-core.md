@@ -46,6 +46,15 @@ preventing direct and indirect recursive inventories.
   container, exact buffer, owner, and access flag across save/reload and break/place.
 - Menus page on the server and expose one stable slot map at a time.
 
+## Advanced Alchemical Chest
+
+The advanced chest expands storage to 243 slots over five server-owned pages. It reuses
+the same owner/operator access checks, comparator fullness calculation, block-item
+container component, and Fabric sided transfer adapter as the base chest. Its smithing
+upgrade treats the Alchemical Chest as the base stack, so vanilla's component-preserving
+transform carries all 104 legacy slots and ownership into the larger layout; the 139 new
+slots start empty. Break/place remains lossless across all 243 slots.
+
 ## Bag persistence and copy rule
 
 All 16 dye colors create a versioned UUID, owner, and paged 104-slot inventory on first server use. Contents are

@@ -126,6 +126,7 @@ public final class ProjectEXModelProvider implements DataProvider {
         Map.entry("condenser_mk2", "minecraft:block/netherite_block"),
         Map.entry("condenser_mk3", "minecraft:block/amethyst_block"),
         Map.entry("alchemical_chest", "minecraft:block/obsidian"),
+        Map.entry("advanced_alchemical_chest", "minecraft:block/crying_obsidian"),
         Map.entry("dark_matter_block", "minecraft:block/coal_block"),
         Map.entry("red_matter_block", "minecraft:block/redstone_block")
         , Map.entry("dark_matter_furnace", "minecraft:block/blast_furnace_side")
