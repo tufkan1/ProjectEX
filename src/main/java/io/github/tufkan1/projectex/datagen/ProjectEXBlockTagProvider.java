@@ -35,6 +35,7 @@ public final class ProjectEXBlockTagProvider extends FabricTagsProvider.BlockTag
             key(ProjectEXBlocks.RELAY_MK2), key(ProjectEXBlocks.RELAY_MK3)
             , key(ProjectEXBlocks.CONDENSER_MK1), key(ProjectEXBlocks.CONDENSER_MK2),
             key(ProjectEXBlocks.ALCHEMICAL_CHEST)
+            , key(ProjectEXBlocks.DARK_MATTER_BLOCK), key(ProjectEXBlocks.RED_MATTER_BLOCK)
         );
         builder(BlockTags.NEEDS_DIAMOND_TOOL).add(table);
         builder(BlockTags.NEEDS_DIAMOND_TOOL).add(
@@ -43,6 +44,7 @@ public final class ProjectEXBlockTagProvider extends FabricTagsProvider.BlockTag
             key(ProjectEXBlocks.RELAY_MK2), key(ProjectEXBlocks.RELAY_MK3)
             , key(ProjectEXBlocks.CONDENSER_MK1), key(ProjectEXBlocks.CONDENSER_MK2),
             key(ProjectEXBlocks.ALCHEMICAL_CHEST)
+            , key(ProjectEXBlocks.DARK_MATTER_BLOCK), key(ProjectEXBlocks.RED_MATTER_BLOCK)
         );
         builder(ProjectEXTags.PHILOSOPHERS_STONE_ALLOWED).add(
             key(Blocks.STONE),
@@ -61,6 +63,16 @@ public final class ProjectEXBlockTagProvider extends FabricTagsProvider.BlockTag
             key(Blocks.STRUCTURE_BLOCK),
             key(Blocks.JIGSAW),
             key(Blocks.END_PORTAL_FRAME)
+        );
+        builder(ProjectEXTags.INCORRECT_FOR_DARK_MATTER_TOOL).add(
+            key(Blocks.BEDROCK), key(Blocks.BARRIER), key(Blocks.COMMAND_BLOCK),
+            key(Blocks.REPEATING_COMMAND_BLOCK), key(Blocks.CHAIN_COMMAND_BLOCK),
+            key(Blocks.STRUCTURE_BLOCK), key(Blocks.JIGSAW), key(Blocks.END_PORTAL_FRAME)
+        );
+        builder(ProjectEXTags.INCORRECT_FOR_RED_MATTER_TOOL).add(
+            key(Blocks.BEDROCK), key(Blocks.BARRIER), key(Blocks.COMMAND_BLOCK),
+            key(Blocks.REPEATING_COMMAND_BLOCK), key(Blocks.CHAIN_COMMAND_BLOCK),
+            key(Blocks.STRUCTURE_BLOCK), key(Blocks.JIGSAW), key(Blocks.END_PORTAL_FRAME)
         );
     }
 

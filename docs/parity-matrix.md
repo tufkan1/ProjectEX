@@ -15,6 +15,7 @@ not imply copied implementation or byte-for-byte behavior.
 | Anti-Matter Relays MK1–MK3 | Implemented | ProjectE | Directed-cycle rejection, world tick budget, Fabric sided storage |
 | Condensers MK1/MK2 | Implemented | ProjectE | Exact persistent buffer, component-safe targets, separated sided automation, server paging |
 | Alchemical Chest and Bags | Implemented | ProjectE | 104-slot chest and bags; copied bag identities mirror one UUID/world-backed inventory |
+| Dark/red matter blocks, tools, and armor | Baseline implemented | ProjectE | Server-raycast area mining, exact EMC payment/refund, public claim hook, bounded cooldowns, vanilla-attribute armor |
 | Advanced tiers and links | Planned | ProjectExpansion | No content or assets imported; scope will be reviewed per feature |
 
 Collector/relay baseline rates and capacities follow ProjectE commit

@@ -3,6 +3,7 @@ package io.github.tufkan1.projectex.datagen;
 import io.github.tufkan1.projectex.ProjectEX;
 import io.github.tufkan1.projectex.content.ProjectEXBlocks;
 import io.github.tufkan1.projectex.content.ProjectEXItems;
+import io.github.tufkan1.projectex.content.ProjectEXContentRegistry;
 import io.github.tufkan1.projectex.content.recipe.KleinStarUpgradeRecipe;
 import java.util.concurrent.CompletableFuture;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
@@ -179,6 +180,61 @@ public final class ProjectEXRecipeProvider extends FabricRecipeProvider {
                         .unlockedBy("has_high_covalence_dust", has(ProjectEXItems.HIGH_COVALENCE_DUST.item()))
                         .save(output, id(bag.id().getPath()));
                 }
+
+                matterBlockRecipes(ProjectEXBlocks.DARK_MATTER_BLOCK, ProjectEXItems.DARK_MATTER.item(), "dark_matter");
+                matterBlockRecipes(ProjectEXBlocks.RED_MATTER_BLOCK, ProjectEXItems.RED_MATTER.item(), "red_matter");
+                matterToolRecipe(ProjectEXItems.DARK_MATTER_PICKAXE, ProjectEXItems.DARK_MATTER.item());
+                matterToolRecipe(ProjectEXItems.DARK_MATTER_HAMMER, ProjectEXItems.DARK_MATTER.item());
+                matterToolRecipe(ProjectEXItems.RED_MATTER_PICKAXE, ProjectEXItems.RED_MATTER.item());
+                matterToolRecipe(ProjectEXItems.RED_MATTER_HAMMER, ProjectEXItems.RED_MATTER.item());
+                ProjectEXItems.MATTER_HAND_TOOLS.forEach(entry -> matterToolRecipe(
+                    entry, entry.id().getPath().startsWith("red_")
+                        ? ProjectEXItems.RED_MATTER.item() : ProjectEXItems.DARK_MATTER.item()
+                ));
+                ProjectEXItems.MATTER_ARMOR.forEach(entry -> matterArmorRecipe(
+                    entry, entry.id().getPath().startsWith("red_")
+                        ? ProjectEXItems.RED_MATTER.item() : ProjectEXItems.DARK_MATTER.item()
+                ));
+            }
+
+            private void matterBlockRecipes(
+                net.minecraft.world.level.ItemLike block, net.minecraft.world.level.ItemLike matter, String name
+            ) {
+                shaped(RecipeCategory.BUILDING_BLOCKS, block)
+                    .define('M', matter).pattern("MMM").pattern("MMM").pattern("MMM")
+                    .unlockedBy("has_matter", has(matter)).save(output, id(name + "_block"));
+                shapeless(RecipeCategory.MISC, matter, 9).requires(block)
+                    .unlockedBy("has_block", has(block)).save(output, id(name + "_from_block"));
+            }
+
+            private void matterToolRecipe(
+                ProjectEXContentRegistry.RegisteredItem<? extends net.minecraft.world.item.Item> entry,
+                net.minecraft.world.level.ItemLike matter
+            ) {
+                String path = entry.id().getPath();
+                var recipe = shaped(RecipeCategory.TOOLS, entry.item()).define('M', matter).define('S', Items.STICK);
+                if (path.endsWith("pickaxe")) recipe.pattern("MMM").pattern(" S ").pattern(" S ");
+                else if (path.endsWith("hammer")) recipe.pattern("MMM").pattern("MSM").pattern(" S ");
+                else if (path.endsWith("axe")) recipe.pattern("MM ").pattern("MS ").pattern(" S ");
+                else if (path.endsWith("shovel")) recipe.pattern(" M ").pattern(" S ").pattern(" S ");
+                else if (path.endsWith("hoe")) recipe.pattern("MM ").pattern(" S ").pattern(" S ");
+                else if (path.endsWith("sword")) recipe.pattern(" M ").pattern(" M ").pattern(" S ");
+                else throw new IllegalArgumentException("Unknown matter tool: " + path);
+                recipe.unlockedBy("has_matter", has(matter)).save(output, id(path));
+            }
+
+            private void matterArmorRecipe(
+                ProjectEXContentRegistry.RegisteredItem<? extends net.minecraft.world.item.Item> entry,
+                net.minecraft.world.level.ItemLike matter
+            ) {
+                String path = entry.id().getPath();
+                var recipe = shaped(RecipeCategory.COMBAT, entry.item()).define('M', matter);
+                if (path.endsWith("helmet")) recipe.pattern("MMM").pattern("M M");
+                else if (path.endsWith("chestplate")) recipe.pattern("M M").pattern("MMM").pattern("MMM");
+                else if (path.endsWith("leggings")) recipe.pattern("MMM").pattern("M M").pattern("M M");
+                else if (path.endsWith("boots")) recipe.pattern("M M").pattern("M M");
+                else throw new IllegalArgumentException("Unknown matter armor: " + path);
+                recipe.unlockedBy("has_matter", has(matter)).save(output, id(path));
             }
 
             private ResourceKey<Recipe<?>> id(String path) {

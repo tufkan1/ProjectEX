@@ -14,6 +14,9 @@ import io.github.tufkan1.projectex.api.alchemy.WorldTransmutationProtection;
 import io.github.tufkan1.projectex.content.component.ActiveItemState;
 import io.github.tufkan1.projectex.content.component.PortableEmcState;
 import io.github.tufkan1.projectex.content.component.MachineItemState;
+import io.github.tufkan1.projectex.content.component.MatterToolState;
+import io.github.tufkan1.projectex.api.matter.MatterAreaActionProtection;
+import io.github.tufkan1.projectex.internal.player.MatterEmcPayment;
 import io.github.tufkan1.projectex.content.recipe.KleinStarUpgradeRecipe;
 import io.github.tufkan1.projectex.content.machine.EmcMachineBlockEntity;
 import io.github.tufkan1.projectex.content.storage.AlchemyStorageBlockEntity;
@@ -676,6 +679,70 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
         helper.assertTrue(!mirrored.getSlot(2).mayPlace(new ItemStack(bagItem)),
             "Portable bag nesting was accepted");
         player.closeContainer();
+        helper.succeed();
+    }
+
+    @GameTest
+    public void redMatterAreaMiningIsServerAuthoritativeProtectedAndExact(GameTestHelper helper) {
+        BlockPos center = new BlockPos(12, 1, 6);
+        BlockPos protectedRelative = center.offset(1, 0, 1);
+        for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) {
+            helper.setBlock(center.offset(x, 0, z), Blocks.STONE);
+        }
+        BlockPos centerAbsolute = helper.absolutePos(center);
+        BlockPos protectedAbsolute = helper.absolutePos(protectedRelative);
+        MatterAreaActionProtection.EVENT.register(
+            context -> !context.position().equals(protectedAbsolute)
+        );
+
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        player.setGameMode(GameType.SURVIVAL);
+        player.setPos(centerAbsolute.getX() + 0.5, centerAbsolute.getY() + 2.0,
+            centerAbsolute.getZ() + 0.5);
+        player.setXRot(90.0F);
+        player.setShiftKeyDown(true);
+        ItemStack tool = new ItemStack(ProjectEXItems.RED_MATTER_PICKAXE.item());
+        tool.set(ProjectEXComponents.MATTER_TOOL_STATE, new MatterToolState(1, 1));
+        player.setItemInHand(InteractionHand.MAIN_HAND, tool);
+        MatterEmcPayment.credit(player, EmcValue.of(10_000));
+
+        ProjectEXItems.RED_MATTER_PICKAXE.item().useOn(new UseOnContext(
+            player,
+            InteractionHand.MAIN_HAND,
+            new BlockHitResult(Vec3.atCenterOf(centerAbsolute), Direction.UP, centerAbsolute, false)
+        ));
+
+        helper.assertBlockPresent(Blocks.STONE, protectedRelative);
+        int removed = 0;
+        for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) {
+            if (helper.getBlockState(center.offset(x, 0, z)).isAir()) removed++;
+        }
+        helper.assertValueEqual(removed, 8, "Area blocks committed");
+        helper.assertTrue(MatterEmcPayment.balance(player).equals(EmcValue.of(9_744)),
+            "Area mining did not debit exactly 32 EMC per committed block");
+        helper.assertValueEqual(tool.getDamageValue(), 8, "Tool durability spent");
+        helper.assertTrue(player.getCooldowns().isOnCooldown(tool),
+            "Successful area mining did not start its server cooldown");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void matterToolChargeAndArmorFamilyLoadAtRuntime(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        ItemStack tool = new ItemStack(ProjectEXItems.DARK_MATTER_PICKAXE.item());
+        player.setItemInHand(InteractionHand.MAIN_HAND, tool);
+        ProjectEXItems.DARK_MATTER_PICKAXE.item().use(
+            helper.getLevel(), player, InteractionHand.MAIN_HAND
+        );
+        helper.assertValueEqual(
+            tool.getOrDefault(ProjectEXComponents.MATTER_TOOL_STATE, MatterToolState.DEFAULT).charge(),
+            1,
+            "Server-owned matter tool charge"
+        );
+        helper.assertValueEqual(ProjectEXItems.MATTER_HAND_TOOLS.size(), 8,
+            "Matter hand-tool family size");
+        helper.assertValueEqual(ProjectEXItems.MATTER_ARMOR.size(), 8,
+            "Matter armor family size");
         helper.succeed();
     }
 
