@@ -26,6 +26,10 @@ target returns false and the executor reports `STATE_CHANGED`. Every attempt emi
 structured amount-free audit event; audit sink failures are logged and isolated from
 game state.
 
+The Fabric receiver and exact wire contract are documented in
+[network-protocol.md](network-protocol.md). Only a server-created menu can register an
+`AlchemyTransactionTarget`; receiving a packet never creates a session or target.
+
 Component-bearing item variants require an exact `EmcMatch`; componentless values are
 not silently used for arbitrary custom components. Knowledge is intentionally tracked
 by item identifier, while the exact match controls valuation and inventory identity.

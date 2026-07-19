@@ -10,4 +10,9 @@ public record AlchemyAuditEvent(
     AlchemyTransactionFailure failure,
     long emcRevision
 ) {
+    public AlchemyAuditEvent {
+        java.util.Objects.requireNonNull(playerId, "playerId");
+        java.util.Objects.requireNonNull(operation, "operation");
+        java.util.Objects.requireNonNull(failure, "failure");
+    }
 }
