@@ -18,4 +18,16 @@ class EmcValueRegistryTest {
         assertThrows(UnsupportedOperationException.class,
             () -> registry.snapshot().put(EmcMatch.item(EmcKey.parse("minecraft:diamond")), EmcValue.of(8192)));
     }
+
+    @Test
+    void rejectsMismatchedProvenanceWithoutChangingTheLiveSnapshot() {
+        EmcValueRegistry registry = new EmcValueRegistry();
+        EmcMatch coal = EmcMatch.item(EmcKey.parse("minecraft:coal"));
+        registry.replaceAll(Map.of(coal, EmcValue.of(128)), Map.of(coal, "base"));
+
+        assertThrows(IllegalArgumentException.class,
+            () -> registry.replaceAll(Map.of(coal, EmcValue.of(64)), Map.of()));
+        assertEquals(EmcValue.of(128), registry.find(coal).orElseThrow());
+        assertEquals("base", registry.findSource(coal).orElseThrow());
+    }
 }

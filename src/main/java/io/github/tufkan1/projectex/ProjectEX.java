@@ -1,6 +1,7 @@
 package io.github.tufkan1.projectex;
 
 import io.github.tufkan1.projectex.api.emc.EmcValueRegistry;
+import io.github.tufkan1.projectex.command.EmcCommands;
 import io.github.tufkan1.projectex.emc.reload.EmcDataReloadListener;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
@@ -22,6 +23,7 @@ public final class ProjectEX implements ModInitializer {
             id("emc_values"),
             new EmcDataReloadListener(EMC_VALUES)
         );
+        EmcCommands.register();
         LOGGER.info("ProjectEX {} is initializing with {} EMC values", version(), EMC_VALUES.size());
     }
 
