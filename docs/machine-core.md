@@ -12,7 +12,11 @@ world state into these types; they do not implement separate arithmetic rules.
   numerators are persisted so unloads cannot lose or create value.
 - A per-tick budget limits both transfer count and total moved EMC.
 - The tick-local network ledger rejects self-routes and any edge that would complete
-  a directed cycle. Every accepted move subtracts and inserts the same exact value.
+  a directed cycle. Its sorted graph and iterative traversal are deterministic and
+  safe for maximum-size networks. Every accepted move subtracts and inserts the
+  same exact value.
+- Adjacent routing checks only already-loaded chunks. A machine tick never requests
+  or retains a chunk ticket, and unload boundaries defer transfer without losing EMC.
 - Ownership is explicit. Unclaimed machines may be claimed; private machines permit
   their owner and operator overrides; public access is owner-controlled.
 - Redstone behavior is one of ignored, signal-required, or no-signal-required and is
