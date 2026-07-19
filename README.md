@@ -58,6 +58,7 @@ launch a development client with `./gradlew runClient`.
 - [EMC storage API](docs/emc-storage-api.md) — portable storage, exact transfers, automation, and migration
 - [EMC machine core](docs/machine-core.md) — fixed-point generation, ownership, budgets, and cycle safety
 - [Behavior parity matrix](docs/parity-matrix.md) — implemented reference behavior and intentional differences
+- [Condenser/storage core](docs/condenser-storage-core.md) — exact output transactions, component identity, and bag nesting rules
 - [Player data](docs/player-data.md) — persistence schema, lifecycle, and corruption recovery
 - [Alchemy transactions](docs/alchemy-transactions.md) — atomic learn, burn, create, and abuse controls
 - [Network protocol](docs/network-protocol.md) — payload schema, sessions, replay defense, and limits
