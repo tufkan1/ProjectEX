@@ -27,7 +27,7 @@ public final class MatterFurnaceMenu extends AbstractContainerMenu {
         this(id, inventory, furnace, new ContainerData() {
             @Override public int get(int index) {
                 return switch (index) {
-                    case 0 -> furnace.tier() == MatterTier.RED ? 1 : 0;
+                    case 0 -> furnace.tier().id().equals(MatterTier.RED.id()) ? 1 : 0;
                     case 1 -> furnace.burnRemaining();
                     case 2 -> furnace.burnTotal();
                     case 3 -> furnace.cookProgress();

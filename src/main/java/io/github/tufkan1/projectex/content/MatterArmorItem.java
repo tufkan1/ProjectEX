@@ -2,6 +2,7 @@ package io.github.tufkan1.projectex.content;
 
 import io.github.tufkan1.projectex.matter.MatterArmorPolicy;
 import io.github.tufkan1.projectex.matter.MatterTier;
+import io.github.tufkan1.projectex.matter.MatterTierConfig;
 import java.util.List;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -25,7 +26,7 @@ public final class MatterArmorItem extends Item {
         this.type = type;
     }
 
-    public MatterTier tier() { return tier; }
+    public MatterTier tier() { return MatterTierConfig.resolve(tier); }
     public ArmorType armorType() { return type; }
 
     @Override public void inventoryTick(
@@ -34,14 +35,16 @@ public final class MatterArmorItem extends Item {
         if (!(entity instanceof Player player) || type != ArmorType.CHESTPLATE
             || slot != EquipmentSlot.CHEST || level.getGameTime() % 20 != 0) return;
         int pieces = 0;
+        MatterTier currentTier = tier();
         for (EquipmentSlot armorSlot : ARMOR_SLOTS) {
             if (player.getItemBySlot(armorSlot).getItem() instanceof MatterArmorItem armor
-                && armor.tier == tier) pieces++;
+                && armor.tier().id().equals(currentTier.id())) pieces++;
         }
-        var policy = MatterArmorPolicy.evaluate(tier, pieces, 0, false, level.getGameTime(), -1);
+        var policy = MatterArmorPolicy.evaluate(currentTier, pieces, 0, false, level.getGameTime(), -1);
         if (!policy.periodicEffectAllowed()) return;
         player.setAirSupply(Math.min(player.getMaxAirSupply(), player.getAirSupply() + 20));
         player.clearFire();
-        if (tier == MatterTier.RED && player.getHealth() < player.getMaxHealth()) player.heal(0.5F);
+        if (currentTier.id().equals(MatterTier.RED.id())
+            && player.getHealth() < player.getMaxHealth()) player.heal(0.5F);
     }
 }

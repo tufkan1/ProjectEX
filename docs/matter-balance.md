@@ -2,6 +2,8 @@
 
 These values are public compatibility defaults, not hidden implementation constants.
 Changes require tests, changelog notes, and an explicit balance review.
+Servers may override runtime-safe fields through the strict schema documented in
+`matter-tier-data.md`.
 
 | Property | Dark matter | Red matter |
 | --- | ---: | ---: |

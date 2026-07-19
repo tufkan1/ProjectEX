@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "id": "red_matter",
+  "mining_level": 4,
+  "mining_speed": 16.0,
+  "attack_bonus": 4.0,
+  "max_charge": 5,
+  "max_area_blocks": 343,
+  "action_cooldown_ticks": 6,
+  "emc_per_area_block": "32",
+  "furnace_cook_ticks": 5,
+  "furnace_output_slots": 18,
+  "bonus_output_numerator": 1,
+  "bonus_output_denominator": 1,
+  "armor_damage_reduction_cap": 0.9
+}

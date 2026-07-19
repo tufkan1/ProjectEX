@@ -18,6 +18,7 @@ import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import io.github.tufkan1.projectex.machine.MachineRuntimeConfig;
+import io.github.tufkan1.projectex.matter.MatterTierReloadListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +35,9 @@ public final class ProjectEX implements ModInitializer {
         ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(
             id("emc_values"),
             new EmcDataReloadListener(EMC_VALUES)
+        );
+        ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(
+            id("matter_tiers"), new MatterTierReloadListener()
         );
         ProjectEXComponents.register();
         ProjectEXBlocks.register();

@@ -4,6 +4,7 @@ import io.github.tufkan1.projectex.content.MatterFurnaceBlock;
 import io.github.tufkan1.projectex.content.ProjectEXBlockEntities;
 import io.github.tufkan1.projectex.matter.MatterFurnaceTransaction;
 import io.github.tufkan1.projectex.matter.MatterTier;
+import io.github.tufkan1.projectex.matter.MatterTierConfig;
 import io.github.tufkan1.projectex.storage.CondenserVariant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,7 +58,7 @@ public final class MatterFurnaceBlockEntity extends BlockEntity implements World
         items = NonNullList.withSize(27, ItemStack.EMPTY);
     }
 
-    public MatterTier tier() { return tier; }
+    public MatterTier tier() { return MatterTierConfig.resolve(tier); }
     public int burnRemaining() { return burnRemaining; }
     public int burnTotal() { return burnTotal; }
     public int cookProgress() { return cookProgress; }
@@ -82,16 +83,17 @@ public final class MatterFurnaceBlockEntity extends BlockEntity implements World
         );
         ItemStack recipeOutput = recipe.map(holder -> holder.value().assemble(new SingleRecipeInput(input)))
             .orElse(ItemStack.EMPTY);
-        boolean canSmelt = !recipeOutput.isEmpty() && evaluate(recipeOutput, true).committed();
+        MatterTier currentTier = tier();
+        boolean canSmelt = !recipeOutput.isEmpty() && evaluate(currentTier, recipeOutput, true).committed();
 
         if (burnRemaining == 0 && canSmelt && ignite(level)) changed = true;
         if (burnRemaining > 0 && canSmelt) {
             cookProgress++;
             changed = true;
-            if (cookProgress >= tier.furnaceCookTicks()) {
-                boolean bonus = level.getRandom().nextInt(tier.bonusOutputDenominator())
-                    < tier.bonusOutputNumerator();
-                var result = evaluate(recipeOutput, bonus);
+            if (cookProgress >= currentTier.furnaceCookTicks()) {
+                boolean bonus = level.getRandom().nextInt(currentTier.bonusOutputDenominator())
+                    < currentTier.bonusOutputNumerator();
+                var result = evaluate(currentTier, recipeOutput, bonus);
                 if (result.committed()) applySmelt(result, recipeOutput);
                 cookProgress = 0;
             }
@@ -119,9 +121,11 @@ public final class MatterFurnaceBlockEntity extends BlockEntity implements World
         return true;
     }
 
-    private MatterFurnaceTransaction.SmeltResult evaluate(ItemStack output, boolean bonus) {
-        List<MatterFurnaceTransaction.OutputSlot> slots = new ArrayList<>(tier.furnaceOutputSlots());
-        for (int index = 0; index < tier.furnaceOutputSlots(); index++) {
+    private MatterFurnaceTransaction.SmeltResult evaluate(
+        MatterTier currentTier, ItemStack output, boolean bonus
+    ) {
+        List<MatterFurnaceTransaction.OutputSlot> slots = new ArrayList<>(currentTier.furnaceOutputSlots());
+        for (int index = 0; index < currentTier.furnaceOutputSlots(); index++) {
             ItemStack stack = items.get(OUTPUT_START + index);
             slots.add(stack.isEmpty()
                 ? MatterFurnaceTransaction.OutputSlot.empty(output.getMaxStackSize())
@@ -130,7 +134,7 @@ public final class MatterFurnaceBlockEntity extends BlockEntity implements World
                 ));
         }
         return MatterFurnaceTransaction.smelt(
-            tier, items.get(INPUT_SLOT).getCount(),
+            currentTier, items.get(INPUT_SLOT).getCount(),
             new MatterFurnaceTransaction.Output(variant(output), output.getCount()), slots, bonus
         );
     }
@@ -174,7 +178,7 @@ public final class MatterFurnaceBlockEntity extends BlockEntity implements World
         if (version == FORMAT_VERSION) {
             burnRemaining = Math.max(0, input.getIntOr("burn_remaining", 0));
             burnTotal = Math.max(0, input.getIntOr("burn_total", 0));
-            cookProgress = Math.max(0, Math.min(tier.furnaceCookTicks(), input.getIntOr("cook_progress", 0)));
+            cookProgress = Math.max(0, Math.min(tier().furnaceCookTicks(), input.getIntOr("cook_progress", 0)));
         }
         ContainerHelper.loadAllItems(input, items);
     }
@@ -220,7 +224,7 @@ public final class MatterFurnaceBlockEntity extends BlockEntity implements World
         if (side == Direction.UP) return new int[] { INPUT_SLOT };
         if (side == Direction.DOWN) return java.util.stream.IntStream.concat(
             java.util.stream.IntStream.of(FUEL_SLOT),
-            java.util.stream.IntStream.range(OUTPUT_START, OUTPUT_START + tier.furnaceOutputSlots())
+            java.util.stream.IntStream.range(OUTPUT_START, OUTPUT_START + tier().furnaceOutputSlots())
         ).toArray();
         return new int[] { FUEL_SLOT };
     }
@@ -230,7 +234,7 @@ public final class MatterFurnaceBlockEntity extends BlockEntity implements World
     @Override public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction side) {
         return side == Direction.DOWN && (
             (slot == FUEL_SLOT && stack.is(net.minecraft.world.item.Items.BUCKET))
-                || (slot >= OUTPUT_START && slot < OUTPUT_START + tier.furnaceOutputSlots())
+                || (slot >= OUTPUT_START && slot < OUTPUT_START + tier().furnaceOutputSlots())
         );
     }
 }

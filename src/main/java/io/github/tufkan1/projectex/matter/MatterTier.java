@@ -34,6 +34,7 @@ public record MatterTier(
             || maxCharge < 0 || maxCharge > 16 || maxAreaBlocks <= 0 || maxAreaBlocks > 4_096
             || actionCooldownTicks < 1 || furnaceCookTicks < 1 || furnaceOutputSlots < 1
             || bonusOutputNumerator < 0 || bonusOutputDenominator < 1
+            || bonusOutputNumerator > bonusOutputDenominator
             || armorDamageReductionCap < 0 || armorDamageReductionCap > 0.95) {
             throw new IllegalArgumentException("Unsafe matter tier definition");
         }
