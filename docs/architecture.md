@@ -63,6 +63,7 @@ problem and must include a focused regression test.
 
 - Unit: arithmetic, identifiers, graph mapping, transactions, codecs.
 - Integration: resource reload, registries, networking, persistence.
-- GameTest: blocks, inventories, automation, world lifecycle.
+- GameTest: blocks, inventories, automation, world lifecycle. Required server GameTests
+  run as part of `build` and therefore gate every pull request.
 - Smoke: headless dedicated server boot and optional client launch.
 - Upgrade: committed fixture worlds/data from every supported release line.

@@ -19,6 +19,7 @@ public final class MinecraftRecipeMappingService {
     }
 
     public static void register(EmcValueRegistry registry) {
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> rebuild(server, registry));
         ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, resourceManager, success) -> {
             if (success) {
                 rebuild(server, registry);
