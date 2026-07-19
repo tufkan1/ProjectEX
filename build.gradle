@@ -10,6 +10,14 @@ base {
 	archivesName = project.archives_base_name
 }
 
+repositories {
+	maven {
+		name = "Modrinth"
+		url = "https://api.modrinth.com/maven"
+		content { includeGroup "maven.modrinth" }
+	}
+}
+
 loom {
 	mods {
 		projectex {
@@ -39,6 +47,10 @@ dependencies {
 	gametestImplementation fabricApi.module("fabric-client-gametest-api-v1", project.fabric_api_version)
 	productionRuntimeMods "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 	productionRuntimeMods fabricApi.module("fabric-client-gametest-api-v1", project.fabric_api_version)
+	compileOnly "maven.modrinth:jade:${project.jade_version}"
+	if (providers.gradleProperty("compatJade").isPresent()) {
+		productionRuntimeMods "maven.modrinth:jade:${project.jade_version}"
+	}
 
 	testImplementation platform("org.junit:junit-bom:6.1.2")
 	testImplementation "org.junit.jupiter:junit-jupiter"
@@ -50,6 +62,44 @@ tasks.register("runProductionClientGameTest", net.fabricmc.loom.task.prod.Client
 	jvmArgs.add("-Dfabric.client.gametest")
 	jvmArgs.add("-Dfabric.client.gametest.disableNetworkSynchronizer=true")
 	useXVFB = System.getProperty("os.name").toLowerCase(java.util.Locale.ROOT).contains("linux")
+}
+
+tasks.register("verifyNoCompatClient") {
+	group = "verification"
+	description = "Proves the production client boots without optional compatibility mods."
+	dependsOn tasks.named("runProductionClientGameTest")
+	doLast {
+		def log = layout.buildDirectory.file("productionClientGameTest/logs/latest.log").get().asFile
+		if (!log.isFile()) throw new GradleException("Production client log is missing")
+		def text = log.getText("UTF-8")
+		if (!text.contains("ProjectEX ") || !text.contains(" is initializing")) {
+			throw new GradleException("ProjectEX initialization evidence is missing")
+		}
+		if (text.contains("Start loading plugin from ProjectEX")) {
+			throw new GradleException("Optional compatibility plugin loaded in the none profile")
+		}
+	}
+}
+
+tasks.register("verifyJadeCompatClient") {
+	group = "verification"
+	description = "Proves Jade discovers the ProjectEX plugin without provider errors."
+	dependsOn tasks.named("runProductionClientGameTest")
+	doFirst {
+		if (!providers.gradleProperty("compatJade").isPresent()) {
+			throw new GradleException("Run verifyJadeCompatClient with -PcompatJade")
+		}
+	}
+	doLast {
+		def log = layout.buildDirectory.file("productionClientGameTest/logs/latest.log").get().asFile
+		if (!log.isFile()) throw new GradleException("Production client log is missing")
+		def text = log.getText("UTF-8")
+		def marker = "Start loading plugin from ProjectEX: io.github.tufkan1.projectex.compat.jade.ProjectEXJadePlugin"
+		if (!text.contains(marker)) throw new GradleException("Jade did not discover the ProjectEX plugin")
+		if (text.contains("Failed to load plugin from ProjectEX")) {
+			throw new GradleException("Jade rejected the ProjectEX plugin; inspect the production client log")
+		}
+	}
 }
 
 def modVersion = project.version

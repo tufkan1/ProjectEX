@@ -9,7 +9,7 @@ Run the complete local gate with:
 This composes unit/fuzz/concurrency tests, 49 dedicated-server GameTests, the production
 client journey, runtime/source JAR creation, and artifact inspection. Pull requests also
 run dependency review, CodeQL, a full-history Gitleaks scan, generated-resource checks,
-and the same artifact verifier.
+the same artifact verifier, and no-mod/Jade production-client profiles.
 
 ## Supported envelope and hard ceilings
 

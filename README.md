@@ -88,6 +88,7 @@ Additional release documentation:
 - [Pack author guide](docs/pack-author-guide.md) - EMC overrides, validation, precedence, and examples
 - [Integration guide](docs/integration-guide.md) - public APIs, compatibility, Javadocs, and example mod
 - [Translation guide](docs/translating.md) - English/Turkish parity and community locale workflow
+- [Optional integrations](docs/optional-integrations.md) - no-mod/Jade matrix, privacy contract, and EMI availability
 
 ## Independence and attribution
 

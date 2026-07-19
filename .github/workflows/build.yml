@@ -70,9 +70,13 @@ jobs:
           retention-days: 14
 
   client-game-test:
-    name: Client GameTest / Fabric 26.2
+    name: Client GameTest / Fabric 26.2 / ${{ matrix.compat }}
     runs-on: ubuntu-24.04
     timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        compat: [none, jade]
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
@@ -90,13 +94,13 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Run headless client journey
-        run: ./gradlew --stacktrace runProductionClientGameTest
+        run: ./gradlew --stacktrace ${{ matrix.compat == 'jade' && '-PcompatJade verifyJadeCompatClient' || 'verifyNoCompatClient' }}
 
       - name: Upload client test evidence
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: client-gametest-${{ github.sha }}
+          name: client-gametest-${{ matrix.compat }}-${{ github.sha }}
           path: |
             build/run/clientGameTest/logs/
             build/run/clientGameTest/screenshots/
