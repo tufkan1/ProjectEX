@@ -15,6 +15,7 @@ the Minecraft version.
 - Deterministic priority/conflict/alias resolution and atomic server data reload.
 - Server-side EMC query, status, reload, and machine-readable diagnostics commands.
 - Deterministic recipe-graph EMC mapping core with cycle and free-EMC protection.
+- Minecraft 26.2 recipe adapter with safe exclusions and post-reload derivation.
 
 ## [0.1.0-alpha.1] - Unreleased
 
