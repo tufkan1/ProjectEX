@@ -1,4 +1,6 @@
 {
+  "advancements.projectex.philosophers_stone.description": "Craft a Philosopher's Stone and reshape ordinary matter.",
+  "advancements.projectex.philosophers_stone.title": "First Principle",
   "advancements.projectex.transmutation.description": "Craft a Transmutation Table and begin exchanging matter.",
   "advancements.projectex.transmutation.title": "A New Exchange",
   "block.projectex.transmutation_table": "Transmutation Table",
@@ -13,6 +15,20 @@
   "commands.projectex.reload_started": "Reloading data packs and ProjectEX EMC values...",
   "commands.projectex.status": "ProjectEX has %s resolved EMC values.",
   "commands.projectex.value": "%s = %s EMC (source: %s)",
+  "item.projectex.active_mode.cube": "Cube",
+  "item.projectex.active_mode.line": "Line",
+  "item.projectex.active_mode.panel": "Panel",
+  "item.projectex.aeternalis_fuel": "Aeternalis Fuel",
+  "item.projectex.alchemical_coal": "Alchemical Coal",
+  "item.projectex.dark_matter": "Dark Matter",
+  "item.projectex.high_covalence_dust": "High Covalence Dust",
+  "item.projectex.low_covalence_dust": "Low Covalence Dust",
+  "item.projectex.medium_covalence_dust": "Medium Covalence Dust",
+  "item.projectex.mobius_fuel": "Mobius Fuel",
+  "item.projectex.philosophers_stone": "Philosopher's Stone",
+  "item.projectex.philosophers_stone.controls": "Use in air: charge · Sneak-use in air: mode · Sneak-use block: reverse",
+  "item.projectex.philosophers_stone.state": "Charge %s · Mode %s",
+  "item.projectex.red_matter": "Red Matter",
   "menu.projectex.transmutation": "Transmutation",
   "modmenu.descriptionTranslation.projectex": "A community-driven alchemy and EMC mod for modern Fabric.",
   "screen.projectex.balance": "EMC: %s",
@@ -41,5 +57,8 @@
   "screen.projectex.page": "Page %s/%s · %s results",
   "screen.projectex.search": "Search learned items",
   "screen.projectex.status.ready": "Ready",
-  "screen.projectex.unfavorite": "Unfavorite"
+  "screen.projectex.unfavorite": "Unfavorite",
+  "tag.block.projectex.philosophers_stone_allowed": "Philosopher's Stone Transformable",
+  "tag.block.projectex.philosophers_stone_denied": "Philosopher's Stone Protected",
+  "tag.item.projectex.covalence_dusts": "Covalence Dusts"
 }

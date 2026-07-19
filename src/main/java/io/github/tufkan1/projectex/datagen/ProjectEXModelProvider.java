@@ -3,6 +3,9 @@ package io.github.tufkan1.projectex.datagen;
 import com.google.gson.JsonParser;
 import io.github.tufkan1.projectex.ProjectEX;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.data.CachedOutput;
@@ -38,6 +41,17 @@ public final class ProjectEXModelProvider implements DataProvider {
           }
         }
         """;
+    private static final Map<String, String> GENERATED_ITEMS = Map.ofEntries(
+        Map.entry("low_covalence_dust", "minecraft:item/gunpowder"),
+        Map.entry("medium_covalence_dust", "minecraft:item/redstone"),
+        Map.entry("high_covalence_dust", "minecraft:item/glowstone_dust"),
+        Map.entry("alchemical_coal", "minecraft:item/coal"),
+        Map.entry("mobius_fuel", "minecraft:item/blaze_powder"),
+        Map.entry("aeternalis_fuel", "minecraft:item/echo_shard"),
+        Map.entry("dark_matter", "minecraft:item/ender_pearl"),
+        Map.entry("red_matter", "minecraft:item/nether_star"),
+        Map.entry("philosophers_stone", "minecraft:item/ender_eye")
+    );
 
     private final Path assetsRoot;
 
@@ -48,11 +62,31 @@ public final class ProjectEXModelProvider implements DataProvider {
 
     @Override
     public CompletableFuture<?> run(CachedOutput output) {
-        return CompletableFuture.allOf(
-            save(output, "models/block/transmutation_table.json", BLOCK_MODEL),
-            save(output, "blockstates/transmutation_table.json", BLOCK_STATE),
-            save(output, "items/transmutation_table.json", ITEM_MODEL)
-        );
+        List<CompletableFuture<?>> writes = new ArrayList<>();
+        writes.add(save(output, "models/block/transmutation_table.json", BLOCK_MODEL));
+        writes.add(save(output, "blockstates/transmutation_table.json", BLOCK_STATE));
+        writes.add(save(output, "items/transmutation_table.json", ITEM_MODEL));
+        GENERATED_ITEMS.forEach((item, texture) -> {
+            String baseModel = """
+                {
+                  "parent": "minecraft:item/generated",
+                  "textures": {
+                    "layer0": "%s"
+                  }
+                }
+                """.formatted(texture);
+            String clientItem = """
+                {
+                  "model": {
+                    "type": "minecraft:model",
+                    "model": "projectex:item/%s"
+                  }
+                }
+                """.formatted(item);
+            writes.add(save(output, "models/item/" + item + ".json", baseModel));
+            writes.add(save(output, "items/" + item + ".json", clientItem));
+        });
+        return CompletableFuture.allOf(writes.toArray(CompletableFuture[]::new));
     }
 
     private CompletableFuture<?> save(CachedOutput output, String path, String json) {

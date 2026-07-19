@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "projectex:alchemical_coal",
+    "projectex:alchemical_coal",
+    "projectex:alchemical_coal",
+    "projectex:alchemical_coal",
+    "minecraft:glowstone_dust"
+  ],
+  "result": {
+    "id": "projectex:mobius_fuel"
+  }
+}

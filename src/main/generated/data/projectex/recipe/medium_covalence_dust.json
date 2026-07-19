@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "minecraft:iron_ingot",
+    "minecraft:redstone"
+  ],
+  "result": {
+    "count": 40,
+    "id": "projectex:medium_covalence_dust"
+  }
+}

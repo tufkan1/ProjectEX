@@ -56,6 +56,7 @@ launch a development client with `./gradlew runClient`.
 - [Network protocol](docs/network-protocol.md) — payload schema, sessions, replay defense, and limits
 - [Transmutation UI](docs/transmutation-ui.md) — keyboard, narration, paging, and latency contract
 - [Content and datagen](docs/datagen.md) — registration, generated resources, and verification
+- [Philosopher's Stone](docs/philosophers-stone.md) — controls, protection hooks, and transaction rules
 - [Contributing](CONTRIBUTING.md) — development and pull request workflow
 - [Support](SUPPORT.md) — where questions and bug reports belong
 - [Security](SECURITY.md) — private vulnerability reporting policy

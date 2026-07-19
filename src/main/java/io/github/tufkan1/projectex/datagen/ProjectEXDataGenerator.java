@@ -10,6 +10,7 @@ public final class ProjectEXDataGenerator implements DataGeneratorEntrypoint {
         FabricDataGenerator.Pack pack = generator.createPack();
         pack.addProvider(ProjectEXRecipeProvider::new);
         pack.addProvider(ProjectEXBlockTagProvider::new);
+        pack.addProvider(ProjectEXItemTagProvider::new);
         pack.addProvider(ProjectEXBlockLootProvider::new);
         pack.addProvider(ProjectEXEnglishLanguageProvider::new);
         pack.addProvider(ProjectEXAdvancementProvider::new);

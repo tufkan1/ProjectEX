@@ -82,6 +82,10 @@ java {
 	targetCompatibility = JavaVersion.VERSION_25
 }
 
+tasks.named("sourcesJar") {
+	mustRunAfter tasks.named("runDatagen")
+}
+
 def projectName = project.name
 
 jar {
