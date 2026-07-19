@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "projectex:white_relay",
+    "projectex:fading_matter",
+    "projectex:fading_matter",
+    "projectex:fading_matter",
+    "projectex:fading_matter",
+    "projectex:fading_matter",
+    "projectex:fading_matter",
+    "projectex:fading_matter",
+    "projectex:fading_matter"
+  ],
+  "result": {
+    "id": "projectex:fading_relay"
+  }
+}

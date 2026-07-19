@@ -131,7 +131,16 @@ public final class ProjectEXModelProvider implements DataProvider {
         writes.add(save(output, "models/block/transmutation_table.json", BLOCK_MODEL));
         writes.add(save(output, "blockstates/transmutation_table.json", BLOCK_STATE));
         writes.add(save(output, "items/transmutation_table.json", ITEM_MODEL));
-        MACHINE_BLOCKS.forEach((block, texture) -> {
+        Map<String, String> machineBlocks = new java.util.LinkedHashMap<>(MACHINE_BLOCKS);
+        java.util.stream.Stream.of(
+            io.github.tufkan1.projectex.content.ProjectEXBlocks.EXPANSION_COLLECTORS,
+            io.github.tufkan1.projectex.content.ProjectEXBlocks.EXPANSION_RELAYS,
+            io.github.tufkan1.projectex.content.ProjectEXBlocks.POWER_FLOWERS
+        ).flatMap(map -> map.entrySet().stream()).forEach(entry ->
+            machineBlocks.put(entry.getValue().id().getPath(), expansionTexture(entry.getKey()))
+        );
+        machineBlocks.put("compact_sun", "minecraft:block/shroomlight");
+        machineBlocks.forEach((block, texture) -> {
             String blockModel = """
                 {
                   "parent": "minecraft:block/cube_all",
@@ -176,6 +185,27 @@ public final class ProjectEXModelProvider implements DataProvider {
                     "type": "minecraft:model",
                     "model": "projectex:item/%s"
                   }
+                }
+                """.formatted(item);
+            writes.add(save(output, "models/item/" + item + ".json", baseModel));
+            writes.add(save(output, "items/" + item + ".json", clientItem));
+        });
+        io.github.tufkan1.projectex.content.ProjectEXItems.COMPRESSED_COLLECTORS.forEach(entry -> {
+            String item = entry.id().getPath();
+            String tier = item.substring(0, item.indexOf("_compressed_collector"));
+            String baseModel = """
+                {
+                  "parent": "minecraft:item/generated",
+                  "textures": { "layer0": "%s" }
+                }
+                """.formatted(expansionTexture(
+                    io.github.tufkan1.projectex.machine.ExpansionMachineTier.valueOf(
+                        tier.toUpperCase(java.util.Locale.ROOT)
+                    )
+                ));
+            String clientItem = """
+                {
+                  "model": { "type": "minecraft:model", "model": "projectex:item/%s" }
                 }
                 """.formatted(item);
             writes.add(save(output, "models/item/" + item + ".json", baseModel));
@@ -236,6 +266,20 @@ public final class ProjectEXModelProvider implements DataProvider {
 
     private CompletableFuture<?> save(CachedOutput output, String path, String json) {
         return DataProvider.saveStable(output, JsonParser.parseString(json), assetsRoot.resolve(path));
+    }
+
+    private static String expansionTexture(
+        io.github.tufkan1.projectex.machine.ExpansionMachineTier tier
+    ) {
+        return switch (tier) {
+            case BASIC -> "minecraft:block/glowstone";
+            case DARK -> "minecraft:block/coal_block";
+            case RED -> "minecraft:block/redstone_block";
+            case VIOLET -> "minecraft:block/chorus_plant";
+            case FADING -> "minecraft:block/crying_obsidian";
+            case FINAL -> "minecraft:block/netherite_block";
+            default -> "minecraft:block/" + tier.id() + "_concrete";
+        };
     }
 
     @Override

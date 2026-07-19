@@ -192,6 +192,68 @@ public final class ProjectEXRecipeProvider extends FabricRecipeProvider {
                     .unlockedBy("has_relay_mk2", has(ProjectEXBlocks.RELAY_MK2))
                     .save(output, id("relay_mk3"));
 
+                net.minecraft.world.level.ItemLike previousCollector = ProjectEXBlocks.COLLECTOR_MK3;
+                net.minecraft.world.level.ItemLike previousRelay = ProjectEXBlocks.RELAY_MK3;
+                for (int index = io.github.tufkan1.projectex.machine.ExpansionMachineTier.MAGENTA.ordinal();
+                     index < io.github.tufkan1.projectex.machine.ExpansionMachineTier.values().length;
+                     index++) {
+                    var tier = io.github.tufkan1.projectex.machine.ExpansionMachineTier.values()[index];
+                    net.minecraft.world.level.ItemLike matter = index
+                        < io.github.tufkan1.projectex.machine.ExpansionMachineTier.FADING.ordinal()
+                        ? ProjectEXItems.EXPANSION_MATTERS.get(index
+                            - io.github.tufkan1.projectex.machine.ExpansionMachineTier.MAGENTA.ordinal()).item()
+                        : tier == io.github.tufkan1.projectex.machine.ExpansionMachineTier.FADING
+                            ? ProjectEXItems.FADING_MATTER.item()
+                            : ProjectEXItems.FINAL_STAR_SHARD.item();
+                    var collector = ProjectEXBlocks.EXPANSION_COLLECTORS.get(tier);
+                    var relay = ProjectEXBlocks.EXPANSION_RELAYS.get(tier);
+                    shapeless(RecipeCategory.MISC, collector.block())
+                        .requires(previousCollector).requires(matter, 8)
+                        .unlockedBy("has_previous_collector", has(previousCollector))
+                        .save(output, id(tier.id() + "_collector"));
+                    shapeless(RecipeCategory.MISC, relay.block())
+                        .requires(previousRelay).requires(matter, 8)
+                        .unlockedBy("has_previous_relay", has(previousRelay))
+                        .save(output, id(tier.id() + "_relay"));
+                    previousCollector = collector.block();
+                    previousRelay = relay.block();
+                }
+
+                for (var tier : io.github.tufkan1.projectex.machine.ExpansionMachineTier.values()) {
+                    net.minecraft.world.level.ItemLike collector = switch (tier) {
+                        case BASIC -> ProjectEXBlocks.COLLECTOR_MK1;
+                        case DARK -> ProjectEXBlocks.COLLECTOR_MK2;
+                        case RED -> ProjectEXBlocks.COLLECTOR_MK3;
+                        default -> ProjectEXBlocks.EXPANSION_COLLECTORS.get(tier).block();
+                    };
+                    net.minecraft.world.level.ItemLike relay = switch (tier) {
+                        case BASIC -> ProjectEXBlocks.RELAY_MK1;
+                        case DARK -> ProjectEXBlocks.RELAY_MK2;
+                        case RED -> ProjectEXBlocks.RELAY_MK3;
+                        default -> ProjectEXBlocks.EXPANSION_RELAYS.get(tier).block();
+                    };
+                    var compressed = ProjectEXItems.COMPRESSED_COLLECTORS.get(tier.ordinal());
+                    var flower = ProjectEXBlocks.POWER_FLOWERS.get(tier);
+                    shaped(RecipeCategory.MISC, compressed.item())
+                        .define('C', collector).pattern("CCC").pattern("CCC").pattern("CCC")
+                        .unlockedBy("has_tier_collector", has(collector))
+                        .save(output, id(tier.id() + "_compressed_collector"));
+                    shaped(RecipeCategory.MISC, flower.block())
+                        .define('C', compressed.item()).define('L', ProjectEXBlocks.TRANSMUTATION_TABLE)
+                        .define('R', relay).pattern("CLC").pattern("RRR").pattern("RRR")
+                        .unlockedBy("has_compressed_collector", has(compressed.item()))
+                        .save(output, id(tier.id() + "_power_flower"));
+                }
+
+                shaped(RecipeCategory.MISC, ProjectEXBlocks.COMPACT_SUN)
+                    .define('S', ProjectEXItems.FINAL_STAR.item())
+                    .define('H', ProjectEXItems.FINAL_STAR_SHARD.item())
+                    .define('Y', ProjectEXItems.EXPANSION_MATTERS.get(
+                        ExpansionMaterialTier.YELLOW.ordinal()).item())
+                    .pattern("HSH").pattern("SYS").pattern("HSH")
+                    .unlockedBy("has_final_star", has(ProjectEXItems.FINAL_STAR.item()))
+                    .save(output, id("compact_sun"));
+
                 shaped(RecipeCategory.MISC, ProjectEXBlocks.ALCHEMICAL_CHEST)
                     .define('C', Items.CHEST).define('D', ProjectEXItems.HIGH_COVALENCE_DUST.item())
                     .define('M', ProjectEXItems.DARK_MATTER.item())

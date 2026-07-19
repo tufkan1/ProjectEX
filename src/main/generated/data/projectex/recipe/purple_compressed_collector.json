@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": "projectex:purple_collector"
+  },
+  "pattern": [
+    "CCC",
+    "CCC",
+    "CCC"
+  ],
+  "result": {
+    "id": "projectex:purple_compressed_collector"
+  }
+}

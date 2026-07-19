@@ -61,4 +61,20 @@ final class MachineItemStateTest {
                 """)
         ).error().isPresent());
     }
+
+    @Test
+    void expansionTierUsesExistingSchemaWithoutLoss() {
+        MachineState machine = new MachineState(
+            MachineState.CURRENT_VERSION,
+            MachineTier.POWER_FLOWER_FINAL,
+            new EmcValue(new BigInteger("1234567890123456789")),
+            new BigInteger("19"),
+            new MachineAccess(Optional.empty(), false),
+            MachineRedstoneMode.IGNORED
+        );
+        MachineItemState carried = MachineItemState.from(machine);
+        var encoded = MachineItemState.CODEC.encodeStart(JsonOps.INSTANCE, carried).getOrThrow();
+        assertEquals(carried, MachineItemState.CODEC.parse(JsonOps.INSTANCE, encoded).getOrThrow());
+        assertEquals(machine, carried.toMachineState());
+    }
 }

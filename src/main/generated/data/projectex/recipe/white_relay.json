@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "projectex:orange_relay",
+    "projectex:white_matter",
+    "projectex:white_matter",
+    "projectex:white_matter",
+    "projectex:white_matter",
+    "projectex:white_matter",
+    "projectex:white_matter",
+    "projectex:white_matter",
+    "projectex:white_matter"
+  ],
+  "result": {
+    "id": "projectex:white_relay"
+  }
+}

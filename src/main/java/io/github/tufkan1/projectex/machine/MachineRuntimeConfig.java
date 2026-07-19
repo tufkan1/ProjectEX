@@ -9,9 +9,12 @@ public final class MachineRuntimeConfig {
         "projectex.machine.maxTransfersPerWorldTick";
     public static final String MAX_EMC_PROPERTY =
         "projectex.machine.maxEmcPerWorldTick";
+    public static final String COMPACT_SUN_MULTIPLIER_PROPERTY =
+        "projectex.machine.compactSunMultiplier";
     private static final int DEFAULT_MAX_TRANSFERS = 65_536;
     private static final EmcValue DEFAULT_MAX_EMC = new EmcValue(BigInteger.ONE.shiftLeft(256));
     private static volatile MachineTickBudget networkBudget = loadBudget();
+    private static volatile int compactSunMultiplier = loadCompactSunMultiplier();
 
     private MachineRuntimeConfig() {
     }
@@ -22,6 +25,11 @@ public final class MachineRuntimeConfig {
 
     public static void reload() {
         networkBudget = loadBudget();
+        compactSunMultiplier = loadCompactSunMultiplier();
+    }
+
+    public static int compactSunMultiplier() {
+        return compactSunMultiplier;
     }
 
     private static MachineTickBudget loadBudget() {
@@ -57,5 +65,21 @@ public final class MachineRuntimeConfig {
             throw new IllegalArgumentException("Machine EMC tick budget must be positive");
         }
         return parsed;
+    }
+
+    private static int loadCompactSunMultiplier() {
+        String value = System.getProperty(COMPACT_SUN_MULTIPLIER_PROPERTY);
+        if (value == null || value.isBlank()) {
+            return 10;
+        }
+        try {
+            int parsed = Integer.parseInt(value);
+            if (parsed < 0 || parsed > 1_000_000) {
+                throw new IllegalArgumentException("Compact Sun multiplier must be between 0 and 1000000");
+            }
+            return parsed == 0 ? 1 : parsed;
+        } catch (NumberFormatException exception) {
+            throw new IllegalArgumentException("Invalid Compact Sun multiplier", exception);
+        }
     }
 }

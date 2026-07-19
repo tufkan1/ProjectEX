@@ -9,6 +9,7 @@ import io.github.tufkan1.projectex.api.storage.EmcStorageContext;
 import io.github.tufkan1.projectex.api.storage.EmcTransferMode;
 import io.github.tufkan1.projectex.content.EmcMachineBlock;
 import io.github.tufkan1.projectex.content.ProjectEXBlockEntities;
+import io.github.tufkan1.projectex.content.ProjectEXBlocks;
 import io.github.tufkan1.projectex.content.ProjectEXItems;
 import io.github.tufkan1.projectex.content.ProjectEXComponents;
 import io.github.tufkan1.projectex.content.component.MachineItemState;
@@ -20,6 +21,7 @@ import io.github.tufkan1.projectex.machine.MachineState;
 import io.github.tufkan1.projectex.machine.MachineStateCodec;
 import io.github.tufkan1.projectex.machine.MachineTier;
 import io.github.tufkan1.projectex.machine.MachineRedstoneMode;
+import io.github.tufkan1.projectex.machine.MachineRuntimeConfig;
 import java.math.BigInteger;
 import java.util.Map;
 import java.util.UUID;
@@ -83,8 +85,10 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
         if (machine.tier.type() == MachineTier.MachineType.COLLECTOR) {
             machine.generate();
             machine.upgradeFuel();
-        } else {
+        } else if (machine.tier.type() == MachineTier.MachineType.RELAY) {
             machine.consumeRelayInput(serverLevel);
+        } else {
+            machine.generate();
         }
         machine.chargeOutput(serverLevel);
         machine.transferToNeighbors(serverLevel);
@@ -163,10 +167,20 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
         if (room.equals(EmcValue.ZERO)) {
             return;
         }
-        FixedPointRate.Generation generation = tier.fixedRate().generate(
+        FixedPointRate rate = tier.fixedRate();
+        if (tier.type() == MachineTier.MachineType.POWER_FLOWER && level != null
+            && level.getBlockState(worldPosition.below()).is(ProjectEXBlocks.COMPACT_SUN)) {
+            rate = new FixedPointRate(
+                rate.numerator().multiply(BigInteger.valueOf(MachineRuntimeConfig.compactSunMultiplier())),
+                rate.denominator()
+            );
+        }
+        EmcValue generationLimit = tier.type() == MachineTier.MachineType.POWER_FLOWER
+            ? room : room.min(tier.rate());
+        FixedPointRate.Generation generation = rate.generate(
             state.deferredGeneration(),
             1,
-            room.min(tier.rate())
+            generationLimit
         );
         buffer.insert(generation.produced());
         replaceStored(buffer.stored(), generation.deferredNumerator());
@@ -406,9 +420,12 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
         if (slot == OUTPUT_SLOT) {
             return exposesEmcStorage(stack);
         }
-        return tier.type() == MachineTier.MachineType.COLLECTOR
-            ? stack.is(ProjectEXItems.ALCHEMICAL_COAL.item()) || stack.is(ProjectEXItems.MOBIUS_FUEL.item())
-            : exposesEmcStorage(stack) || valueOf(stack).isPresent();
+        return switch (tier.type()) {
+            case COLLECTOR -> stack.is(ProjectEXItems.ALCHEMICAL_COAL.item())
+                || stack.is(ProjectEXItems.MOBIUS_FUEL.item());
+            case RELAY -> exposesEmcStorage(stack) || valueOf(stack).isPresent();
+            case POWER_FLOWER -> false;
+        };
     }
 
     private boolean exposesEmcStorage(ItemStack stack) {

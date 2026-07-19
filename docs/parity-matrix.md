@@ -17,8 +17,11 @@ not imply copied implementation or byte-for-byte behavior.
 | Alchemical Chest and Bags | Implemented | ProjectE | 104-slot chest and bags; copied bag identities mirror one UUID/world-backed inventory |
 | Dark/red matter blocks, tools, and armor | Implemented | ProjectE | Data-pack runtime balance, server-raycast area mining, exact EMC payment/refund, public claim hook, bounded cooldowns, vanilla-attribute armor |
 | Dark/red matter furnaces | Implemented | ProjectE | Atomic multi-slot output, component identity, exact fuel remainder, sided Fabric automation, narrated progress UI |
-| Advanced tiers and links | Planned | ProjectExpansion | No content or assets imported; scope will be reviewed per feature |
+| Expansion collectors, relays, power flowers, and Compact Sun | Implemented | ProjectExpansion | Exact fixed-point/BigInteger accounting, schema-v1 carry state, bounded multiplier, no chunk tickets, original vanilla-reference models |
+| EMC Links and Transmutation Interface | Planned | ProjectExpansion | Server-authoritative Fabric automation design tracked separately |
 
 Collector/relay baseline rates and capacities follow ProjectE commit
 `15d4ce65bd06eb4222709b984255fbf5080e78bc`. All Fabric integration, persistence,
 network routing, menus, tests, models, and textures in ProjectEX are original.
+Expansion machine identities and balance formulas follow ProjectExpansion commit
+`168bcf2491b9fde679295fd412ad9c93fd3d93f1`; no upstream art is distributed.

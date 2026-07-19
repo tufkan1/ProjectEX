@@ -1,6 +1,7 @@
 package io.github.tufkan1.projectex.content;
 
 import io.github.tufkan1.projectex.machine.MachineTier;
+import io.github.tufkan1.projectex.machine.ExpansionMachineTier;
 import io.github.tufkan1.projectex.storage.StorageKind;
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -36,6 +37,20 @@ public final class ProjectEXBlocks {
     public static final Block RELAY_MK1 = RELAY_MK1_FAMILY.block();
     public static final Block RELAY_MK2 = RELAY_MK2_FAMILY.block();
     public static final Block RELAY_MK3 = RELAY_MK3_FAMILY.block();
+    public static final java.util.Map<ExpansionMachineTier, ProjectEXContentRegistry.RegisteredBlock>
+        EXPANSION_COLLECTORS = expansionMachines(MachineTier.MachineType.COLLECTOR);
+    public static final java.util.Map<ExpansionMachineTier, ProjectEXContentRegistry.RegisteredBlock>
+        EXPANSION_RELAYS = expansionMachines(MachineTier.MachineType.RELAY);
+    public static final java.util.Map<ExpansionMachineTier, ProjectEXContentRegistry.RegisteredBlock>
+        POWER_FLOWERS = expansionMachines(MachineTier.MachineType.POWER_FLOWER);
+    public static final ProjectEXContentRegistry.RegisteredBlock COMPACT_SUN_FAMILY =
+        ProjectEXContentRegistry.registerBlockWithItem(
+            "compact_sun",
+            Block::new,
+            BlockBehaviour.Properties.of().strength(50.0F, 1_200.0F)
+                .requiresCorrectToolForDrops().sound(SoundType.GLASS).lightLevel(state -> 15)
+        );
+    public static final Block COMPACT_SUN = COMPACT_SUN_FAMILY.block();
     public static final ProjectEXContentRegistry.RegisteredBlock CONDENSER_MK1_FAMILY =
         storage("condenser_mk1", StorageKind.CONDENSER_MK1);
     public static final ProjectEXContentRegistry.RegisteredBlock CONDENSER_MK2_FAMILY =
@@ -71,6 +86,10 @@ public final class ProjectEXBlocks {
                 entries.accept(RELAY_MK1.asItem());
                 entries.accept(RELAY_MK2.asItem());
                 entries.accept(RELAY_MK3.asItem());
+                EXPANSION_COLLECTORS.values().forEach(entry -> entries.accept(entry.item()));
+                EXPANSION_RELAYS.values().forEach(entry -> entries.accept(entry.item()));
+                POWER_FLOWERS.values().forEach(entry -> entries.accept(entry.item()));
+                entries.accept(COMPACT_SUN.asItem());
                 entries.accept(CONDENSER_MK1.asItem());
                 entries.accept(CONDENSER_MK2.asItem());
                 entries.accept(ALCHEMICAL_CHEST.asItem());
@@ -90,6 +109,28 @@ public final class ProjectEXBlocks {
             properties -> new EmcMachineBlock(properties, tier),
             BlockBehaviour.Properties.of().strength(3.5F, 12.0F).sound(SoundType.METAL)
         );
+    }
+
+    private static java.util.Map<ExpansionMachineTier, ProjectEXContentRegistry.RegisteredBlock>
+        expansionMachines(MachineTier.MachineType type) {
+        java.util.Map<ExpansionMachineTier, ProjectEXContentRegistry.RegisteredBlock> machines =
+            new java.util.LinkedHashMap<>();
+        for (ExpansionMachineTier expansionTier : ExpansionMachineTier.values()) {
+            if (type != MachineTier.MachineType.POWER_FLOWER
+                && expansionTier.ordinal() < ExpansionMachineTier.MAGENTA.ordinal()) {
+                continue;
+            }
+            String suffix = switch (type) {
+                case COLLECTOR -> "collector";
+                case RELAY -> "relay";
+                case POWER_FLOWER -> "power_flower";
+            };
+            machines.put(expansionTier, machine(
+                expansionTier.id() + "_" + suffix,
+                MachineTier.expansion(type, expansionTier)
+            ));
+        }
+        return java.util.Collections.unmodifiableMap(machines);
     }
 
     private static ProjectEXContentRegistry.RegisteredBlock storage(String id, StorageKind kind) {

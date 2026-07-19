@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:block",
+  "functions": [
+    {
+      "function": "minecraft:copy_components",
+      "include": [
+        "projectex:machine_state",
+        "minecraft:container"
+      ],
+      "source": "block_entity"
+    }
+  ],
+  "pools": [
+    {
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "projectex:purple_collector"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}

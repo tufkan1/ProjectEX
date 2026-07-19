@@ -412,6 +412,56 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
     }
 
     @GameTest
+    public void expansionPowerFlowerUsesExactRateAndCompactSunMultiplier(GameTestHelper helper) {
+        var basicFlower = ProjectEXBlocks.POWER_FLOWERS.get(
+            io.github.tufkan1.projectex.machine.ExpansionMachineTier.BASIC
+        ).block();
+        BlockPos plainPos = new BlockPos(0, 2, 0);
+        BlockPos boostedPos = new BlockPos(3, 2, 0);
+        helper.setBlock(plainPos, basicFlower);
+        helper.setBlock(boostedPos, basicFlower);
+        helper.setBlock(boostedPos.below(), ProjectEXBlocks.COMPACT_SUN);
+        EmcMachineBlockEntity plain = machine(helper, plainPos);
+        EmcMachineBlockEntity boosted = machine(helper, boostedPos);
+
+        for (int tick = 0; tick < 20; tick++) {
+            EmcMachineBlockEntity.tickServer(
+                helper.getLevel(), helper.absolutePos(plainPos), plain.getBlockState(), plain
+            );
+            EmcMachineBlockEntity.tickServer(
+                helper.getLevel(), helper.absolutePos(boostedPos), boosted.getBlockState(), boosted
+            );
+        }
+
+        helper.assertTrue(plain.machineState().stored().equals(EmcValue.of(102)),
+            "Basic power flower lost its exact fixed-point second output");
+        helper.assertTrue(boosted.machineState().stored().equals(EmcValue.of(1_020)),
+            "Compact Sun did not apply the validated default multiplier");
+        for (var tier : io.github.tufkan1.projectex.machine.ExpansionMachineTier.values()) {
+            helper.assertTrue(ProjectEXBlocks.POWER_FLOWERS.containsKey(tier),
+                "Missing registered power flower for " + tier.id());
+            helper.assertTrue(helper.getLevel().getServer().getRecipeManager().byKey(
+                net.minecraft.resources.ResourceKey.create(
+                    net.minecraft.core.registries.Registries.RECIPE,
+                    ProjectEX.id(tier.id() + "_compressed_collector")
+                )
+            ).isPresent(), "Missing compressed collector recipe for " + tier.id());
+            helper.assertTrue(helper.getLevel().getServer().getRecipeManager().byKey(
+                net.minecraft.resources.ResourceKey.create(
+                    net.minecraft.core.registries.Registries.RECIPE,
+                    ProjectEX.id(tier.id() + "_power_flower")
+                )
+            ).isPresent(), "Missing power flower recipe for " + tier.id());
+        }
+        helper.assertTrue(helper.getLevel().getServer().getRecipeManager().byKey(
+            net.minecraft.resources.ResourceKey.create(
+                net.minecraft.core.registries.Registries.RECIPE, ProjectEX.id("compact_sun")
+            )
+        ).isPresent(), "Missing Compact Sun recipe");
+        helper.succeed();
+    }
+
+    @GameTest
     public void machineOwnershipAllowsOwnerServerMenu(GameTestHelper helper) {
         BlockPos relative = new BlockPos(9, 1, 0);
         helper.setBlock(relative, ProjectEXBlocks.COLLECTOR_MK2);

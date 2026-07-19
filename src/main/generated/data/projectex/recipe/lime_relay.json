@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "projectex:green_relay",
+    "projectex:lime_matter",
+    "projectex:lime_matter",
+    "projectex:lime_matter",
+    "projectex:lime_matter",
+    "projectex:lime_matter",
+    "projectex:lime_matter",
+    "projectex:lime_matter",
+    "projectex:lime_matter"
+  ],
+  "result": {
+    "id": "projectex:lime_relay"
+  }
+}

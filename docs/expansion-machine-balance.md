@@ -24,3 +24,25 @@ adapter, never by modifying this compatibility baseline.
 
 Compressed collectors are recipe components, not independent generators, so
 they deliberately do not expose a second generation rate.
+
+## Runtime content contract
+
+- Basic, dark, and red collectors/relays reuse the baseline MK1-MK3 blocks.
+- Magenta through final collectors and relays are forward-only upgrades that keep
+  the existing versioned machine state and carried-item component format.
+- All 16 power flowers generate through the same exact fixed-point accumulator.
+- A Compact Sun immediately below a power flower applies the validated server
+  multiplier. It does not chunk-load and does not alter persisted EMC.
+- Nine collectors craft one compressed collector; two compressed collectors and
+  six matching relays form a power flower. The central recipe slot uses the
+  Transmutation Table until the EMC Link family lands in #42, after which datagen
+  can switch the ingredient without changing machine state or world data.
+
+The Compact Sun multiplier is configured with the JVM property
+`projectex.machine.compactSunMultiplier` (`0` disables the bonus; valid range
+0-1,000,000; default 10). Invalid values fail startup/reload instead of silently
+changing generation.
+
+No block-state migration is required for existing MK1-MK3 machines. Expansion
+machines use the same schema-v1 fields and strict tier-bound decoding, so a block
+item cannot be placed into a different tier to increase its stored capacity.
