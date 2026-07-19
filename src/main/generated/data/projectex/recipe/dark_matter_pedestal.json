@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "D": "projectex:dark_matter_block",
+    "R": "projectex:red_matter"
+  },
+  "pattern": [
+    "RDR",
+    "RDR",
+    "DDD"
+  ],
+  "result": {
+    "id": "projectex:dark_matter_pedestal"
+  }
+}

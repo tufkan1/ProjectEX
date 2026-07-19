@@ -7,6 +7,8 @@ import io.github.tufkan1.projectex.client.screen.MatterFurnaceScreen;
 import io.github.tufkan1.projectex.client.screen.AlchemyStorageScreen;
 import io.github.tufkan1.projectex.client.screen.AutomationScreen;
 import io.github.tufkan1.projectex.content.ProjectEXMenus;
+import io.github.tufkan1.projectex.content.ProjectEXBlockEntities;
+import io.github.tufkan1.projectex.client.render.DarkMatterPedestalRenderer;
 import io.github.tufkan1.projectex.network.AlchemyActionPayload;
 import io.github.tufkan1.projectex.network.AlchemyKnowledgePagePayload;
 import io.github.tufkan1.projectex.network.AlchemyKnowledgeRequestPayload;
@@ -21,6 +23,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.minecraft.client.KeyMapping;
 import com.mojang.blaze3d.platform.InputConstants;
 import org.lwjgl.glfw.GLFW;
@@ -44,6 +47,7 @@ public final class ProjectEXClient implements ClientModInitializer {
     ));
 
     @Override
+    @SuppressWarnings("deprecation") // Fabric's 26.2 registry remains the supported public hook.
     public void onInitializeClient() {
         favoriteStore = new ClientFavoriteStore(
             FabricLoader.getInstance().getConfigDir().resolve("projectex-favorites.json"));
@@ -53,6 +57,8 @@ public final class ProjectEXClient implements ClientModInitializer {
         MenuScreens.register(ProjectEXMenus.ALCHEMY_STORAGE, AlchemyStorageScreen::new);
         MenuScreens.register(ProjectEXMenus.MATTER_FURNACE, MatterFurnaceScreen::new);
         MenuScreens.register(ProjectEXMenus.AUTOMATION, AutomationScreen::new);
+        BlockEntityRendererRegistry.register(
+            ProjectEXBlockEntities.DARK_MATTER_PEDESTAL, DarkMatterPedestalRenderer::new);
         ClientPlayNetworking.registerGlobalReceiver(AlchemySessionPayload.TYPE, (payload, context) -> {
             if (!ALCHEMY.open(payload)) {
                 ProjectEX.LOGGER.warn("Discarded malformed ProjectEX alchemy session payload");

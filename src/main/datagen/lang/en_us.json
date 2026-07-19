@@ -214,5 +214,9 @@
   "item.projectex.divining_rod.result": "Scanned %s blocks; average EMC: %s",
   "item.projectex.divining_rod.highest": "Highest value #%s: %s EMC",
   "tag.block.projectex.divining_rod_allowed": "Divining Rod scannable blocks",
-  "tag.block.projectex.divining_rod_denied": "Divining Rod denied blocks"
+  "tag.block.projectex.divining_rod_denied": "Divining Rod denied blocks",
+  "block.projectex.dark_matter_pedestal": "Dark Matter Pedestal",
+  "block.projectex.dark_matter_pedestal.active": "Pedestal activated",
+  "block.projectex.dark_matter_pedestal.inactive": "Pedestal deactivated",
+  "block.projectex.dark_matter_pedestal.redstone": "Pedestal redstone mode: %s"
 }

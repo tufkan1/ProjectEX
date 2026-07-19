@@ -5,6 +5,7 @@ import io.github.tufkan1.projectex.content.machine.EmcMachineBlockEntity;
 import io.github.tufkan1.projectex.content.storage.AlchemyStorageBlockEntity;
 import io.github.tufkan1.projectex.content.matter.MatterFurnaceBlockEntity;
 import io.github.tufkan1.projectex.content.automation.AutomationBlockEntity;
+import io.github.tufkan1.projectex.content.pedestal.DarkMatterPedestalBlockEntity;
 import java.util.Set;
 import net.fabricmc.fabric.api.transfer.v1.item.ContainerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
@@ -61,6 +62,13 @@ public final class ProjectEXBlockEntities {
                 java.util.stream.Stream.of(ProjectEXBlocks.TRANSMUTATION_INTERFACE)
             ).collect(java.util.stream.Collectors.toUnmodifiableSet()))
     );
+    public static final BlockEntityType<DarkMatterPedestalBlockEntity> DARK_MATTER_PEDESTAL =
+        Registry.register(
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            ResourceKey.create(Registries.BLOCK_ENTITY_TYPE, ProjectEX.id("dark_matter_pedestal")),
+            new BlockEntityType<>(DarkMatterPedestalBlockEntity::new,
+                Set.of(ProjectEXBlocks.DARK_MATTER_PEDESTAL))
+        );
 
     private ProjectEXBlockEntities() {
     }

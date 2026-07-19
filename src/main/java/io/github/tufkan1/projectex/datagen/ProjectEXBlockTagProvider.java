@@ -37,6 +37,7 @@ public final class ProjectEXBlockTagProvider extends FabricTagsProvider.BlockTag
             key(ProjectEXBlocks.ALCHEMICAL_CHEST)
             , key(ProjectEXBlocks.DARK_MATTER_BLOCK), key(ProjectEXBlocks.RED_MATTER_BLOCK),
             key(ProjectEXBlocks.DARK_MATTER_FURNACE), key(ProjectEXBlocks.RED_MATTER_FURNACE)
+            , key(ProjectEXBlocks.DARK_MATTER_PEDESTAL)
         );
         builder(BlockTags.MINEABLE_WITH_PICKAXE).add(expansionMachineKeys());
         builder(BlockTags.MINEABLE_WITH_PICKAXE).add(automationKeys());
@@ -49,6 +50,7 @@ public final class ProjectEXBlockTagProvider extends FabricTagsProvider.BlockTag
             key(ProjectEXBlocks.ALCHEMICAL_CHEST)
             , key(ProjectEXBlocks.DARK_MATTER_BLOCK), key(ProjectEXBlocks.RED_MATTER_BLOCK),
             key(ProjectEXBlocks.DARK_MATTER_FURNACE), key(ProjectEXBlocks.RED_MATTER_FURNACE)
+            , key(ProjectEXBlocks.DARK_MATTER_PEDESTAL)
         );
         builder(BlockTags.NEEDS_DIAMOND_TOOL).add(expansionMachineKeys());
         builder(BlockTags.NEEDS_DIAMOND_TOOL).add(automationKeys());
