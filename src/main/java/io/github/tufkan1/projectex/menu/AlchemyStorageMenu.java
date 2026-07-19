@@ -14,7 +14,7 @@ import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-/** Server-paged menu for 84-slot condensers and the 104-slot alchemical chest. */
+/** Server-paged menu for bounded condenser and alchemical storage layouts. */
 public final class AlchemyStorageMenu extends AbstractContainerMenu {
     private static final int VIEW_SLOTS = 54;
     private static final int STORAGE_MENU_SLOTS = 1 + VIEW_SLOTS;
@@ -103,15 +103,24 @@ public final class AlchemyStorageMenu extends AbstractContainerMenu {
     }
     public int page() { return data.get(1); }
     public boolean publicAccess() { return data.get(2) != 0; }
+    public int pageCount() { return kind().pageCount(); }
+    public boolean inputPage() { return kind().inputPage(page()); }
 
     @Override public boolean clickMenuButton(Player player, int id) {
-        if (id == 0 || id == 1) {
+        if (id >= 0 && id < kind().pageCount()) {
             if (id >= kind().pageCount()) return false;
             data.set(1, id);
             broadcastChanges();
             return true;
         }
-        return id == 2 && storageEntity != null && storageEntity.canUse(player)
+        if (id == 100 || id == 101) {
+            int next = Math.floorMod(page() + (id == 100 ? -1 : 1), kind().pageCount());
+            data.set(1, next);
+            broadcastChanges();
+            return true;
+        }
+        return (id == 102 || (id == 2 && kind().pageCount() == 2))
+            && storageEntity != null && storageEntity.canUse(player)
             && storageEntity.setPublicAccess(!storageEntity.storageState().access().publicAccess(), player);
     }
 
@@ -163,11 +172,8 @@ public final class AlchemyStorageMenu extends AbstractContainerMenu {
         @Override protected int map(int slot) {
             if (directClientView) return slot + 1;
             StorageKind layout = decode(kind);
-            if (slot < 0 || slot >= layout.pageSize()) return -1;
-            int mapped = layout.condenser()
-                ? (page.getAsInt() == 0 ? layout.inputStart() : layout.outputStart()) + slot
-                : page.getAsInt() * layout.pageSize() + slot;
-            return mapped < backing.getContainerSize() ? mapped : -1;
+            int mapped = layout.storageSlot(page.getAsInt(), slot);
+            return mapped >= 0 && mapped < backing.getContainerSize() ? mapped : -1;
         }
         @Override public int getContainerSize() { return VIEW_SLOTS; }
     }

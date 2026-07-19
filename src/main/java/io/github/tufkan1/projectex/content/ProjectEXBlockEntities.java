@@ -42,6 +42,7 @@ public final class ProjectEXBlockEntities {
         new BlockEntityType<>(AlchemyStorageBlockEntity::new, Set.of(
             ProjectEXBlocks.CONDENSER_MK1,
             ProjectEXBlocks.CONDENSER_MK2,
+            ProjectEXBlocks.CONDENSER_MK3,
             ProjectEXBlocks.ALCHEMICAL_CHEST
         ))
     );
