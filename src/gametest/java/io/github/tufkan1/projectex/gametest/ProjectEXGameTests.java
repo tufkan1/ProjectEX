@@ -218,6 +218,42 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
     }
 
     @GameTest
+    public void arcaneTabletReusesM2AndProvidesAuthorizedCraftingMode(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        ItemStack tablet = new ItemStack(ProjectEXItems.ARCANE_TABLET.item());
+        player.setItemInHand(InteractionHand.MAIN_HAND, tablet);
+
+        ProjectEXItems.ARCANE_TABLET.item().use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
+        helper.assertTrue(player.containerMenu instanceof TransmutationMenu,
+            "Arcane Tablet transmutation mode did not reuse the M2 server menu");
+        player.closeContainer();
+
+        player.setShiftKeyDown(true);
+        ProjectEXItems.ARCANE_TABLET.item().use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
+        player.setShiftKeyDown(false);
+        helper.assertTrue(tablet.getOrDefault(ProjectEXComponents.ARCANE_TABLET_STATE,
+                io.github.tufkan1.projectex.content.component.ArcaneTabletState.DEFAULT).mode()
+                == io.github.tufkan1.projectex.content.component.ArcaneTabletState.Mode.CRAFTING,
+            "Arcane Tablet mode did not persist on the item component");
+
+        ProjectEXItems.ARCANE_TABLET.item().use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
+        helper.assertTrue(player.containerMenu instanceof io.github.tufkan1.projectex.menu.ArcaneCraftingMenu,
+            "Arcane Tablet crafting mode did not open the server-owned 3x3 menu");
+        var crafting = (io.github.tufkan1.projectex.menu.ArcaneCraftingMenu) player.containerMenu;
+        helper.assertTrue(crafting.stillValid(player), "Held Arcane Tablet crafting menu was unauthorized");
+        player.setItemInHand(InteractionHand.MAIN_HAND, tablet.copy());
+        helper.assertTrue(!crafting.stillValid(player),
+            "Arcane crafting accepted a replacement stack instead of exact item identity");
+        player.closeContainer();
+        helper.assertTrue(helper.getLevel().getServer().getRecipeManager().byKey(
+            net.minecraft.resources.ResourceKey.create(
+                net.minecraft.core.registries.Registries.RECIPE, ProjectEX.id("arcane_tablet")
+            )
+        ).isPresent(), "Arcane Tablet recipe is missing");
+        helper.succeed();
+    }
+
+    @GameTest
     public void repairTalismanRepairsInventoryWithoutStackingWork(GameTestHelper helper) {
         ServerPlayer player = helper.makeMockServerPlayerInLevel();
         ItemStack damaged = new ItemStack(Items.IRON_PICKAXE);

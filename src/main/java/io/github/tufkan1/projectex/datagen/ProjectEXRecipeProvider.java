@@ -60,6 +60,14 @@ public final class ProjectEXRecipeProvider extends FabricRecipeProvider {
                     .pattern("DSD").pattern("DTD").pattern("DDD")
                     .unlockedBy("has_dark_matter", has(ProjectEXItems.DARK_MATTER.item()))
                     .save(output, id("transmutation_tablet"));
+                shaped(RecipeCategory.TOOLS, ProjectEXItems.ARCANE_TABLET.item())
+                    .define('T', ProjectEXItems.TRANSMUTATION_TABLET.item())
+                    .define('M', ProjectEXItems.EXPANSION_MATTERS.get(0).item())
+                    .define('W', Items.CRAFTING_TABLE).define('C', Items.CHEST)
+                    .define('S', ProjectEXItems.MAGNUM_STAR_EIN.item())
+                    .pattern("TWT").pattern("MSM").pattern("TCT")
+                    .unlockedBy("has_transmutation_tablet", has(ProjectEXItems.TRANSMUTATION_TABLET.item()))
+                    .save(output, id("arcane_tablet"));
                 shaped(RecipeCategory.TOOLS, ProjectEXItems.REPAIR_TALISMAN.item())
                     .define('L', ProjectEXItems.LOW_COVALENCE_DUST.item())
                     .define('M', ProjectEXItems.MEDIUM_COVALENCE_DUST.item())
