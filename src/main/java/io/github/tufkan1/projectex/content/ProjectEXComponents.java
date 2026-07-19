@@ -10,12 +10,21 @@ import io.github.tufkan1.projectex.content.component.MatterToolState;
 import io.github.tufkan1.projectex.content.component.AutomationBlockState;
 import io.github.tufkan1.projectex.content.component.ArcaneTabletState;
 import io.github.tufkan1.projectex.content.component.KnowledgeBookState;
+import io.github.tufkan1.projectex.content.component.AlchemicalBookState;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 
 /** Persistent and network-synchronized ProjectEX data components. */
 public final class ProjectEXComponents {
+    public static final DataComponentType<AlchemicalBookState> ALCHEMICAL_BOOK_STATE = Registry.register(
+        BuiltInRegistries.DATA_COMPONENT_TYPE,
+        ProjectEX.id("alchemical_book_state"),
+        DataComponentType.<AlchemicalBookState>builder()
+            .persistent(AlchemicalBookState.CODEC)
+            .networkSynchronized(AlchemicalBookState.STREAM_CODEC)
+            .build()
+    );
     public static final DataComponentType<KnowledgeBookState> KNOWLEDGE_BOOK_STATE = Registry.register(
         BuiltInRegistries.DATA_COMPONENT_TYPE,
         ProjectEX.id("knowledge_book_state"),

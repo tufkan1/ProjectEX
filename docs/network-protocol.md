@@ -59,3 +59,15 @@ of at most 64 characters, a zero-based page, and a requested page size of 1–54
 value in the current authoritative EMC snapshot. Filtering and paging happen on the
 server; responses contain at most 54 identifier/value entries. Action and query replay
 sequences are independent so search latency cannot invalidate create/burn requests.
+
+## Alchemical Book sessions
+
+`alchemical_book_action_v1` and `alchemical_book_view_v1` form a separate protocol.
+The server opens a random UUID session only from item use and binds it to the player,
+opening hand, exact `ItemStack` object, tier, component state, and bound-store revision.
+Actions use strictly increasing request ids and bounded names; the shared raw limiter
+applies before parsing. Create, delete, teleport, back, and close are reauthorized on
+every packet. The full server view is capped at 64 destinations and carries authoritative
+prices, balance, edit permission, back target, and typed failure text. Disconnect,
+dropping/replacing the book, owner disconnect, component changes, or bound-store changes
+invalidate the session without guessing client intent.
