@@ -43,7 +43,8 @@ public final class ProjectEXBlockEntities {
             ProjectEXBlocks.CONDENSER_MK1,
             ProjectEXBlocks.CONDENSER_MK2,
             ProjectEXBlocks.CONDENSER_MK3,
-            ProjectEXBlocks.ALCHEMICAL_CHEST
+            ProjectEXBlocks.ALCHEMICAL_CHEST,
+            ProjectEXBlocks.ADVANCED_ALCHEMICAL_CHEST
         ))
     );
     public static final BlockEntityType<MatterFurnaceBlockEntity> MATTER_FURNACE = Registry.register(

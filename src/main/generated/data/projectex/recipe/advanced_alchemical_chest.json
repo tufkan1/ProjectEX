@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "projectex:magenta_matter",
+  "base": "projectex:alchemical_chest",
+  "result": {
+    "id": "projectex:advanced_alchemical_chest"
+  },
+  "template": "projectex:high_covalence_dust"
+}

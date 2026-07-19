@@ -60,10 +60,13 @@ public final class ProjectEXBlocks {
         storage("condenser_mk3", StorageKind.CONDENSER_MK3);
     public static final ProjectEXContentRegistry.RegisteredBlock ALCHEMICAL_CHEST_FAMILY =
         storage("alchemical_chest", StorageKind.ALCHEMICAL_CHEST);
+    public static final ProjectEXContentRegistry.RegisteredBlock ADVANCED_ALCHEMICAL_CHEST_FAMILY =
+        storage("advanced_alchemical_chest", StorageKind.ADVANCED_ALCHEMICAL_CHEST);
     public static final Block CONDENSER_MK1 = CONDENSER_MK1_FAMILY.block();
     public static final Block CONDENSER_MK2 = CONDENSER_MK2_FAMILY.block();
     public static final Block CONDENSER_MK3 = CONDENSER_MK3_FAMILY.block();
     public static final Block ALCHEMICAL_CHEST = ALCHEMICAL_CHEST_FAMILY.block();
+    public static final Block ADVANCED_ALCHEMICAL_CHEST = ADVANCED_ALCHEMICAL_CHEST_FAMILY.block();
     public static final ProjectEXContentRegistry.RegisteredBlock DARK_MATTER_BLOCK_FAMILY =
         matterBlock("dark_matter_block", SoundType.NETHERITE_BLOCK);
     public static final ProjectEXContentRegistry.RegisteredBlock RED_MATTER_BLOCK_FAMILY =
@@ -115,6 +118,7 @@ public final class ProjectEXBlocks {
                 entries.accept(CONDENSER_MK2.asItem());
                 entries.accept(CONDENSER_MK3.asItem());
                 entries.accept(ALCHEMICAL_CHEST.asItem());
+                entries.accept(ADVANCED_ALCHEMICAL_CHEST.asItem());
                 entries.accept(DARK_MATTER_BLOCK.asItem());
                 entries.accept(RED_MATTER_BLOCK.asItem());
                 entries.accept(DARK_MATTER_FURNACE.asItem());

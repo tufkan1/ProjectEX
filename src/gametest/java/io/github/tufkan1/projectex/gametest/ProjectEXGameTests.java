@@ -1280,6 +1280,56 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
     }
 
     @GameTest
+    public void advancedAlchemicalChestMigratesLegacyStateAndExposesBoundedStorage(GameTestHelper helper) {
+        BlockPos sourcePos = new BlockPos(27, 1, 0);
+        helper.setBlock(sourcePos, ProjectEXBlocks.ALCHEMICAL_CHEST);
+        AlchemyStorageBlockEntity source = helper.getBlockEntity(sourcePos, AlchemyStorageBlockEntity.class);
+        ServerPlayer owner = helper.makeMockServerPlayerInLevel();
+        source.claim(owner.getUUID());
+        source.setItem(0, new ItemStack(Items.DIAMOND, 3));
+        source.setItem(103, new ItemStack(Items.COAL, 7));
+        ItemStack carried = net.minecraft.world.level.block.Block.getDrops(
+            source.getBlockState(), helper.getLevel(), helper.absolutePos(sourcePos), source
+        ).stream().filter(stack -> stack.is(ProjectEXBlocks.ALCHEMICAL_CHEST.asItem()))
+            .findFirst().orElseThrow();
+
+        BlockPos upgradedPos = new BlockPos(29, 1, 0);
+        helper.setBlock(upgradedPos, ProjectEXBlocks.ADVANCED_ALCHEMICAL_CHEST);
+        AlchemyStorageBlockEntity upgraded = helper.getBlockEntity(upgradedPos, AlchemyStorageBlockEntity.class);
+        // The smithing transform retains the base stack components; this exercises the same
+        // component-to-block migration boundary without a client crafting screen.
+        upgraded.applyComponentsFromItemStack(carried);
+
+        helper.assertTrue(upgraded.getContainerSize() == 243,
+            "Advanced Alchemical Chest did not expose its bounded 243-slot capacity");
+        helper.assertTrue(upgraded.getItem(0).getCount() == 3 && upgraded.getItem(103).getCount() == 7,
+            "Advanced Alchemical Chest migration lost a legacy inventory entry");
+        helper.assertTrue(upgraded.storageState().access().owner().orElseThrow().equals(owner.getUUID()),
+            "Advanced Alchemical Chest migration lost ownership");
+        helper.assertTrue(upgraded.comparatorSignal() > 0,
+            "Advanced Alchemical Chest comparator ignored migrated contents");
+
+        var storage = ItemStorage.SIDED.find(
+            helper.getLevel(), helper.absolutePos(upgradedPos), Direction.NORTH);
+        helper.assertTrue(storage != null, "Advanced Alchemical Chest did not expose Fabric item storage");
+        try (Transaction transaction = Transaction.openOuter()) {
+            helper.assertTrue(storage.insert(ItemVariant.of(new ItemStack(Items.EMERALD)), 1, transaction) == 1,
+                "Advanced Alchemical Chest rejected hopper-compatible insertion");
+            transaction.commit();
+        }
+        AlchemyStorageMenu menu = new AlchemyStorageMenu(0, owner.getInventory(), upgraded);
+        helper.assertTrue(menu.clickMenuButton(owner, 4) && menu.page() == 4,
+            "Advanced Alchemical Chest fifth server-owned page was unreachable");
+        helper.assertTrue(helper.getLevel().getServer().getRecipeManager().byKey(
+            net.minecraft.resources.ResourceKey.create(
+                net.minecraft.core.registries.Registries.RECIPE,
+                ProjectEX.id("advanced_alchemical_chest")
+            )
+        ).isPresent(), "Advanced Alchemical Chest migration recipe is missing");
+        helper.succeed();
+    }
+
+    @GameTest
     public void copiedBagIdentitySharesOneServerInventoryAndRejectsNesting(GameTestHelper helper) {
         ServerPlayer player = helper.makeMockServerPlayerInLevel();
         AlchemicalBagItem bagItem = ProjectEXItems.alchemicalBags().getFirst().item();

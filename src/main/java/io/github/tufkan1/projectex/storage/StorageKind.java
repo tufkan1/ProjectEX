@@ -6,6 +6,7 @@ public enum StorageKind {
     CONDENSER_MK2(42, 42, 64),
     CONDENSER_MK3(91, 180, 512),
     ALCHEMICAL_CHEST(104, 0, 0),
+    ADVANCED_ALCHEMICAL_CHEST(243, 0, 0),
     ALCHEMICAL_BAG(104, 0, 0);
 
     private static final int VIEW_SLOTS = 54;
