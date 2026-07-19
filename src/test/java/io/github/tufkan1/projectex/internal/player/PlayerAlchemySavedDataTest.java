@@ -2,6 +2,7 @@ package io.github.tufkan1.projectex.internal.player;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
@@ -55,5 +56,21 @@ class PlayerAlchemySavedDataTest {
         assertTrue(data.compareAndSet(player, initial, replacement));
         assertTrue(!data.compareAndSet(player, initial, PlayerAlchemyState.EMPTY));
         assertEquals(replacement, data.state(player));
+    }
+
+    @Test
+    void revisionedCompareAndSetRejectsAbaStateAndInvalidatesCaches() {
+        UUID player = UUID.fromString("00000000-0000-0000-0000-000000000002");
+        PlayerAlchemySavedData data = new PlayerAlchemySavedData();
+        PlayerAlchemyState initial = data.update(player, state -> state.credit(EmcValue.of(64)));
+        long initialRevision = data.revision(player);
+        data.update(player, state -> state.credit(EmcValue.of(1)));
+        data.update(player, ignored -> initial);
+
+        assertEquals(initial, data.state(player));
+        assertTrue(data.revision(player) > initialRevision);
+        assertFalse(data.compareAndSet(player, initial, initialRevision,
+            initial.credit(EmcValue.of(1))));
+        assertEquals(initial, data.state(player));
     }
 }

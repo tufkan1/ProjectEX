@@ -39,6 +39,7 @@ public final class ProjectEXBlockTagProvider extends FabricTagsProvider.BlockTag
             key(ProjectEXBlocks.DARK_MATTER_FURNACE), key(ProjectEXBlocks.RED_MATTER_FURNACE)
         );
         builder(BlockTags.MINEABLE_WITH_PICKAXE).add(expansionMachineKeys());
+        builder(BlockTags.MINEABLE_WITH_PICKAXE).add(automationKeys());
         builder(BlockTags.NEEDS_DIAMOND_TOOL).add(table);
         builder(BlockTags.NEEDS_DIAMOND_TOOL).add(
             key(ProjectEXBlocks.COLLECTOR_MK1), key(ProjectEXBlocks.COLLECTOR_MK2),
@@ -50,6 +51,7 @@ public final class ProjectEXBlockTagProvider extends FabricTagsProvider.BlockTag
             key(ProjectEXBlocks.DARK_MATTER_FURNACE), key(ProjectEXBlocks.RED_MATTER_FURNACE)
         );
         builder(BlockTags.NEEDS_DIAMOND_TOOL).add(expansionMachineKeys());
+        builder(BlockTags.NEEDS_DIAMOND_TOOL).add(automationKeys());
         builder(ProjectEXTags.PHILOSOPHERS_STONE_ALLOWED).add(
             key(Blocks.STONE),
             key(Blocks.COBBLESTONE),
@@ -93,6 +95,14 @@ public final class ProjectEXBlockTagProvider extends FabricTagsProvider.BlockTag
                 ProjectEXBlocks.POWER_FLOWERS
             ).flatMap(map -> map.values().stream()).map(entry -> key(entry.block())),
             java.util.stream.Stream.of(key(ProjectEXBlocks.COMPACT_SUN))
+        ).toArray(ResourceKey[]::new);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static ResourceKey<Block>[] automationKeys() {
+        return java.util.stream.Stream.concat(
+            ProjectEXBlocks.EMC_LINKS.values().stream().map(entry -> key(entry.block())),
+            java.util.stream.Stream.of(key(ProjectEXBlocks.TRANSMUTATION_INTERFACE))
         ).toArray(ResourceKey[]::new);
     }
 }

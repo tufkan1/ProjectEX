@@ -56,6 +56,23 @@
     "projectex:white_power_flower",
     "projectex:fading_power_flower",
     "projectex:final_power_flower",
-    "projectex:compact_sun"
+    "projectex:compact_sun",
+    "projectex:basic_emc_link",
+    "projectex:dark_emc_link",
+    "projectex:red_emc_link",
+    "projectex:magenta_emc_link",
+    "projectex:pink_emc_link",
+    "projectex:purple_emc_link",
+    "projectex:violet_emc_link",
+    "projectex:blue_emc_link",
+    "projectex:cyan_emc_link",
+    "projectex:green_emc_link",
+    "projectex:lime_emc_link",
+    "projectex:yellow_emc_link",
+    "projectex:orange_emc_link",
+    "projectex:white_emc_link",
+    "projectex:fading_emc_link",
+    "projectex:final_emc_link",
+    "projectex:transmutation_interface"
   ]
 }

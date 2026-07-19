@@ -35,6 +35,7 @@ public final class PlayerAlchemySavedData extends SavedData {
     );
 
     private final Map<UUID, PlayerAlchemyState> states;
+    private final Map<UUID, Long> revisions = new java.util.HashMap<>();
     private Optional<String> recoveryPayload;
     private Optional<String> recoveryError;
 
@@ -60,6 +61,11 @@ public final class PlayerAlchemySavedData extends SavedData {
         return states.getOrDefault(playerId, PlayerAlchemyState.EMPTY);
     }
 
+    /** Runtime monotonic revision used by transactional automation and storage cache invalidation. */
+    public synchronized long revision(UUID playerId) {
+        return revisions.getOrDefault(playerId, 0L);
+    }
+
     public synchronized PlayerAlchemyState update(UUID playerId, UnaryOperator<PlayerAlchemyState> update) {
         PlayerAlchemyState before = state(playerId);
         PlayerAlchemyState after = java.util.Objects.requireNonNull(update.apply(before), "updated state");
@@ -69,6 +75,7 @@ public final class PlayerAlchemySavedData extends SavedData {
             } else {
                 states.put(playerId, after);
             }
+            bumpRevision(playerId);
             setDirty();
         }
         return after;
@@ -76,7 +83,10 @@ public final class PlayerAlchemySavedData extends SavedData {
 
     public synchronized Optional<PlayerAlchemyState> remove(UUID playerId) {
         Optional<PlayerAlchemyState> removed = Optional.ofNullable(states.remove(playerId));
-        removed.ifPresent(ignored -> setDirty());
+        removed.ifPresent(ignored -> {
+            bumpRevision(playerId);
+            setDirty();
+        });
         return removed;
     }
 
@@ -94,9 +104,20 @@ public final class PlayerAlchemySavedData extends SavedData {
             states.put(playerId, replacement);
         }
         if (!replacement.equals(expected)) {
+            bumpRevision(playerId);
             setDirty();
         }
         return true;
+    }
+
+    public synchronized boolean compareAndSet(
+        UUID playerId,
+        PlayerAlchemyState expected,
+        long expectedRevision,
+        PlayerAlchemyState replacement
+    ) {
+        if (revision(playerId) != expectedRevision) return false;
+        return compareAndSet(playerId, expected, replacement);
     }
 
     public synchronized Map<UUID, PlayerAlchemyState> snapshot() {
@@ -121,6 +142,11 @@ public final class PlayerAlchemySavedData extends SavedData {
 
     private synchronized String payload() {
         return PlayerAlchemyStateCodec.encode(states);
+    }
+
+    private void bumpRevision(UUID playerId) {
+        revisions.merge(playerId, 1L, (current, increment) ->
+            current == Long.MAX_VALUE ? Long.MAX_VALUE : current + increment);
     }
 
     private static PlayerAlchemySavedData fromPayload(

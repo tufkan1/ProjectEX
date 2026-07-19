@@ -5,6 +5,7 @@ import io.github.tufkan1.projectex.menu.TransmutationMenu;
 import io.github.tufkan1.projectex.menu.EmcMachineMenu;
 import io.github.tufkan1.projectex.menu.AlchemyStorageMenu;
 import io.github.tufkan1.projectex.menu.MatterFurnaceMenu;
+import io.github.tufkan1.projectex.menu.AutomationMenu;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.flag.FeatureFlags;
@@ -31,6 +32,11 @@ public final class ProjectEXMenus {
         BuiltInRegistries.MENU,
         ProjectEX.id("matter_furnace"),
         new MenuType<>(MatterFurnaceMenu::new, FeatureFlags.VANILLA_SET)
+    );
+    public static final MenuType<AutomationMenu> AUTOMATION = Registry.register(
+        BuiltInRegistries.MENU,
+        ProjectEX.id("automation"),
+        new MenuType<>(AutomationMenu::new, FeatureFlags.VANILLA_SET)
     );
 
     private ProjectEXMenus() {

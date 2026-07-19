@@ -4,6 +4,7 @@ import io.github.tufkan1.projectex.ProjectEX;
 import io.github.tufkan1.projectex.content.machine.EmcMachineBlockEntity;
 import io.github.tufkan1.projectex.content.storage.AlchemyStorageBlockEntity;
 import io.github.tufkan1.projectex.content.matter.MatterFurnaceBlockEntity;
+import io.github.tufkan1.projectex.content.automation.AutomationBlockEntity;
 import java.util.Set;
 import net.fabricmc.fabric.api.transfer.v1.item.ContainerStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
@@ -50,6 +51,16 @@ public final class ProjectEXBlockEntities {
             ProjectEXBlocks.DARK_MATTER_FURNACE, ProjectEXBlocks.RED_MATTER_FURNACE
         ))
     );
+    public static final BlockEntityType<AutomationBlockEntity> AUTOMATION = Registry.register(
+        BuiltInRegistries.BLOCK_ENTITY_TYPE,
+        ResourceKey.create(Registries.BLOCK_ENTITY_TYPE, ProjectEX.id("automation")),
+        new BlockEntityType<>(AutomationBlockEntity::new,
+            java.util.stream.Stream.concat(
+                ProjectEXBlocks.EMC_LINKS.values().stream()
+                    .map(ProjectEXContentRegistry.RegisteredBlock::block),
+                java.util.stream.Stream.of(ProjectEXBlocks.TRANSMUTATION_INTERFACE)
+            ).collect(java.util.stream.Collectors.toUnmodifiableSet()))
+    );
 
     private ProjectEXBlockEntities() {
     }
@@ -66,6 +77,10 @@ public final class ProjectEXBlockEntities {
         ItemStorage.SIDED.registerForBlockEntity(
             (furnace, direction) -> ContainerStorage.of(furnace, direction),
             MATTER_FURNACE
+        );
+        ItemStorage.SIDED.registerForBlockEntity(
+            (automation, direction) -> automation.storage(direction),
+            AUTOMATION
         );
     }
 }

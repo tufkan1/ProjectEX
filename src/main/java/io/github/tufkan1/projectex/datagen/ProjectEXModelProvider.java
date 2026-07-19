@@ -140,6 +140,10 @@ public final class ProjectEXModelProvider implements DataProvider {
             machineBlocks.put(entry.getValue().id().getPath(), expansionTexture(entry.getKey()))
         );
         machineBlocks.put("compact_sun", "minecraft:block/shroomlight");
+        io.github.tufkan1.projectex.content.ProjectEXBlocks.EMC_LINKS.forEach((tier, entry) ->
+            machineBlocks.put(entry.id().getPath(), expansionTexture(tier))
+        );
+        machineBlocks.put("transmutation_interface", "minecraft:block/enchanting_table_side");
         machineBlocks.forEach((block, texture) -> {
             String blockModel = """
                 {

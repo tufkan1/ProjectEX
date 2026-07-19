@@ -3,6 +3,7 @@ package io.github.tufkan1.projectex.content;
 import io.github.tufkan1.projectex.machine.MachineTier;
 import io.github.tufkan1.projectex.machine.ExpansionMachineTier;
 import io.github.tufkan1.projectex.storage.StorageKind;
+import io.github.tufkan1.projectex.content.automation.AutomationBlockKind;
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Block;
@@ -72,6 +73,16 @@ public final class ProjectEXBlocks {
         matterFurnace("red_matter_furnace", io.github.tufkan1.projectex.matter.MatterTier.RED);
     public static final Block DARK_MATTER_FURNACE = DARK_MATTER_FURNACE_FAMILY.block();
     public static final Block RED_MATTER_FURNACE = RED_MATTER_FURNACE_FAMILY.block();
+    public static final java.util.Map<ExpansionMachineTier, ProjectEXContentRegistry.RegisteredBlock>
+        EMC_LINKS = automationLinks();
+    public static final ProjectEXContentRegistry.RegisteredBlock TRANSMUTATION_INTERFACE_FAMILY =
+        ProjectEXContentRegistry.registerBlockWithItem(
+            "transmutation_interface",
+            properties -> new AutomationBlock(properties, AutomationBlockKind.TRANSMUTATION_INTERFACE,
+                ExpansionMachineTier.FINAL),
+            BlockBehaviour.Properties.of().strength(12.0F, 1_200.0F).sound(SoundType.METAL)
+        );
+    public static final Block TRANSMUTATION_INTERFACE = TRANSMUTATION_INTERFACE_FAMILY.block();
 
     private ProjectEXBlocks() {
     }
@@ -97,6 +108,8 @@ public final class ProjectEXBlocks {
                 entries.accept(RED_MATTER_BLOCK.asItem());
                 entries.accept(DARK_MATTER_FURNACE.asItem());
                 entries.accept(RED_MATTER_FURNACE.asItem());
+                EMC_LINKS.values().forEach(entry -> entries.accept(entry.item()));
+                entries.accept(TRANSMUTATION_INTERFACE.asItem());
             });
     }
 
@@ -156,5 +169,19 @@ public final class ProjectEXBlocks {
             id, properties -> new MatterFurnaceBlock(properties, tier),
             BlockBehaviour.Properties.of().strength(8.0F, 1_200.0F).sound(SoundType.METAL)
         );
+    }
+
+    private static java.util.Map<ExpansionMachineTier, ProjectEXContentRegistry.RegisteredBlock>
+        automationLinks() {
+        java.util.Map<ExpansionMachineTier, ProjectEXContentRegistry.RegisteredBlock> links =
+            new java.util.LinkedHashMap<>();
+        for (ExpansionMachineTier tier : ExpansionMachineTier.values()) {
+            links.put(tier, ProjectEXContentRegistry.registerBlockWithItem(
+                tier.id() + "_emc_link",
+                properties -> new AutomationBlock(properties, AutomationBlockKind.EMC_LINK, tier),
+                BlockBehaviour.Properties.of().strength(6.0F, 1_200.0F).sound(SoundType.METAL)
+            ));
+        }
+        return java.util.Collections.unmodifiableMap(links);
     }
 }

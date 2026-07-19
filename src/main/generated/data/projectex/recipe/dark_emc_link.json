@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "projectex:relay_mk2",
+    "projectex:basic_emc_link"
+  ],
+  "result": {
+    "id": "projectex:dark_emc_link"
+  }
+}

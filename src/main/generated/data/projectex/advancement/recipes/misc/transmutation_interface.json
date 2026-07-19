@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_final_emc_link": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projectex:final_emc_link"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "projectex:transmutation_interface"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_final_emc_link"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "projectex:transmutation_interface"
+    ]
+  }
+}

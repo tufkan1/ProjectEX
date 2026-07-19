@@ -7,6 +7,7 @@ import io.github.tufkan1.projectex.content.component.MachineItemState;
 import io.github.tufkan1.projectex.content.component.AlchemyStorageState;
 import io.github.tufkan1.projectex.content.component.BagItemState;
 import io.github.tufkan1.projectex.content.component.MatterToolState;
+import io.github.tufkan1.projectex.content.component.AutomationBlockState;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -59,6 +60,14 @@ public final class ProjectEXComponents {
         DataComponentType.<MatterToolState>builder()
             .persistent(MatterToolState.CODEC)
             .networkSynchronized(MatterToolState.STREAM_CODEC)
+            .build()
+    );
+    public static final DataComponentType<AutomationBlockState> AUTOMATION_STATE = Registry.register(
+        BuiltInRegistries.DATA_COMPONENT_TYPE,
+        ProjectEX.id("automation_state"),
+        DataComponentType.<AutomationBlockState>builder()
+            .persistent(AutomationBlockState.CODEC)
+            .networkSynchronized(AutomationBlockState.STREAM_CODEC)
             .build()
     );
 

@@ -39,6 +39,8 @@ public final class ProjectEXBlockLootProvider extends FabricBlockLootSubProvider
         dropSelf(ProjectEXBlocks.RED_MATTER_BLOCK);
         container(ProjectEXBlocks.DARK_MATTER_FURNACE);
         container(ProjectEXBlocks.RED_MATTER_FURNACE);
+        ProjectEXBlocks.EMC_LINKS.values().forEach(entry -> automation(entry.block()));
+        automation(ProjectEXBlocks.TRANSMUTATION_INTERFACE);
     }
 
     private void machine(net.minecraft.world.level.block.Block block) {
@@ -61,6 +63,13 @@ public final class ProjectEXBlockLootProvider extends FabricBlockLootSubProvider
         add(block, createSingleItemTable(block).apply(
             CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY)
                 .include(DataComponents.CONTAINER)
+        ));
+    }
+
+    private void automation(net.minecraft.world.level.block.Block block) {
+        add(block, createSingleItemTable(block).apply(
+            CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY)
+                .include(ProjectEXComponents.AUTOMATION_STATE)
         ));
     }
 }

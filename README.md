@@ -17,6 +17,10 @@ Klein Stars provide portable EMC storage. Three Energy Collector and Anti-Matter
 Relay tiers can upgrade fuel, charge stars, and move EMC through cycle-safe adjacent
 networks with server-owned redstone, access, comparator, and automation controls.
 
+Sixteen tiered EMC Links and the Transmutation Interface expose a claimed player's
+EMC and learned items to sided Fabric storage automation with exact transaction rollback,
+bounded filters, server pricing, and owner-controlled access.
+
 ## Compatibility
 
 | Component | Current target |

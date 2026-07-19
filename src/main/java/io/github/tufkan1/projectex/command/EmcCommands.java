@@ -18,10 +18,12 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.UuidArgument;
+import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.server.commands.ReloadCommand;
+import io.github.tufkan1.projectex.content.automation.AutomationBlockEntity;
 
 /** Server-side ProjectEX diagnostics and operator commands. */
 public final class EmcCommands {
@@ -53,6 +55,18 @@ public final class EmcCommands {
                     .executes(context -> dump(context.getSource())))
                 .then(literal("transmutation")
                     .executes(context -> openTransmutation(context.getSource())))
+                .then(literal("automation")
+                    .then(literal("member")
+                        .then(argument("pos", BlockPosArgument.blockPos())
+                            .then(argument("uuid", UuidArgument.uuid())
+                                .then(literal("add").executes(context -> updateAutomationMember(
+                                    context.getSource(),
+                                    BlockPosArgument.getLoadedBlockPos(context, "pos"),
+                                    UuidArgument.getUuid(context, "uuid"), true)))
+                                .then(literal("remove").executes(context -> updateAutomationMember(
+                                    context.getSource(),
+                                    BlockPosArgument.getLoadedBlockPos(context, "pos"),
+                                    UuidArgument.getUuid(context, "uuid"), false)))))))
                 .then(literal("player")
                     .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
                     .then(literal("inspect")
@@ -158,6 +172,26 @@ public final class EmcCommands {
             return 0;
         }
         source.sendSuccess(() -> Component.translatable("commands.projectex.player.recovery_clean"), false);
+        return 1;
+    }
+
+    private static int updateAutomationMember(
+        net.minecraft.commands.CommandSourceStack source,
+        net.minecraft.core.BlockPos pos,
+        UUID member,
+        boolean enabled
+    ) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer actor = source.getPlayerOrException();
+        if (!(source.getLevel().getBlockEntity(pos) instanceof AutomationBlockEntity automation)
+            || !automation.setMember(member, enabled, actor)) {
+            source.sendFailure(Component.translatable("commands.projectex.automation.member.denied"));
+            return 0;
+        }
+        source.sendSuccess(() -> Component.translatable(
+            enabled ? "commands.projectex.automation.member.added"
+                : "commands.projectex.automation.member.removed",
+            member.toString()
+        ), false);
         return 1;
     }
 }
