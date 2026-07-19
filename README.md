@@ -55,6 +55,7 @@ launch a development client with `./gradlew runClient`.
 - [Alchemy transactions](docs/alchemy-transactions.md) — atomic learn, burn, create, and abuse controls
 - [Network protocol](docs/network-protocol.md) — payload schema, sessions, replay defense, and limits
 - [Transmutation UI](docs/transmutation-ui.md) — keyboard, narration, paging, and latency contract
+- [Content and datagen](docs/datagen.md) — registration, generated resources, and verification
 - [Contributing](CONTRIBUTING.md) — development and pull request workflow
 - [Support](SUPPORT.md) — where questions and bug reports belong
 - [Security](SECURITY.md) — private vulnerability reporting policy

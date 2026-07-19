@@ -10,6 +10,10 @@ so design, scope, licensing, and save compatibility can be agreed early.
 3. Import the Gradle project into IntelliJ IDEA or another Java IDE.
 4. Use `./gradlew runClient` only after the build and unit tests pass.
 
+Content changes must run `./gradlew runDatagen` and commit the resulting files in
+`src/main/generated`. See [the datagen guide](docs/datagen.md) for provider ownership
+and the reproducibility check used by CI.
+
 Do not commit IDE files, `run/`, generated build output, downloaded mods, logs, or
 world saves. Never include secrets in configuration, fixtures, or screenshots.
 
@@ -35,6 +39,7 @@ another contributor.
 - Public APIs need Javadoc and compatibility consideration.
 - A mixin needs a short justification, narrow target, and regression test.
 - Persistent or network formats require a version and migration/compatibility plan.
+- Do not edit `src/main/generated` by hand; update its provider or source template.
 
 ## Tests
 
