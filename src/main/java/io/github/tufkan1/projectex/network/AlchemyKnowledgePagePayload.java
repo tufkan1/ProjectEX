@@ -98,7 +98,7 @@ public record AlchemyKnowledgePagePayload(
             java.util.Objects.requireNonNull(itemId, "itemId");
             java.util.Objects.requireNonNull(emc, "emc");
             if (itemId.length() > AlchemyNetworkProtocol.MAX_ITEM_ID_LENGTH
-                || emc.length() > AlchemyNetworkProtocol.MAX_BALANCE_LENGTH) {
+                || emc.length() > AlchemyNetworkProtocol.MAX_EMC_VALUE_LENGTH) {
                 throw new IllegalArgumentException("Knowledge entry exceeds protocol limit");
             }
         }
@@ -123,13 +123,13 @@ public record AlchemyKnowledgePagePayload(
 
         private void write(RegistryFriendlyByteBuf buffer) {
             buffer.writeUtf(itemId, AlchemyNetworkProtocol.MAX_ITEM_ID_LENGTH);
-            buffer.writeUtf(emc, AlchemyNetworkProtocol.MAX_BALANCE_LENGTH);
+            buffer.writeUtf(emc, AlchemyNetworkProtocol.MAX_EMC_VALUE_LENGTH);
         }
 
         private static Entry read(RegistryFriendlyByteBuf buffer) {
             return new Entry(
                 buffer.readUtf(AlchemyNetworkProtocol.MAX_ITEM_ID_LENGTH),
-                buffer.readUtf(AlchemyNetworkProtocol.MAX_BALANCE_LENGTH)
+                buffer.readUtf(AlchemyNetworkProtocol.MAX_EMC_VALUE_LENGTH)
             );
         }
     }

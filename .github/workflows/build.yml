@@ -46,8 +46,8 @@ jobs:
           git diff --exit-code -- src/main/generated
           test -z "$(git status --porcelain --untracked-files=all -- src/main/generated)"
 
-      - name: Check and build
-        run: ./gradlew --stacktrace check build
+      - name: Check, build, and audit artifacts
+        run: ./gradlew --stacktrace check build verifyReleaseArtifacts
 
       - name: Upload failure reports
         if: failure()
