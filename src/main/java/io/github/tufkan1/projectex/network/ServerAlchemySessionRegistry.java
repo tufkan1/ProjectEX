@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import java.util.Locale;
 
 /** Active server-created menu sessions. Client packets cannot create or modify sessions. */
 public final class ServerAlchemySessionRegistry {
@@ -105,6 +106,74 @@ public final class ServerAlchemySessionRegistry {
         return AlchemyResultPayload.from(payload.sessionId(), payload.requestId(), emc.revision(), result);
     }
 
+    public synchronized AlchemyKnowledgePagePayload handleKnowledge(
+        UUID playerId,
+        boolean connected,
+        AlchemyKnowledgeRequestPayload payload,
+        EmcSnapshot emc,
+        long monotonicMillis
+    ) {
+        Objects.requireNonNull(playerId, "playerId");
+        Objects.requireNonNull(payload, "payload");
+        Objects.requireNonNull(emc, "emc");
+        if (!wireLimiter.allow(playerId, monotonicMillis)) {
+            return knowledgeFailure(payload, AlchemyTransactionFailure.RATE_LIMITED);
+        }
+        if (payload.protocolVersion() != AlchemyNetworkProtocol.VERSION) {
+            return knowledgeFailure(payload, AlchemyTransactionFailure.UNSUPPORTED_PROTOCOL);
+        }
+        Session session = sessions.get(playerId);
+        if (session == null || session.id != payload.sessionId()) {
+            return knowledgeFailure(payload, AlchemyTransactionFailure.SESSION_INVALID);
+        }
+        if (!payload.hasValidShape()) {
+            return knowledgeFailure(payload, AlchemyTransactionFailure.MALFORMED_REQUEST);
+        }
+        if (payload.queryId() <= session.lastKnowledgeQueryId) {
+            return knowledgeFailure(payload, AlchemyTransactionFailure.REPLAYED_REQUEST);
+        }
+        session.lastKnowledgeQueryId = payload.queryId();
+        try {
+            double distance = session.distanceSquared.getAsDouble();
+            if (!connected || !session.authorizedMenu.getAsBoolean()) {
+                return knowledgeFailure(payload, AlchemyTransactionFailure.SESSION_INVALID);
+            }
+            if (!Double.isFinite(distance) || distance < 0 || distance > AlchemyRequestGuard.MAX_DISTANCE_SQUARED) {
+                return knowledgeFailure(payload, AlchemyTransactionFailure.TOO_FAR);
+            }
+        } catch (RuntimeException exception) {
+            ProjectEX.LOGGER.error("Transmutation knowledge access check failed for {}", playerId, exception);
+            close(playerId);
+            return knowledgeFailure(payload, AlchemyTransactionFailure.SESSION_INVALID);
+        }
+
+        String query = payload.query().strip().toLowerCase(Locale.ROOT);
+        java.util.List<AlchemyKnowledgePagePayload.Entry> matching = session.target.playerState().knowledge().stream()
+            .filter(item -> query.isEmpty() || item.toString().contains(query))
+            .map(item -> emc.find(item)
+                .filter(value -> !value.equals(io.github.tufkan1.projectex.api.emc.EmcValue.ZERO))
+                .map(value -> new AlchemyKnowledgePagePayload.Entry(
+                    item.toString(), value.amount().toString())))
+            .flatMap(Optional::stream)
+            .toList();
+        int totalEntries = matching.size();
+        int totalPages = totalEntries == 0 ? 0
+            : (totalEntries + payload.pageSize() - 1) / payload.pageSize();
+        int page = totalPages == 0 ? 0 : Math.min(payload.page(), totalPages - 1);
+        int from = Math.min(totalEntries, page * payload.pageSize());
+        int to = Math.min(totalEntries, from + payload.pageSize());
+        return new AlchemyKnowledgePagePayload(
+            AlchemyNetworkProtocol.VERSION,
+            payload.sessionId(),
+            payload.queryId(),
+            AlchemyTransactionFailure.NONE.ordinal(),
+            page,
+            totalPages,
+            totalEntries,
+            matching.subList(from, to)
+        );
+    }
+
     public synchronized void close(UUID playerId) {
         sessions.remove(playerId);
         guard.disconnect(playerId);
@@ -134,6 +203,22 @@ public final class ServerAlchemySessionRegistry {
             payload.sessionId(), payload.requestId(), emc.revision(), failure, player);
     }
 
+    private static AlchemyKnowledgePagePayload knowledgeFailure(
+        AlchemyKnowledgeRequestPayload payload,
+        AlchemyTransactionFailure failure
+    ) {
+        return new AlchemyKnowledgePagePayload(
+            AlchemyNetworkProtocol.VERSION,
+            payload.sessionId(),
+            Math.max(0, payload.queryId()),
+            failure.ordinal(),
+            0,
+            0,
+            0,
+            java.util.List.of()
+        );
+    }
+
     private static void audit(AlchemyAuditEvent event) {
         if (event.success()) {
             ProjectEX.LOGGER.debug(
@@ -154,6 +239,7 @@ public final class ServerAlchemySessionRegistry {
         private final BooleanSupplier authorizedMenu;
         private final DoubleSupplier distanceSquared;
         private long lastRequestId = -1;
+        private long lastKnowledgeQueryId = -1;
 
         private Session(
             long id,
