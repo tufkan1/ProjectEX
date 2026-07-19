@@ -52,6 +52,13 @@ public final class ProjectEXRecipeProvider extends FabricRecipeProvider {
                     .pattern("RGR")
                     .unlockedBy("has_glowstone", has(Items.GLOWSTONE_DUST))
                     .save(output, id("philosophers_stone"));
+                shaped(RecipeCategory.TOOLS, ProjectEXItems.TRANSMUTATION_TABLET.item())
+                    .define('T', ProjectEXBlocks.TRANSMUTATION_TABLE)
+                    .define('D', ProjectEXItems.DARK_MATTER.item())
+                    .define('S', ProjectEXItems.PHILOSOPHERS_STONE.item())
+                    .pattern("DSD").pattern("DTD").pattern("DDD")
+                    .unlockedBy("has_dark_matter", has(ProjectEXItems.DARK_MATTER.item()))
+                    .save(output, id("transmutation_tablet"));
 
                 shapeless(RecipeCategory.MISC, ProjectEXItems.LOW_COVALENCE_DUST.item(), 40)
                     .requires(Items.CHARCOAL)

@@ -276,5 +276,11 @@
   "block.projectex.transmutation_interface": "Dönüşüm Arayüzü",
   "commands.projectex.automation.member.denied": "Otomasyon bloğu bulunamadı, menzil dışında veya düzenleme yetkiniz yok.",
   "commands.projectex.automation.member.added": "%s otomasyon erişim listesine eklendi.",
-  "commands.projectex.automation.member.removed": "%s otomasyon erişim listesinden çıkarıldı."
+  "commands.projectex.automation.member.removed": "%s otomasyon erişim listesinden çıkarıldı.",
+  "menu.projectex.transmutation_tablet": "Dönüşüm Tableti",
+  "item.projectex.transmutation_tablet": "Dönüşüm Tableti",
+  "item.projectex.utility.state": "%s — Şarj %s, Kip: %s",
+  "key.categories.projectex.utilities": "ProjectEX Araçları",
+  "key.projectex.utility_charge": "Araç Şarjını Değiştir",
+  "key.projectex.utility_mode": "Araç Kipini Değiştir"
 }

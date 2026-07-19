@@ -96,6 +96,11 @@ public final class ProjectEXItems {
             PhilosophersStoneItem::new,
             new Item.Properties().rarity(Rarity.UNCOMMON)
         );
+    public static final ProjectEXContentRegistry.RegisteredItem<TransmutationTabletItem>
+        TRANSMUTATION_TABLET = ProjectEXContentRegistry.registerItem(
+            "transmutation_tablet", TransmutationTabletItem::new,
+            new Item.Properties().rarity(Rarity.EPIC).fireResistant()
+        );
     public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> KLEIN_STAR_EIN =
         star(KleinStarTier.EIN);
     public static final ProjectEXContentRegistry.RegisteredItem<KleinStarItem> KLEIN_STAR_ZWEI =
@@ -196,6 +201,7 @@ public final class ProjectEXItems {
         CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.TOOLS_AND_UTILITIES)
             .register(entries -> {
                 entries.accept(PHILOSOPHERS_STONE.item());
+                entries.accept(TRANSMUTATION_TABLET.item());
                 entries.accept(FINAL_STAR_SHARD.item());
                 entries.accept(FINAL_STAR.item());
                 entries.accept(INFINITE_STEAK.item());

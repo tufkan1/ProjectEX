@@ -193,6 +193,31 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
     }
 
     @GameTest
+    public void tabletOpensSameSessionAndClosesWhenNoLongerHeld(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        ItemStack tablet = new ItemStack(ProjectEXItems.TRANSMUTATION_TABLET.item());
+        player.setItemInHand(InteractionHand.MAIN_HAND, tablet);
+
+        ProjectEXItems.TRANSMUTATION_TABLET.item().use(
+            helper.getLevel(), player, InteractionHand.MAIN_HAND
+        );
+        helper.assertTrue(player.containerMenu instanceof TransmutationMenu,
+            "Transmutation Tablet did not open the M2 server menu");
+        TransmutationMenu menu = (TransmutationMenu) player.containerMenu;
+        helper.assertTrue(menu.stillValid(player), "Held tablet menu was not authorized");
+        player.setItemInHand(InteractionHand.MAIN_HAND,
+            new ItemStack(ProjectEXItems.TRANSMUTATION_TABLET.item()));
+        helper.assertTrue(!menu.stillValid(player),
+            "Tablet session accepted a replacement item in the opening hand");
+        player.setItemInHand(InteractionHand.MAIN_HAND, tablet);
+        player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+        helper.assertTrue(!menu.stillValid(player),
+            "Tablet session remained authorized after the tablet left the hand");
+        player.closeContainer();
+        helper.succeed();
+    }
+
+    @GameTest
     public void bundledEmcDataLoadsAtRuntime(GameTestHelper helper) {
         helper.assertValueEqual(
             ProjectEX.emc().find(EmcKey.parse("minecraft:diamond")).orElseThrow(),
@@ -529,14 +554,20 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
         ).block();
         BlockPos plainPos = new BlockPos(0, 2, 0);
         BlockPos boostedPos = new BlockPos(3, 2, 0);
-        helper.setBlock(plainPos, basicFlower);
-        helper.setBlock(boostedPos, basicFlower);
         helper.setBlock(boostedPos.below(), ProjectEXBlocks.COMPACT_SUN);
-        EmcMachineBlockEntity plain = machine(helper, plainPos);
-        EmcMachineBlockEntity boosted = machine(helper, boostedPos);
+        BlockPos absolutePlainPos = helper.absolutePos(plainPos);
+        BlockPos absoluteBoostedPos = helper.absolutePos(boostedPos);
+        EmcMachineBlockEntity plain = new EmcMachineBlockEntity(
+            absolutePlainPos, basicFlower.defaultBlockState()
+        );
+        EmcMachineBlockEntity boosted = new EmcMachineBlockEntity(
+            absoluteBoostedPos, basicFlower.defaultBlockState()
+        );
+        plain.setLevel(helper.getLevel());
+        boosted.setLevel(helper.getLevel());
 
         EmcMachineBlockEntity.tickServer(
-            helper.getLevel(), helper.absolutePos(plainPos), plain.getBlockState(), plain
+            helper.getLevel(), absolutePlainPos, plain.getBlockState(), plain
         );
         var persisted = plain.saveWithFullMetadata(helper.getLevel().registryAccess());
         var loaded = net.minecraft.world.level.block.entity.BlockEntity.loadStatic(
@@ -549,12 +580,12 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
 
         for (int tick = 1; tick < 20; tick++) {
             EmcMachineBlockEntity.tickServer(
-                helper.getLevel(), helper.absolutePos(plainPos), plain.getBlockState(), plain
+                helper.getLevel(), absolutePlainPos, plain.getBlockState(), plain
             );
         }
         for (int tick = 0; tick < 20; tick++) {
             EmcMachineBlockEntity.tickServer(
-                helper.getLevel(), helper.absolutePos(boostedPos), boosted.getBlockState(), boosted
+                helper.getLevel(), absoluteBoostedPos, boosted.getBlockState(), boosted
             );
         }
 

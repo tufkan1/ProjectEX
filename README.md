@@ -72,6 +72,7 @@ launch a development client with `./gradlew runClient`.
 - [Transmutation UI](docs/transmutation-ui.md) — keyboard, narration, paging, and latency contract
 - [Content and datagen](docs/datagen.md) — registration, generated resources, and verification
 - [Philosopher's Stone](docs/philosophers-stone.md) — controls, protection hooks, and transaction rules
+- [Alchemical utilities](docs/alchemical-utilities.md) — shared controls and portable tablet security
 - [Contributing](CONTRIBUTING.md) — development and pull request workflow
 - [Support](SUPPORT.md) — where questions and bug reports belong
 - [Security](SECURITY.md) — private vulnerability reporting policy

@@ -16,13 +16,14 @@ import net.minecraft.world.item.ItemStack;
 public final class TransmutationMenu extends AbstractContainerMenu {
     private final ServerPlayer serverPlayer;
     private final ContainerLevelAccess access;
+    private final java.util.function.BooleanSupplier portableAuthorization;
 
     public TransmutationMenu(int containerId, Inventory inventory) {
-        this(containerId, inventory, null, null);
+        this(containerId, inventory, null, null, () -> true);
     }
 
     public TransmutationMenu(int containerId, Inventory inventory, ServerPlayer serverPlayer) {
-        this(containerId, inventory, serverPlayer, null);
+        this(containerId, inventory, serverPlayer, null, () -> true);
     }
 
     public TransmutationMenu(
@@ -31,8 +32,19 @@ public final class TransmutationMenu extends AbstractContainerMenu {
         ServerPlayer serverPlayer,
         BlockPos tablePos
     ) {
+        this(containerId, inventory, serverPlayer, tablePos, () -> true);
+    }
+
+    public TransmutationMenu(
+        int containerId,
+        Inventory inventory,
+        ServerPlayer serverPlayer,
+        BlockPos tablePos,
+        java.util.function.BooleanSupplier portableAuthorization
+    ) {
         super(ProjectEXMenus.TRANSMUTATION, containerId);
         this.serverPlayer = serverPlayer;
+        this.portableAuthorization = portableAuthorization;
         this.access = serverPlayer != null && tablePos != null
             ? ContainerLevelAccess.create(serverPlayer.level(), tablePos)
             : ContainerLevelAccess.NULL;
@@ -42,7 +54,7 @@ public final class TransmutationMenu extends AbstractContainerMenu {
             AlchemyNetworking.openSession(
                 serverPlayer,
                 target,
-                () -> serverPlayer.containerMenu == this,
+                () -> serverPlayer.containerMenu == this && portableAuthorization.getAsBoolean(),
                 () -> tablePos == null ? 0 : serverPlayer.distanceToSqr(
                     tablePos.getX() + 0.5, tablePos.getY() + 0.5, tablePos.getZ() + 0.5)
             );
@@ -58,6 +70,7 @@ public final class TransmutationMenu extends AbstractContainerMenu {
     public boolean stillValid(Player player) {
         return serverPlayer == null
             || (player == serverPlayer && serverPlayer.isAlive() && !serverPlayer.hasDisconnected()
+                && portableAuthorization.getAsBoolean()
                 && (access == ContainerLevelAccess.NULL
                     || stillValid(access, player, ProjectEXBlocks.TRANSMUTATION_TABLE)));
     }

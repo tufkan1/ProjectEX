@@ -14,6 +14,7 @@ import io.github.tufkan1.projectex.emc.mapping.minecraft.MinecraftRecipeMappingS
 import io.github.tufkan1.projectex.emc.reload.EmcDataReloadListener;
 import io.github.tufkan1.projectex.internal.emc.EmcValueRegistry;
 import io.github.tufkan1.projectex.network.AlchemyNetworking;
+import io.github.tufkan1.projectex.network.UtilityNetworking;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.resources.Identifier;
@@ -56,6 +57,7 @@ public final class ProjectEX implements ModInitializer {
         ProjectEXMenus.register();
         EmcCommands.register();
         AlchemyNetworking.register();
+        UtilityNetworking.register();
         MinecraftRecipeMappingService.register(EMC_VALUES);
         LOGGER.info("ProjectEX {} is initializing with {} EMC values", version(), EMC_VALUES.snapshot().size());
     }

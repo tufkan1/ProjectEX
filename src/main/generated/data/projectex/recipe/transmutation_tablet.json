@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "D": "projectex:dark_matter",
+    "S": "projectex:philosophers_stone",
+    "T": "projectex:transmutation_table"
+  },
+  "pattern": [
+    "DSD",
+    "DTD",
+    "DDD"
+  ],
+  "result": {
+    "id": "projectex:transmutation_tablet"
+  }
+}
