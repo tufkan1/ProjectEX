@@ -46,3 +46,7 @@ ProjectExpansion references identify immutable commits and their MIT licenses; g
 models use runtime-provided vanilla texture identifiers and contain no copied upstream art.
 No additional bundled third-party code, binary, font, sound, or texture requires a separate
 notice. `verifyReleaseArtifacts` enforces notice presence on every release build.
+
+Jade `26.2.9+fabric` is an optional compile/test-only integration dependency fetched from its
+official Modrinth artifact. It is not nested, copied, or redistributed in ProjectEX jars;
+ProjectEX's adapter implementation and translations are original MIT-licensed code.

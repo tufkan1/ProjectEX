@@ -320,5 +320,18 @@
   "item.projectex.body_stone": "Body Stone",
   "item.projectex.soul_stone": "Soul Stone",
   "item.projectex.life_stone": "Life Stone",
-  "item.projectex.vitality_stone.result": "Vitality restored for %s EMC"
+  "item.projectex.vitality_stone.result": "Vitality restored for %s EMC",
+  "compat.projectex.jade.machine": "%s (%s): %s EMC rate",
+  "compat.projectex.jade.machine.collector": "Collector",
+  "compat.projectex.jade.machine.relay": "Relay",
+  "compat.projectex.jade.machine.power_flower": "Power Flower",
+  "compat.projectex.jade.stored": "Stored: %s / %s EMC",
+  "compat.projectex.jade.redstone": "Redstone: %s",
+  "compat.projectex.jade.redstone.ignored": "Always active",
+  "compat.projectex.jade.redstone.require_signal": "Requires signal",
+  "compat.projectex.jade.redstone.require_no_signal": "Active without signal",
+  "compat.projectex.jade.condenser_stored": "Condenser buffer: %s EMC",
+  "compat.projectex.jade.automation": "%s tier: %s",
+  "compat.projectex.jade.automation.emc_link": "EMC Link",
+  "compat.projectex.jade.automation.transmutation_interface": "Transmutation Interface"
 }

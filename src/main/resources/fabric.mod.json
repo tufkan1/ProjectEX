@@ -24,6 +24,9 @@
     ],
     "fabric-datagen": [
       "io.github.tufkan1.projectex.datagen.ProjectEXDataGenerator"
+    ],
+    "jade": [
+      "io.github.tufkan1.projectex.compat.jade.ProjectEXJadePlugin"
     ]
   },
   "depends": {
@@ -31,5 +34,8 @@
     "minecraft": "~${minecraft_version}",
     "java": ">=25",
     "fabric-api": ">=0.155.2"
+  },
+  "suggests": {
+    "jade": ">=26.2.9"
   }
 }
