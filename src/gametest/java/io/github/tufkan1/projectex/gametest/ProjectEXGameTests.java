@@ -261,6 +261,59 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
     }
 
     @GameTest
+    public void darkMatterPedestalIsOwnedPersistentAndWorkBounded(GameTestHelper helper) {
+        BlockPos relative = new BlockPos(6, 1, 6);
+        helper.setBlock(relative, ProjectEXBlocks.DARK_MATTER_PEDESTAL);
+        var pedestal = helper.getBlockEntity(relative,
+            io.github.tufkan1.projectex.content.pedestal.DarkMatterPedestalBlockEntity.class);
+        ServerPlayer owner = helper.makeMockServerPlayerInLevel();
+        ServerPlayer intruder = helper.makeMockServerPlayerInLevel();
+        owner.setPos(Vec3.atCenterOf(helper.absolutePos(relative)));
+        intruder.setPos(Vec3.atCenterOf(helper.absolutePos(relative)));
+        pedestal.claim(owner.getUUID());
+
+        ItemStack talisman = new ItemStack(ProjectEXItems.REPAIR_TALISMAN.item());
+        helper.assertTrue(pedestal.insert(talisman, owner) && talisman.isEmpty(),
+            "Owner could not insert one pedestal effect item");
+        helper.assertTrue(!pedestal.cycleRedstoneMode(intruder)
+                && pedestal.extract(intruder).isEmpty(),
+            "Non-owner changed or extracted the pedestal");
+        helper.assertTrue(pedestal.toggleActive(owner) && pedestal.comparatorSignal() == 15,
+            "Owner could not activate the pedestal");
+
+        ItemStack damaged = new ItemStack(Items.IRON_PICKAXE);
+        damaged.setDamageValue(10);
+        owner.getInventory().setItem(5, damaged);
+        io.github.tufkan1.projectex.content.pedestal.DarkMatterPedestalBlockEntity.tickServer(
+            helper.getLevel(), helper.absolutePos(relative), pedestal.getBlockState(), pedestal);
+        helper.assertValueEqual(damaged.getDamageValue(), 9,
+            "Repair Talisman pedestal effect did not repair exactly one point");
+        io.github.tufkan1.projectex.content.pedestal.DarkMatterPedestalBlockEntity.tickServer(
+            helper.getLevel(), helper.absolutePos(relative), pedestal.getBlockState(), pedestal);
+        helper.assertValueEqual(damaged.getDamageValue(), 9,
+            "Pedestal ignored its bounded effect cooldown");
+
+        helper.assertTrue(pedestal.cycleRedstoneMode(owner)
+                && pedestal.redstoneMode() == MachineRedstoneMode.REQUIRE_SIGNAL,
+            "Owner could not cycle the pedestal redstone mode");
+        var saved = pedestal.saveWithFullMetadata(helper.getLevel().registryAccess());
+        var loaded = net.minecraft.world.level.block.entity.BlockEntity.loadStatic(
+            helper.absolutePos(relative), pedestal.getBlockState(), saved,
+            helper.getLevel().registryAccess());
+        helper.assertTrue(loaded instanceof io.github.tufkan1.projectex.content.pedestal.DarkMatterPedestalBlockEntity copy
+                && copy.active() && copy.item().is(ProjectEXItems.REPAIR_TALISMAN.item())
+                && copy.access().owner().equals(pedestal.access().owner())
+                && copy.redstoneMode() == MachineRedstoneMode.REQUIRE_SIGNAL,
+            "Pedestal ownership, item, activation, or redstone mode did not persist");
+        helper.assertTrue(helper.getLevel().getServer().getRecipeManager().byKey(
+            net.minecraft.resources.ResourceKey.create(
+                net.minecraft.core.registries.Registries.RECIPE,
+                ProjectEX.id("dark_matter_pedestal"))).isPresent(),
+            "Dark Matter Pedestal survival recipe is missing");
+        helper.succeed();
+    }
+
+    @GameTest
     public void bundledEmcDataLoadsAtRuntime(GameTestHelper helper) {
         helper.assertValueEqual(
             ProjectEX.emc().find(EmcKey.parse("minecraft:diamond")).orElseThrow(),

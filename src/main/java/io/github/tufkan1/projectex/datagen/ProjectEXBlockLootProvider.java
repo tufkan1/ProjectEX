@@ -31,6 +31,7 @@ public final class ProjectEXBlockLootProvider extends FabricBlockLootSubProvider
         ProjectEXBlocks.EXPANSION_COLLECTORS.values().forEach(entry -> machine(entry.block()));
         ProjectEXBlocks.EXPANSION_RELAYS.values().forEach(entry -> machine(entry.block()));
         ProjectEXBlocks.POWER_FLOWERS.values().forEach(entry -> machine(entry.block()));
+        dropSelf(ProjectEXBlocks.DARK_MATTER_PEDESTAL);
         dropSelf(ProjectEXBlocks.COMPACT_SUN);
         storage(ProjectEXBlocks.CONDENSER_MK1);
         storage(ProjectEXBlocks.CONDENSER_MK2);

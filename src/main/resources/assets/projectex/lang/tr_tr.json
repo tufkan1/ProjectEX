@@ -290,5 +290,9 @@
   "item.projectex.divining_rod.result": "%s blok tarandı; ortalama EMC: %s",
   "item.projectex.divining_rod.highest": "En yüksek değer #%s: %s EMC",
   "tag.block.projectex.divining_rod_allowed": "Kehanet Çubuğuyla taranabilir bloklar",
-  "tag.block.projectex.divining_rod_denied": "Kehanet Çubuğuna kapalı bloklar"
+  "tag.block.projectex.divining_rod_denied": "Kehanet Çubuğuna kapalı bloklar",
+  "block.projectex.dark_matter_pedestal": "Karanlık Madde Kaidesi",
+  "block.projectex.dark_matter_pedestal.active": "Kaide etkinleştirildi",
+  "block.projectex.dark_matter_pedestal.inactive": "Kaide devre dışı bırakıldı",
+  "block.projectex.dark_matter_pedestal.redstone": "Kaide redstone kipi: %s"
 }

@@ -83,6 +83,13 @@ public final class ProjectEXBlocks {
             BlockBehaviour.Properties.of().strength(12.0F, 1_200.0F).sound(SoundType.METAL)
         );
     public static final Block TRANSMUTATION_INTERFACE = TRANSMUTATION_INTERFACE_FAMILY.block();
+    public static final ProjectEXContentRegistry.RegisteredBlock DARK_MATTER_PEDESTAL_FAMILY =
+        ProjectEXContentRegistry.registerBlockWithItem(
+            "dark_matter_pedestal", DarkMatterPedestalBlock::new,
+            BlockBehaviour.Properties.of().strength(20.0F, 1_200.0F)
+                .requiresCorrectToolForDrops().sound(SoundType.NETHERITE_BLOCK)
+        );
+    public static final Block DARK_MATTER_PEDESTAL = DARK_MATTER_PEDESTAL_FAMILY.block();
 
     private ProjectEXBlocks() {
     }
@@ -110,6 +117,7 @@ public final class ProjectEXBlocks {
                 entries.accept(RED_MATTER_FURNACE.asItem());
                 EMC_LINKS.values().forEach(entry -> entries.accept(entry.item()));
                 entries.accept(TRANSMUTATION_INTERFACE.asItem());
+                entries.accept(DARK_MATTER_PEDESTAL.asItem());
             });
     }
 

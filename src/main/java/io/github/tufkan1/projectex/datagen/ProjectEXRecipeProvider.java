@@ -67,6 +67,12 @@ public final class ProjectEXRecipeProvider extends FabricRecipeProvider {
                     .pattern("LMH").pattern("SPS").pattern("HML")
                     .unlockedBy("has_covalence_dust", has(ProjectEXItems.LOW_COVALENCE_DUST.item()))
                     .save(output, id("repair_talisman"));
+                shaped(RecipeCategory.MISC, ProjectEXBlocks.DARK_MATTER_PEDESTAL)
+                    .define('D', ProjectEXBlocks.DARK_MATTER_BLOCK)
+                    .define('R', ProjectEXItems.RED_MATTER.item())
+                    .pattern("RDR").pattern("RDR").pattern("DDD")
+                    .unlockedBy("has_dark_matter_block", has(ProjectEXBlocks.DARK_MATTER_BLOCK))
+                    .save(output, id("dark_matter_pedestal"));
                 for (int tier = 0; tier < ProjectEXItems.DIVINING_RODS.size(); tier++) {
                     var rod = ProjectEXItems.DIVINING_RODS.get(tier);
                     var dust = switch (tier) {

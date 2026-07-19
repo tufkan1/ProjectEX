@@ -41,9 +41,23 @@ chunks, do not mutate blocks, honor `projectex:divining_rod_allowed` and
 callback for claim integrations. Results use the live immutable EMC snapshot and report the
 average plus the tier's highest distinct values through accessible chat messages.
 
+## Dark Matter Pedestal
+
+The Dark Matter Pedestal is claimed by its placer. Only the owner or a server operator may
+insert, extract, activate, or configure its effect. Use with a compatible item to insert one,
+use with an empty hand to toggle it, attack to extract it, and sneak-use with an empty hand to
+cycle ignored/require-signal/require-no-signal redstone modes. Comparator output distinguishes
+empty, unsupported, ready, and active states.
+
+Pedestal effects run only on the logical server. The Repair Talisman effect uses the reference
+four-block bounds and a 20-tick interval, considers at most 16 living players per activation,
+sorts targets deterministically, and skips players whose chunks are not already loaded. It
+never creates chunk tickets. Breaking the pedestal ejects its item before the block entity is
+removed.
+
 ## Remaining #39 families
 
-Pedestal effects, amulets, rings, knowledge tome policy, and
+Additional pedestal effects, amulets, rings, knowledge tome policy, and
 destructive catalysts will build on this state/network contract. Their world adapters must
 add per-target protection callbacks, allow/deny tags, chunk-loaded bounds, per-tick work caps,
 and exact EMC charging before #39 is closed.
