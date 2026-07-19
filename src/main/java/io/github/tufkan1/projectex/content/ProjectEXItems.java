@@ -101,6 +101,11 @@ public final class ProjectEXItems {
             "transmutation_tablet", TransmutationTabletItem::new,
             new Item.Properties().rarity(Rarity.EPIC).fireResistant()
         );
+    public static final ProjectEXContentRegistry.RegisteredItem<ArcaneTabletItem> ARCANE_TABLET =
+        ProjectEXContentRegistry.registerItem(
+            "arcane_tablet", ArcaneTabletItem::new,
+            new Item.Properties().rarity(Rarity.EPIC).fireResistant()
+        );
     public static final ProjectEXContentRegistry.RegisteredItem<RepairTalismanItem> REPAIR_TALISMAN =
         ProjectEXContentRegistry.registerItem(
             "repair_talisman", RepairTalismanItem::new,
@@ -250,6 +255,7 @@ public final class ProjectEXItems {
             .register(entries -> {
                 entries.accept(PHILOSOPHERS_STONE.item());
                 entries.accept(TRANSMUTATION_TABLET.item());
+                entries.accept(ARCANE_TABLET.item());
                 entries.accept(REPAIR_TALISMAN.item());
                 entries.accept(EVERTIDE_AMULET.item());
                 entries.accept(VOLCANITE_AMULET.item());

@@ -78,6 +78,7 @@ public final class ProjectEXModelProvider implements DataProvider {
         Map.entry("infinite_steak", "minecraft:item/cooked_beef"),
         Map.entry("philosophers_stone", "minecraft:item/ender_eye"),
         Map.entry("transmutation_tablet", "minecraft:item/enchanted_book"),
+        Map.entry("arcane_tablet", "minecraft:item/knowledge_book"),
         Map.entry("repair_talisman", "minecraft:item/paper"),
         Map.entry("evertide_amulet", "minecraft:item/heart_of_the_sea"),
         Map.entry("volcanite_amulet", "minecraft:item/magma_cream"),

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": "minecraft:chest",
+    "M": "projectex:magenta_matter",
+    "S": "projectex:magnum_star_ein",
+    "T": "projectex:transmutation_tablet",
+    "W": "minecraft:crafting_table"
+  },
+  "pattern": [
+    "TWT",
+    "MSM",
+    "TCT"
+  ],
+  "result": {
+    "id": "projectex:arcane_tablet"
+  }
+}

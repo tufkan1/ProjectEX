@@ -8,12 +8,21 @@ import io.github.tufkan1.projectex.content.component.AlchemyStorageState;
 import io.github.tufkan1.projectex.content.component.BagItemState;
 import io.github.tufkan1.projectex.content.component.MatterToolState;
 import io.github.tufkan1.projectex.content.component.AutomationBlockState;
+import io.github.tufkan1.projectex.content.component.ArcaneTabletState;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 
 /** Persistent and network-synchronized ProjectEX data components. */
 public final class ProjectEXComponents {
+    public static final DataComponentType<ArcaneTabletState> ARCANE_TABLET_STATE = Registry.register(
+        BuiltInRegistries.DATA_COMPONENT_TYPE,
+        ProjectEX.id("arcane_tablet_state"),
+        DataComponentType.<ArcaneTabletState>builder()
+            .persistent(ArcaneTabletState.CODEC)
+            .networkSynchronized(ArcaneTabletState.STREAM_CODEC)
+            .build()
+    );
     public static final DataComponentType<ActiveItemState> ACTIVE_ITEM_STATE = Registry.register(
         BuiltInRegistries.DATA_COMPONENT_TYPE,
         ProjectEX.id("active_item_state"),
