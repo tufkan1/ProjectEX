@@ -224,5 +224,10 @@
   "tag.block.projectex.elemental_amulet_allowed": "Elemental Amulet replaceable blocks",
   "tag.block.projectex.elemental_amulet_denied": "Elemental Amulet denied blocks",
   "item.projectex.knowledge_tome": "Knowledge Tome",
-  "item.projectex.knowledge_tome.learned": "Knowledge Tome learned %s entries (%s total)"
+  "item.projectex.knowledge_tome.learned": "Knowledge Tome learned %s entries (%s total)",
+  "item.projectex.nova_catalyst": "Nova Catalyst",
+  "item.projectex.destruction_catalyst": "Destruction Catalyst",
+  "item.projectex.destructive_catalyst.result": "Destroyed %s blocks; spent %s EMC",
+  "tag.block.projectex.destructive_catalyst_allowed": "Destructive Catalyst breakable blocks",
+  "tag.block.projectex.destructive_catalyst_denied": "Destructive Catalyst denied blocks"
 }

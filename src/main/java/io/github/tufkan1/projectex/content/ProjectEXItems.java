@@ -123,6 +123,18 @@ public final class ProjectEXItems {
             "knowledge_tome", KnowledgeTomeItem::new,
             new Item.Properties().rarity(Rarity.EPIC).fireResistant()
         );
+    public static final ProjectEXContentRegistry.RegisteredItem<DestructiveCatalystItem> NOVA_CATALYST =
+        ProjectEXContentRegistry.registerItem(
+            "nova_catalyst", properties -> new DestructiveCatalystItem(
+                properties, DestructiveCatalystItem.Kind.NOVA),
+            new Item.Properties().rarity(Rarity.UNCOMMON)
+        );
+    public static final ProjectEXContentRegistry.RegisteredItem<DestructiveCatalystItem>
+        DESTRUCTION_CATALYST = ProjectEXContentRegistry.registerItem(
+            "destruction_catalyst", properties -> new DestructiveCatalystItem(
+                properties, DestructiveCatalystItem.Kind.DESTRUCTION),
+            new Item.Properties().rarity(Rarity.RARE).fireResistant()
+        );
     public static final List<ProjectEXContentRegistry.RegisteredItem<DiviningRodItem>> DIVINING_RODS =
         java.util.stream.IntStream.range(0, 3).mapToObj(tier ->
             ProjectEXContentRegistry.registerItem(
@@ -236,6 +248,8 @@ public final class ProjectEXItems {
                 entries.accept(EVERTIDE_AMULET.item());
                 entries.accept(VOLCANITE_AMULET.item());
                 entries.accept(KNOWLEDGE_TOME.item());
+                entries.accept(NOVA_CATALYST.item());
+                entries.accept(DESTRUCTION_CATALYST.item());
                 DIVINING_RODS.forEach(entry -> entries.accept(entry.item()));
                 entries.accept(FINAL_STAR_SHARD.item());
                 entries.accept(FINAL_STAR.item());

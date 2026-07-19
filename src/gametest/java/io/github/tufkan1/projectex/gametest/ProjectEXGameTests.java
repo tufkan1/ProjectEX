@@ -423,6 +423,68 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
     }
 
     @GameTest
+    public void destructiveCatalystsAreBoundedProtectedAndExactlyCharged(GameTestHelper helper) {
+        BlockPos origin = new BlockPos(9, 2, 10);
+        helper.setBlock(origin, Blocks.STONE);
+        helper.setBlock(origin.east(), Blocks.STONE);
+        helper.setBlock(origin.west(), Blocks.BEDROCK);
+        helper.setBlock(origin.north(), Blocks.CHEST);
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        player.setGameMode(GameType.SURVIVAL);
+        player.setPos(Vec3.atCenterOf(helper.absolutePos(origin.above())));
+        ItemStack destruction = new ItemStack(ProjectEXItems.DESTRUCTION_CATALYST.item());
+        player.setItemInHand(InteractionHand.MAIN_HAND, destruction);
+        MatterEmcPayment.credit(player, EmcValue.of(8));
+
+        helper.assertTrue(useOnTop(helper, player, origin, destruction)
+                == net.minecraft.world.InteractionResult.SUCCESS_SERVER,
+            "Exactly funded Destruction Catalyst action failed");
+        helper.assertBlockPresent(Blocks.AIR, origin);
+        helper.assertBlockPresent(Blocks.STONE, origin.east());
+        helper.assertBlockPresent(Blocks.BEDROCK, origin.west());
+        helper.assertBlockPresent(Blocks.CHEST, origin.north());
+        helper.assertTrue(MatterEmcPayment.balance(player).equals(EmcValue.ZERO),
+            "Destruction Catalyst did not charge exactly 8 EMC for one committed block");
+        helper.assertTrue(!destruction.isEmpty(), "Reusable Destruction Catalyst was consumed");
+
+        BlockPos deniedOrigin = new BlockPos(14, 2, 10);
+        helper.setBlock(deniedOrigin, Blocks.STONE);
+        ServerPlayer deniedPlayer = helper.makeMockServerPlayerInLevel();
+        deniedPlayer.setGameMode(GameType.SURVIVAL);
+        deniedPlayer.setPos(Vec3.atCenterOf(helper.absolutePos(deniedOrigin.above())));
+        ItemStack deniedNova = new ItemStack(ProjectEXItems.NOVA_CATALYST.item());
+        deniedPlayer.setItemInHand(InteractionHand.MAIN_HAND, deniedNova);
+        io.github.tufkan1.projectex.api.utility.UtilityWorldActionProtection.EVENT.register(
+            context -> !context.player().getUUID().equals(deniedPlayer.getUUID()));
+        helper.assertTrue(useOnTop(helper, deniedPlayer, deniedOrigin, deniedNova)
+                == net.minecraft.world.InteractionResult.FAIL,
+            "Nova Catalyst ignored its per-target protection callback");
+        helper.assertBlockPresent(Blocks.STONE, deniedOrigin);
+        helper.assertTrue(!deniedNova.isEmpty(),
+            "Denied Nova Catalyst action consumed the item or left residual state");
+
+        BlockPos novaOrigin = new BlockPos(18, 2, 10);
+        helper.setBlock(novaOrigin, Blocks.STONE);
+        ServerPlayer novaPlayer = helper.makeMockServerPlayerInLevel();
+        novaPlayer.setGameMode(GameType.SURVIVAL);
+        novaPlayer.setPos(Vec3.atCenterOf(helper.absolutePos(novaOrigin.above())));
+        ItemStack nova = new ItemStack(ProjectEXItems.NOVA_CATALYST.item());
+        novaPlayer.setItemInHand(InteractionHand.MAIN_HAND, nova);
+        helper.assertTrue(useOnTop(helper, novaPlayer, novaOrigin, nova)
+                == net.minecraft.world.InteractionResult.SUCCESS_SERVER,
+            "Nova Catalyst did not commit its bounded one-shot action");
+        helper.assertBlockPresent(Blocks.AIR, novaOrigin);
+        helper.assertTrue(nova.isEmpty(), "Committed Nova Catalyst was not consumed");
+        for (String recipe : List.of("nova_catalyst", "destruction_catalyst")) {
+            helper.assertTrue(helper.getLevel().getServer().getRecipeManager().byKey(
+                net.minecraft.resources.ResourceKey.create(
+                    net.minecraft.core.registries.Registries.RECIPE, ProjectEX.id(recipe)))
+                .isPresent(), "Missing destructive catalyst recipe: " + recipe);
+        }
+        helper.succeed();
+    }
+
+    @GameTest
     public void bundledEmcDataLoadsAtRuntime(GameTestHelper helper) {
         helper.assertValueEqual(
             ProjectEX.emc().find(EmcKey.parse("minecraft:diamond")).orElseThrow(),

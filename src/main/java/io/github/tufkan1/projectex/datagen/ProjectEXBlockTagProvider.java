@@ -88,6 +88,19 @@ public final class ProjectEXBlockTagProvider extends FabricTagsProvider.BlockTag
             key(Blocks.REPEATING_COMMAND_BLOCK), key(Blocks.CHAIN_COMMAND_BLOCK),
             key(Blocks.STRUCTURE_BLOCK), key(Blocks.JIGSAW), key(Blocks.END_PORTAL_FRAME)
         );
+        builder(ProjectEXTags.DESTRUCTIVE_CATALYST_ALLOWED)
+            .addTag(BlockTags.MINEABLE_WITH_PICKAXE)
+            .add(key(Blocks.DIRT), key(Blocks.GRASS_BLOCK), key(Blocks.SAND),
+                key(Blocks.GRAVEL), key(Blocks.CLAY), key(Blocks.OAK_LOG),
+                key(Blocks.SPRUCE_LOG), key(Blocks.BIRCH_LOG), key(Blocks.JUNGLE_LOG),
+                key(Blocks.ACACIA_LOG), key(Blocks.DARK_OAK_LOG), key(Blocks.MANGROVE_LOG),
+                key(Blocks.CHERRY_LOG));
+        builder(ProjectEXTags.DESTRUCTIVE_CATALYST_DENIED).add(
+            key(Blocks.BEDROCK), key(Blocks.BARRIER), key(Blocks.COMMAND_BLOCK),
+            key(Blocks.REPEATING_COMMAND_BLOCK), key(Blocks.CHAIN_COMMAND_BLOCK),
+            key(Blocks.STRUCTURE_BLOCK), key(Blocks.JIGSAW), key(Blocks.END_PORTAL_FRAME),
+            key(Blocks.SPAWNER), key(Blocks.VAULT), key(Blocks.TRIAL_SPAWNER)
+        );
         builder(ProjectEXTags.INCORRECT_FOR_DARK_MATTER_TOOL).add(
             key(Blocks.BEDROCK), key(Blocks.BARRIER), key(Blocks.COMMAND_BLOCK),
             key(Blocks.REPEATING_COMMAND_BLOCK), key(Blocks.CHAIN_COMMAND_BLOCK),

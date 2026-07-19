@@ -23,6 +23,7 @@ import io.github.tufkan1.projectex.machine.MachineRuntimeConfig;
 import io.github.tufkan1.projectex.matter.MatterTierReloadListener;
 import io.github.tufkan1.projectex.endgame.EndgameRuntimeConfig;
 import io.github.tufkan1.projectex.content.KnowledgeTomePolicy;
+import io.github.tufkan1.projectex.content.DestructiveCatalystPolicy;
 import io.github.tufkan1.projectex.endgame.FinalStarAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,7 @@ public final class ProjectEX implements ModInitializer {
         MachineRuntimeConfig.reload();
         EndgameRuntimeConfig.reload();
         KnowledgeTomePolicy.reload();
+        DestructiveCatalystPolicy.reload();
         ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(
             id("emc_values"),
             new EmcDataReloadListener(EMC_VALUES)
