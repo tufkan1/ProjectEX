@@ -39,5 +39,7 @@
   "screen.projectex.failure.balance_limit_exceeded": "EMC bakiye sınırı aşıldı",
   "screen.projectex.failure.none": "Hazır",
   "screen.projectex.status.ready": "Hazır",
-  "screen.projectex.narration": "Bakiye %s EMC. Sayfa %s / %s. %s sonuç. Durum %s."
+  "screen.projectex.narration": "Bakiye %s EMC. Sayfa %s / %s. %s sonuç. Durum %s.",
+  "advancements.projectex.transmutation.title": "Yeni Bir Takas",
+  "advancements.projectex.transmutation.description": "Bir Dönüşüm Masası üret ve madde takasına başla."
 }

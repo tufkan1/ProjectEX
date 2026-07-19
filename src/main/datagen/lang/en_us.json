@@ -39,5 +39,7 @@
   "screen.projectex.failure.balance_limit_exceeded": "EMC balance limit exceeded",
   "screen.projectex.failure.none": "Ready",
   "screen.projectex.status.ready": "Ready",
-  "screen.projectex.narration": "Balance %s EMC. Page %s of %s. %s results. Status %s."
+  "screen.projectex.narration": "Balance %s EMC. Page %s of %s. %s results. Status %s.",
+  "advancements.projectex.transmutation.title": "A New Exchange",
+  "advancements.projectex.transmutation.description": "Craft a Transmutation Table and begin exchanging matter."
 }

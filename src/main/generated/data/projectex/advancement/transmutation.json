@@ -1,0 +1,31 @@
+{
+  "criteria": {
+    "has_transmutation_table": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projectex:transmutation_table"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projectex.transmutation.description"
+    },
+    "icon": {
+      "id": "projectex:transmutation_table"
+    },
+    "title": {
+      "translate": "advancements.projectex.transmutation.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_transmutation_table"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

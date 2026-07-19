@@ -5,7 +5,7 @@ same pull request that introduces any derived material.
 
 | ProjectEX path | Origin project/path | Origin commit | License | Adaptation notes |
 | --- | --- | --- | --- | --- |
-| _None yet_ | — | — | — | Current source is original scaffolding |
+| `src/main/generated/**` | ProjectEX datagen providers | N/A | MIT | Original ProjectEX data/models; no upstream code or assets copied |
 
 ## Rules
 

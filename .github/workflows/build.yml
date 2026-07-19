@@ -37,6 +37,15 @@ jobs:
       - name: Grant wrapper execute permission
         run: chmod +x ./gradlew
 
+      - name: Generate resources
+        run: ./gradlew --stacktrace runDatagen
+
+      - name: Verify generated resources are committed
+        shell: bash
+        run: |
+          git diff --exit-code -- src/main/generated
+          test -z "$(git status --porcelain --untracked-files=all -- src/main/generated)"
+
       - name: Check and build
         run: ./gradlew --stacktrace check build
 
