@@ -143,7 +143,7 @@ jobs:
         shell: bash
         run: |
           prerelease=""
-          [[ "${GITHUB_REF_NAME}" == *-* ]] && prerelease="--prerelease"
+          [[ "${GITHUB_REF_NAME}" == *-* || "${GITHUB_REF_NAME}" == "26.3" ]] && prerelease="--prerelease"
           notes="docs/release-notes/${GITHUB_REF_NAME#v}.md"
           test -f "${notes}"
           title="ProjectEX ${GITHUB_REF_NAME} for Minecraft 26.2"
