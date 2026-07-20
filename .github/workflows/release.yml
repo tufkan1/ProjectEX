@@ -2,7 +2,7 @@ name: Release
 
 on:
   push:
-    tags: ["v*", "26.3"]
+    tags: ["v*", "26.3*"]
 
 permissions:
   contents: write
@@ -30,7 +30,7 @@ jobs:
         shell: bash
         run: |
           expected="v$(sed -n 's/^mod_version=//p' gradle.properties)"
-          [[ "${GITHUB_REF_NAME}" == "26.3" ]] && expected="26.3"
+          [[ "${GITHUB_REF_NAME}" == 26.3* ]] && expected="${GITHUB_REF_NAME}"
           test "${GITHUB_REF_NAME}" = "${expected}" || {
             echo "Tag ${GITHUB_REF_NAME} does not match ${expected}" >&2
             exit 1
@@ -48,7 +48,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p dist first-build
-          if [[ "${GITHUB_REF_NAME}" == "26.3" ]]; then
+          if [[ "${GITHUB_REF_NAME}" == 26.3* ]]; then
             for profile in 26.3-snapshot-{1..4}; do
               ./gradlew --no-daemon -PtargetProfile="${profile}" clean releaseAudit runGameTest verifyNoCompatClient
               cp build/libs/*.jar dist/
@@ -63,17 +63,17 @@ jobs:
           fi
 
       - name: Verify Jade compatibility profile
-        if: github.ref_name != '26.3'
+        if: ${{ !startsWith(github.ref_name, '26.3') }}
         run: ./gradlew --no-daemon -PcompatJade verifyJadeCompatClient --rerun-tasks
 
       - name: Verify Mod Menu settings profile
-        if: github.ref_name != '26.3'
+        if: ${{ !startsWith(github.ref_name, '26.3') }}
         run: ./gradlew --no-daemon -PcompatModMenu verifyModMenuCompatClient --rerun-tasks
 
       - name: Rebuild jars and prove reproducibility
         shell: bash
         run: |
-          if [[ "${GITHUB_REF_NAME}" == "26.3" ]]; then
+          if [[ "${GITHUB_REF_NAME}" == 26.3* ]]; then
             for profile in 26.3-snapshot-{1..4}; do
               ./gradlew --no-daemon -PtargetProfile="${profile}" clean jar sourcesJar javadocJar
               for rebuilt in build/libs/*.jar; do
@@ -107,35 +107,35 @@ jobs:
           subject-path: dist/*.jar
 
       - name: Attest runtime SBOM
-        if: github.ref_name != '26.3'
+        if: ${{ !startsWith(github.ref_name, '26.3') }}
         uses: actions/attest@v4
         with:
           subject-path: dist/*.jar
           sbom-path: dist/projectex-fabric.cdx.json
 
       - name: Attest Snapshot 1 runtime SBOM
-        if: github.ref_name == '26.3'
+        if: ${{ startsWith(github.ref_name, '26.3') }}
         uses: actions/attest@v4
         with:
           subject-path: dist/projectex-fabric-26.3-snapshot-1-*.jar
           sbom-path: dist/projectex-fabric-26.3-snapshot-1.cdx.json
 
       - name: Attest Snapshot 2 runtime SBOM
-        if: github.ref_name == '26.3'
+        if: ${{ startsWith(github.ref_name, '26.3') }}
         uses: actions/attest@v4
         with:
           subject-path: dist/projectex-fabric-26.3-snapshot-2-*.jar
           sbom-path: dist/projectex-fabric-26.3-snapshot-2.cdx.json
 
       - name: Attest Snapshot 3 runtime SBOM
-        if: github.ref_name == '26.3'
+        if: ${{ startsWith(github.ref_name, '26.3') }}
         uses: actions/attest@v4
         with:
           subject-path: dist/projectex-fabric-26.3-snapshot-3-*.jar
           sbom-path: dist/projectex-fabric-26.3-snapshot-3.cdx.json
 
       - name: Attest Snapshot 4 runtime SBOM
-        if: github.ref_name == '26.3'
+        if: ${{ startsWith(github.ref_name, '26.3') }}
         uses: actions/attest@v4
         with:
           subject-path: dist/projectex-fabric-26.3-snapshot-4-*.jar
@@ -147,11 +147,11 @@ jobs:
         shell: bash
         run: |
           prerelease=""
-          [[ "${GITHUB_REF_NAME}" == *-* || "${GITHUB_REF_NAME}" == "26.3" ]] && prerelease="--prerelease"
+          [[ "${GITHUB_REF_NAME}" == *-* || "${GITHUB_REF_NAME}" == 26.3* ]] && prerelease="--prerelease"
           notes="docs/release-notes/${GITHUB_REF_NAME#v}.md"
           test -f "${notes}"
           title="ProjectEX ${GITHUB_REF_NAME} for Minecraft 26.2"
-          [[ "${GITHUB_REF_NAME}" == "26.3" ]] && title="ProjectEX 26.3 Snapshot 1-4"
+          [[ "${GITHUB_REF_NAME}" == 26.3* ]] && title="ProjectEX ${GITHUB_REF_NAME} Snapshot 1-4"
           gh release create "${GITHUB_REF_NAME}" dist/* \
             --verify-tag \
             --title "${title}" \
