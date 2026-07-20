@@ -27,6 +27,9 @@
     ],
     "jade": [
       "io.github.tufkan1.projectex.compat.jade.ProjectEXJadePlugin"
+    ],
+    "modmenu": [
+      "io.github.tufkan1.projectex.compat.modmenu.ProjectEXModMenu"
     ]
   },
   "depends": {
@@ -36,6 +39,7 @@
     "fabric-api": "${fabric_api_dependency}"
   },
   "suggests": {
-    "jade": "${jade_dependency}"
+    "jade": "${jade_dependency}",
+    "modmenu": "${modmenu_dependency}"
   }
 }

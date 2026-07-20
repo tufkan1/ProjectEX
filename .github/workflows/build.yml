@@ -76,7 +76,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compat: [none, jade]
+        include:
+          - compat: none
+            gradle-args: verifyNoCompatClient
+          - compat: jade
+            gradle-args: -PcompatJade verifyJadeCompatClient
+          - compat: mod-menu
+            gradle-args: -PcompatModMenu verifyModMenuCompatClient
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
@@ -94,7 +100,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Run headless client journey
-        run: ./gradlew --stacktrace ${{ matrix.compat == 'jade' && '-PcompatJade verifyJadeCompatClient' || 'verifyNoCompatClient' }}
+        run: ./gradlew --stacktrace ${{ matrix.gradle-args }}
 
       - name: Upload client test evidence
         if: always()
@@ -104,5 +110,6 @@ jobs:
           path: |
             build/run/clientGameTest/logs/
             build/run/clientGameTest/screenshots/
+            build/productionClientGameTest/logs/
           if-no-files-found: ignore
           retention-days: 14

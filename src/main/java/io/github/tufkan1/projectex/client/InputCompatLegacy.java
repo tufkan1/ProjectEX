@@ -10,7 +10,8 @@ final class InputCompatLegacy {
 
     static InputConstants.Type keyboardType() { return InputConstants.Type.KEYSYM; }
     static int keyV() { return GLFW.GLFW_KEY_V; }
-    static int keyB() { return GLFW.GLFW_KEY_B; }
+    static int keyG() { return GLFW.GLFW_KEY_G; }
+    static int keyK() { return GLFW.GLFW_KEY_K; }
     static int keyLeft() { return GLFW.GLFW_KEY_LEFT; }
     static int keyRight() { return GLFW.GLFW_KEY_RIGHT; }
     static int keyUp() { return GLFW.GLFW_KEY_UP; }

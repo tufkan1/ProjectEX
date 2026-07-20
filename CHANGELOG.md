@@ -6,6 +6,17 @@ the Minecraft version.
 
 ## [Unreleased]
 
+## [1.1.5] - 2026-07-20
+
+### Added
+
+- Remappable `V` charge, `G` mode, and `K` inventory Arcane Tablet controls in Minecraft's
+  native ProjectEX key-binding category, with server validation for remote tablet opening.
+- An optional Mod Menu settings entrypoint for EMC tooltips, compact number formatting,
+  remembered favorites, and transmutation-search autofocus.
+- Client render traversal for every currently registered machine/storage menu and the new
+  settings screen, plus present/absent optional-integration boot verification.
+
 ## [1.1.4] - 2026-07-20
 
 ### Added

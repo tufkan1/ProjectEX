@@ -29,6 +29,9 @@ import net.fabricmc.loader.api.FabricLoader;
 public final class ProjectEXConfig {
     public static final int SCHEMA_VERSION = 1;
     public static final String CLIENT_REMEMBER_FAVORITES = "projectex.client.rememberFavorites";
+    public static final String CLIENT_SHOW_EMC_TOOLTIPS = "projectex.client.showEmcTooltips";
+    public static final String CLIENT_COMPACT_EMC = "projectex.client.compactEmcNumbers";
+    public static final String CLIENT_FOCUS_SEARCH = "projectex.client.focusTransmutationSearch";
     private static final String VERSION_KEY = "schema_version";
     private static final Set<String> MANAGED_PROPERTIES = new HashSet<>();
     private static final Schema COMMON = new Schema("common.properties", List.of(
@@ -76,10 +79,19 @@ public final class ProjectEXConfig {
     ));
     private static final Schema CLIENT = new Schema("client.properties", List.of(
         entry(CLIENT_REMEMBER_FAVORITES, "true", "Persist transmutation favorites on this client.",
+            ProjectEXConfig::isBoolean),
+        entry(CLIENT_SHOW_EMC_TOOLTIPS, "true", "Show authoritative EMC values in item tooltips.",
+            ProjectEXConfig::isBoolean),
+        entry(CLIENT_COMPACT_EMC, "true", "Format large EMC values with K/M/B/T suffixes.",
+            ProjectEXConfig::isBoolean),
+        entry(CLIENT_FOCUS_SEARCH, "true", "Focus the transmutation search box when its screen opens.",
             ProjectEXConfig::isBoolean)
     ));
     private static volatile Path directory;
     private static volatile boolean rememberFavorites = true;
+    private static volatile boolean showEmcTooltips = true;
+    private static volatile boolean compactEmcNumbers = true;
+    private static volatile boolean focusTransmutationSearch = true;
 
     private ProjectEXConfig() { }
 
@@ -91,7 +103,7 @@ public final class ProjectEXConfig {
     public static synchronized void initializeClient() {
         if (directory == null) directory = FabricLoader.getInstance().getConfigDir().resolve("projectex");
         publish(List.of(CLIENT), false);
-        rememberFavorites = Boolean.parseBoolean(effective(CLIENT_REMEMBER_FAVORITES, "true"));
+        reloadClientRuntime();
     }
 
     public static synchronized ReloadReport reloadServer() {
@@ -106,6 +118,27 @@ public final class ProjectEXConfig {
     }
 
     public static boolean rememberFavorites() { return rememberFavorites; }
+    public static boolean showEmcTooltips() { return showEmcTooltips; }
+    public static boolean compactEmcNumbers() { return compactEmcNumbers; }
+    public static boolean focusTransmutationSearch() { return focusTransmutationSearch; }
+
+    public static ClientOptions clientOptions() {
+        return new ClientOptions(rememberFavorites, showEmcTooltips, compactEmcNumbers,
+            focusTransmutationSearch);
+    }
+
+    public static synchronized void saveClientOptions(ClientOptions options) {
+        ensureInitialized();
+        java.util.Objects.requireNonNull(options, "options");
+        LinkedHashMap<String, String> values = new LinkedHashMap<>();
+        values.put(CLIENT_REMEMBER_FAVORITES, Boolean.toString(options.rememberFavorites()));
+        values.put(CLIENT_SHOW_EMC_TOOLTIPS, Boolean.toString(options.showEmcTooltips()));
+        values.put(CLIENT_COMPACT_EMC, Boolean.toString(options.compactEmcNumbers()));
+        values.put(CLIENT_FOCUS_SEARCH, Boolean.toString(options.focusTransmutationSearch()));
+        writeValues(directory.resolve(CLIENT.fileName), CLIENT, values);
+        publish(List.of(CLIENT), false);
+        reloadClientRuntime();
+    }
 
     static synchronized ReloadReport loadForTest(Path root, boolean runtime) {
         directory = root;
@@ -116,7 +149,7 @@ public final class ProjectEXConfig {
     static synchronized ReloadReport loadClientForTest(Path root) {
         directory = root;
         publish(List.of(CLIENT), false);
-        rememberFavorites = Boolean.parseBoolean(effective(CLIENT_REMEMBER_FAVORITES, "true"));
+        reloadClientRuntime();
         return report(List.of(CLIENT));
     }
 
@@ -125,6 +158,9 @@ public final class ProjectEXConfig {
         MANAGED_PROPERTIES.clear();
         directory = null;
         rememberFavorites = true;
+        showEmcTooltips = true;
+        compactEmcNumbers = true;
+        focusTransmutationSearch = true;
         reloadRuntime();
     }
 
@@ -176,13 +212,19 @@ public final class ProjectEXConfig {
             throw invalid(path, VERSION_KEY, "expected " + SCHEMA_VERSION + " but found " + version, null);
         }
         LinkedHashMap<String, String> values = new LinkedHashMap<>();
+        boolean migratedClientOptions = false;
         for (Entry entry : schema.entries) {
             String value = properties.getProperty(entry.key);
+            if (value == null && schema == CLIENT) {
+                value = entry.defaultValue;
+                migratedClientOptions = true;
+            }
             if (value == null) throw invalid(path, entry.key, "required key is missing", null);
             value = value.trim();
             if (!entry.validator.test(value)) throw invalid(path, entry.key, "invalid value '" + value + "'", null);
             values.put(entry.key, value);
         }
+        if (migratedClientOptions) writeValues(path, schema, values);
         return values;
     }
 
@@ -219,13 +261,20 @@ public final class ProjectEXConfig {
     }
 
     private static void writeDefaults(Path path, Schema schema) {
+        LinkedHashMap<String, String> values = new LinkedHashMap<>();
+        schema.entries.forEach(entry -> values.put(entry.key, entry.defaultValue));
+        writeValues(path, schema, values);
+    }
+
+    private static void writeValues(Path path, Schema schema, Map<String, String> values) {
         StringBuilder output = new StringBuilder();
         output.append("# ProjectEX ").append(schema.fileName).append("\n");
         output.append("# Unknown keys and invalid values stop loading; files are never silently reset.\n");
         output.append(VERSION_KEY).append('=').append(SCHEMA_VERSION).append("\n\n");
         for (Entry entry : schema.entries) {
             output.append("# ").append(entry.comment).append("\n");
-            output.append(entry.key).append('=').append(entry.defaultValue).append("\n\n");
+            output.append(entry.key).append('=').append(values.getOrDefault(entry.key, entry.defaultValue))
+                .append("\n\n");
         }
         Path temporary = path.resolveSibling(path.getFileName() + ".tmp");
         try {
@@ -291,6 +340,13 @@ public final class ProjectEXConfig {
         return System.getProperty(key, fallback).trim();
     }
 
+    private static void reloadClientRuntime() {
+        rememberFavorites = Boolean.parseBoolean(effective(CLIENT_REMEMBER_FAVORITES, "true"));
+        showEmcTooltips = Boolean.parseBoolean(effective(CLIENT_SHOW_EMC_TOOLTIPS, "true"));
+        compactEmcNumbers = Boolean.parseBoolean(effective(CLIENT_COMPACT_EMC, "true"));
+        focusTransmutationSearch = Boolean.parseBoolean(effective(CLIENT_FOCUS_SEARCH, "true"));
+    }
+
     private static void ensureInitialized() {
         if (directory == null) throw new IllegalStateException("ProjectEX config has not been initialized");
     }
@@ -302,6 +358,10 @@ public final class ProjectEXConfig {
     }
 
     public record ReloadReport(int schemaVersion, int settingCount, List<String> files) { }
+    public record ClientOptions(boolean rememberFavorites, boolean showEmcTooltips,
+                                boolean compactEmcNumbers, boolean focusTransmutationSearch) {
+        public static final ClientOptions DEFAULT = new ClientOptions(true, true, true, true);
+    }
     private record Schema(String fileName, List<Entry> entries) { }
     private record Entry(String key, String defaultValue, String comment, Predicate<String> validator) { }
 }

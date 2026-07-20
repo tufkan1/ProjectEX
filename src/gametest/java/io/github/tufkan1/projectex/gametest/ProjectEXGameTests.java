@@ -1999,6 +1999,30 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
         helper.succeed();
     }
 
+    @GameTest
+    public void arcaneTabletKeyRequestOpensOnlyAValidatedInventoryTablet(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        helper.assertTrue(!io.github.tufkan1.projectex.content.ArcaneTabletItem
+                .openFromInventory(player),
+            "Arcane Tablet shortcut opened without a tablet");
+        ItemStack tablet = new ItemStack(ProjectEXItems.ARCANE_TABLET.item());
+        player.getInventory().add(tablet);
+        helper.assertTrue(io.github.tufkan1.projectex.content.ArcaneTabletItem
+                .openFromInventory(player),
+            "Arcane Tablet shortcut did not find the validated inventory tablet");
+        helper.assertTrue(player.containerMenu instanceof TransmutationMenu,
+            "Arcane Tablet shortcut opened the wrong synchronized menu");
+        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
+            if (player.getInventory().getItem(slot).is(ProjectEXItems.ARCANE_TABLET.item())) {
+                player.getInventory().setItem(slot, ItemStack.EMPTY);
+                break;
+            }
+        }
+        helper.assertTrue(!player.containerMenu.stillValid(player),
+            "Arcane Tablet shortcut session survived removal of its bound stack");
+        helper.succeed();
+    }
+
     private static EmcMachineBlockEntity machine(GameTestHelper helper, BlockPos relative) {
         return helper.getBlockEntity(relative, EmcMachineBlockEntity.class);
     }

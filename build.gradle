@@ -81,8 +81,12 @@ dependencies {
 	productionRuntimeMods "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 	productionRuntimeMods fabricApi.module("fabric-client-gametest-api-v1", project.fabric_api_version)
 	compileOnly "maven.modrinth:jade:${project.jade_version}"
+	compileOnly "maven.modrinth:modmenu:${project.modmenu_version}"
 	if (providers.gradleProperty("compatJade").isPresent()) {
 		productionRuntimeMods "maven.modrinth:jade:${project.jade_version}"
+	}
+	if (providers.gradleProperty("compatModMenu").isPresent()) {
+		productionRuntimeMods "maven.modrinth:modmenu:${project.modmenu_version}"
 	}
 
 	testImplementation platform("org.junit:junit-bom:6.1.2")
@@ -135,11 +139,34 @@ tasks.register("verifyJadeCompatClient") {
 	}
 }
 
+tasks.register("verifyModMenuCompatClient") {
+	group = "verification"
+	description = "Proves Mod Menu loads ProjectEX's settings entrypoint."
+	dependsOn tasks.named("runProductionClientGameTest")
+	doFirst {
+		if (!providers.gradleProperty("compatModMenu").isPresent()) {
+			throw new GradleException("Run verifyModMenuCompatClient with -PcompatModMenu")
+		}
+	}
+	doLast {
+		def log = layout.buildDirectory.file("productionClientGameTest/logs/latest.log").get().asFile
+		if (!log.isFile()) throw new GradleException("Production client log is missing")
+		def text = log.getText("UTF-8")
+		if (!text.contains("modmenu") || !text.contains("ProjectEX ")) {
+			throw new GradleException("Mod Menu or ProjectEX was absent from the production client")
+		}
+		if (text.contains("Could not execute entrypoint stage 'modmenu'")) {
+			throw new GradleException("Mod Menu rejected ProjectEX's settings entrypoint")
+		}
+	}
+}
+
 def modVersion = project.version
 def targetMinecraftVersion = project.minecraft_version
 def minecraftDependency = project.minecraft_dependency
 def fabricApiDependency = project.fabric_api_dependency
 def jadeDependency = project.jade_dependency
+def modmenuDependency = project.modmenu_dependency
 
 processResources {
 	inputs.property "version", modVersion
@@ -147,6 +174,7 @@ processResources {
 	inputs.property "minecraft_dependency", minecraftDependency
 	inputs.property "fabric_api_dependency", fabricApiDependency
 	inputs.property "jade_dependency", jadeDependency
+	inputs.property "modmenu_dependency", modmenuDependency
 
 	filesMatching("fabric.mod.json") {
 			expand(
@@ -154,7 +182,8 @@ processResources {
 			minecraft_version: targetMinecraftVersion,
 			minecraft_dependency: minecraftDependency,
 			fabric_api_dependency: fabricApiDependency,
-			jade_dependency: jadeDependency
+			jade_dependency: jadeDependency,
+			modmenu_dependency: modmenuDependency
 		)
 	}
 	doLast {

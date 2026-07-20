@@ -8,9 +8,23 @@ under `config/projectex/` and is split by ownership:
 - `client.properties`: local preferences only; it cannot change authoritative values.
 
 Each file declares `schema_version=1` and documents every setting inline. Unknown keys,
-missing keys, unsupported schemas, and invalid values stop loading with the absolute file
-path and exact key. ProjectEX never replaces an invalid file with defaults. `-D` JVM
+unsupported schemas, and invalid values stop loading with the absolute file path and exact
+key. Newly introduced client-only keys are added with documented defaults so an existing
+installation gains safe UI preferences without manual migration. ProjectEX never replaces
+an invalid file with defaults. `-D` JVM
 properties remain explicit boot-time overrides; file reloads do not overwrite them.
+
+## Client settings
+
+| Key | Default | Effect |
+| --- | --- | --- |
+| `projectex.client.showEmcTooltips` | `true` | Shows server-synchronized EMC beneath valued items |
+| `projectex.client.compactEmcNumbers` | `true` | Uses readable suffixes such as `74.4M`; disabling it shows grouped full values |
+| `projectex.client.rememberFavorites` | `true` | Preserves local transmutation favorites between sessions |
+| `projectex.client.focusTransmutationSearch` | `true` | Focuses search when the transmutation screen opens |
+
+These preferences can be edited through the optional Mod Menu settings page. Saving the
+screen writes `client.properties` atomically; Cancel leaves the active values unchanged.
 
 ## Server settings
 

@@ -4,8 +4,9 @@
 2. Update `gradle.properties`, move changelog entries under the version/date, and verify
    Minecraft/Fabric versions in README and metadata.
 3. Run `./gradlew clean releaseAudit verifyNoCompatClient`, followed by
-   `./gradlew -PcompatJade verifyJadeCompatClient`. Inspect the runtime, sources,
-   Javadocs and CycloneDX SBOM. Rehearse upgrade fixtures for any stateful release.
+   `./gradlew -PcompatJade verifyJadeCompatClient` and `./gradlew -PcompatModMenu
+   verifyModMenuCompatClient`. Inspect the runtime, sources, Javadocs and CycloneDX SBOM.
+   Rehearse upgrade fixtures for any stateful release.
 4. Merge the release PR, then create an SSH-signed annotated tag matching
    `v<mod_version>` with a key listed in `.github/release-signers`.
 5. Push the tag. `release.yml` cryptographically rejects unsigned, unauthorized,

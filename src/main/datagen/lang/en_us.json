@@ -337,5 +337,14 @@
   "compat.projectex.jade.automation": "%s tier: %s",
   "compat.projectex.jade.automation.emc_link": "EMC Link",
   "compat.projectex.jade.automation.transmutation_interface": "Transmutation Interface",
-  "tooltip.projectex.emc_value": "EMC: %s"
+  "tooltip.projectex.emc_value": "EMC: %s",
+  "key.categories.projectex.utilities": "ProjectEX",
+  "key.category.projectex.utilities": "ProjectEX",
+  "key.projectex.open_arcane_tablet": "Open Arcane Tablet",
+  "screen.projectex.config.title": "ProjectEX Client Settings",
+  "screen.projectex.config.remember_favorites": "Remember transmutation favorites: %s",
+  "screen.projectex.config.show_emc_tooltips": "Show EMC tooltips: %s",
+  "screen.projectex.config.compact_emc": "Compact large EMC values: %s",
+  "screen.projectex.config.focus_search": "Focus transmutation search on open: %s",
+  "screen.projectex.config.reset": "Reset Defaults"
 }

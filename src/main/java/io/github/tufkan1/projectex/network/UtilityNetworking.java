@@ -1,6 +1,7 @@
 package io.github.tufkan1.projectex.network;
 
 import io.github.tufkan1.projectex.content.ChargeableUtilityItem;
+import io.github.tufkan1.projectex.content.ArcaneTabletItem;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,6 +19,8 @@ public final class UtilityNetworking {
 
     public static void register() {
         PayloadTypeRegistry.serverboundPlay().register(UtilityStatePayload.TYPE, UtilityStatePayload.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(
+            OpenArcaneTabletPayload.TYPE, OpenArcaneTabletPayload.CODEC);
         ServerPlayNetworking.registerGlobalReceiver(UtilityStatePayload.TYPE, (payload, context) -> {
             if (!payload.hasValidShape()) return;
             long tick = context.player().level().getGameTime();
@@ -28,6 +31,12 @@ public final class UtilityNetworking {
             if (stack.getItem() instanceof ChargeableUtilityItem utility) {
                 utility.cycle(stack, context.player(), payload.resolvedAction());
             }
+        });
+        ServerPlayNetworking.registerGlobalReceiver(OpenArcaneTabletPayload.TYPE, (payload, context) -> {
+            long tick = context.player().level().getGameTime();
+            Long previous = LAST_TICK.put(context.player().getUUID(), tick);
+            if (previous != null && previous == tick) return;
+            ArcaneTabletItem.openFromInventory(context.player());
         });
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) ->
             LAST_TICK.remove(handler.player.getUUID()));

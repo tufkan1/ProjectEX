@@ -1,5 +1,6 @@
 package io.github.tufkan1.projectex.client;
 
+import io.github.tufkan1.projectex.config.ProjectEXConfig;
 import java.math.BigInteger;
 
 /** Compact, lossless-input EMC presentation for arbitrarily large server values. */
@@ -18,6 +19,7 @@ public final class EmcNumberFormatter {
     }
 
     public static String format(BigInteger value) {
+        if (!ProjectEXConfig.compactEmcNumbers()) return group(value);
         if (value.abs().compareTo(COMPACT_START) < 0) return group(value);
         BigInteger magnitude = value.abs();
         int group = Math.min((magnitude.toString().length() - 1) / 3, SUFFIXES.length - 1);

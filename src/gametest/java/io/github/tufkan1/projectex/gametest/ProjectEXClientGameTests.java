@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.client.input.KeyEvent;
 import io.github.tufkan1.projectex.network.KnowledgeSharePreviewPayload;
 import java.util.UUID;
@@ -17,6 +18,15 @@ import io.github.tufkan1.projectex.client.screen.AlchemicalBookScreen;
 import io.github.tufkan1.projectex.network.AlchemicalBookViewPayload;
 import java.util.List;
 import java.util.Optional;
+import io.github.tufkan1.projectex.client.screen.AlchemyStorageScreen;
+import io.github.tufkan1.projectex.client.screen.EmcMachineScreen;
+import io.github.tufkan1.projectex.client.screen.MatterFurnaceScreen;
+import io.github.tufkan1.projectex.client.screen.ProjectEXConfigScreen;
+import io.github.tufkan1.projectex.machine.MachineTier;
+import io.github.tufkan1.projectex.menu.AlchemyStorageMenu;
+import io.github.tufkan1.projectex.menu.EmcMachineMenu;
+import io.github.tufkan1.projectex.menu.MatterFurnaceMenu;
+import io.github.tufkan1.projectex.storage.StorageKind;
 
 /** End-to-end client/server smoke test for the learn, burn, and create journey. */
 @SuppressWarnings("UnstableApiUsage")
@@ -66,7 +76,66 @@ public final class ProjectEXClientGameTests implements FabricClientGameTest {
                 assertButtonContaining(client.gui.screen(), "Go back");
                 client.setScreenAndShow(null);
             });
+
+            verifyEverySourcePanelRenders(context);
         }
+    }
+
+    private static void verifyEverySourcePanelRenders(ClientGameTestContext context) {
+        openMachine(context, MachineTier.COLLECTOR_MK1);
+        openMachine(context, MachineTier.COLLECTOR_MK2);
+        openMachine(context, MachineTier.COLLECTOR_MK3);
+        openMachine(context, MachineTier.RELAY_MK1);
+        openMachine(context, MachineTier.RELAY_MK2);
+        openMachine(context, MachineTier.RELAY_MK3);
+        openMachine(context, MachineTier.COLLECTOR_FINAL);
+
+        openStorage(context, StorageKind.ALCHEMICAL_CHEST, false);
+        openStorage(context, StorageKind.ADVANCED_ALCHEMICAL_CHEST, false);
+        openStorage(context, StorageKind.ALCHEMICAL_BAG, false);
+        openStorage(context, StorageKind.CONDENSER_MK1, false);
+        openStorage(context, StorageKind.CONDENSER_MK2, false);
+        openStorage(context, StorageKind.CONDENSER_MK3, false);
+        openStorage(context, StorageKind.CONDENSER_MK3, true);
+
+        openFurnace(context, 0);
+        openFurnace(context, 1);
+        context.runOnClient(client -> client.setScreenAndShow(
+            new ProjectEXConfigScreen(client.gui.screen())));
+        context.waitForScreen(ProjectEXConfigScreen.class);
+        context.runOnClient(client -> client.setScreenAndShow(null));
+    }
+
+    private static void openMachine(ClientGameTestContext context, MachineTier tier) {
+        context.runOnClient(client -> {
+            if (client.player == null) throw new AssertionError("Client player is missing");
+            var inventory = client.player.getInventory();
+            var menu = new EmcMachineMenu(0, inventory, tier.ordinal());
+            client.setScreenAndShow(new EmcMachineScreen(menu, inventory, Component.empty()));
+        });
+        context.waitForScreen(EmcMachineScreen.class);
+    }
+
+    private static void openStorage(ClientGameTestContext context, StorageKind kind,
+                                    boolean outputView) {
+        context.runOnClient(client -> {
+            if (client.player == null) throw new AssertionError("Client player is missing");
+            var inventory = client.player.getInventory();
+            var menu = new AlchemyStorageMenu(0, inventory,
+                AlchemyStorageMenu.openingData(kind, outputView));
+            client.setScreenAndShow(new AlchemyStorageScreen(menu, inventory, Component.empty()));
+        });
+        context.waitForScreen(AlchemyStorageScreen.class);
+    }
+
+    private static void openFurnace(ClientGameTestContext context, int tier) {
+        context.runOnClient(client -> {
+            if (client.player == null) throw new AssertionError("Client player is missing");
+            var inventory = client.player.getInventory();
+            var menu = new MatterFurnaceMenu(0, inventory, tier);
+            client.setScreenAndShow(new MatterFurnaceScreen(menu, inventory, Component.empty()));
+        });
+        context.waitForScreen(MatterFurnaceScreen.class);
     }
 
     private static boolean clientHasDiamond(net.minecraft.client.Minecraft client) {

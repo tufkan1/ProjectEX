@@ -38,9 +38,17 @@ search, paging, and narrated labels/status. Search and page selection remain loc
 server action is confirmed. Knowledge sharing and teleport operations show a preview or an
 explicit destination before committing.
 
-Charged-tool controls use the translated bindings shown in Minecraft's Controls screen; do
-not assume a keyboard layout. ProjectEX conveys state with text and narration in addition to
-color. Reduce rapid repeated input if a server rate-limit message appears.
+The defaults are `V` for charge level, `G` for mode, and `K` to open the first Arcane
+Tablet found in the player's inventory. They are ordinary translated key mappings under
+**Settings > Controls > Key Binds > ProjectEX**, so every binding can be changed or cleared.
+Tablet opening is validated by the server; the shortcut cannot open an item the player no
+longer carries. ProjectEX conveys state with text and narration in addition to color. Reduce
+rapid repeated input if a server rate-limit message appears.
+
+With the optional Mod Menu installed, **Mods > ProjectEX > Configure** exposes local-only
+switches for EMC tooltips, compact EMC numbers, remembered transmutation favorites, and
+automatic search focus. The same values are persisted in `config/projectex/client.properties`;
+they never modify server rules.
 
 ## Machine basics
 

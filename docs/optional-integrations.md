@@ -10,6 +10,7 @@ and cannot calculate authoritative EMC from client resources.
 | --- | --- | --- | --- |
 | No optional mods | 26.2 | ProjectEX CI | Supported and required |
 | Jade | 26.2 | `26.2.9+fabric` | Supported |
+| Mod Menu | 26.2 | `20.0.1` | Supported settings entrypoint |
 | EMI | 26.2 | No upstream Fabric 26.2 artifact | Waiting for upstream |
 | WTHIT | 26.2 | No upstream Fabric 26.2 artifact | Not maintained |
 
@@ -19,10 +20,14 @@ Automation tooltips send only public block family and tier. They never send acco
 knowledge, owner UUID, member list, filters, inventories, condenser target, or signed state.
 Removing Jade requires no ProjectEX configuration or save migration.
 
-The CI client matrix boots ProjectEX both without optional mods and with the pinned Jade jar.
+Mod Menu adds a discoverable ProjectEX settings button for the four client-only preferences.
+The screen uses vanilla widgets and ProjectEX remains fully functional when Mod Menu is not
+installed. Removing it does not delete or reset `client.properties`.
+
+The CI client matrix boots ProjectEX without optional mods and with each pinned integration.
 The Jade profile additionally requires discovery of `ProjectEXJadePlugin` and rejects Jade's
-plugin-error marker. The pin is updated only after both profiles, the dedicated server suite,
-and privacy allowlist tests pass.
+plugin-error marker; the Mod Menu profile rejects entrypoint failures. Pins are updated only
+after the client profiles, dedicated server suite, and privacy allowlist tests pass.
 
 ## EMI status and policy
 

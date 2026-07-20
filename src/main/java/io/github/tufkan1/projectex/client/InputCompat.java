@@ -15,5 +15,6 @@ public final class InputCompat {
 
     static InputConstants.Type keyboardType() { return InputCompatLegacy.keyboardType(); }
     static int keyV() { return InputCompatLegacy.keyV(); }
-    static int keyB() { return InputCompatLegacy.keyB(); }
+    static int keyG() { return InputCompatLegacy.keyG(); }
+    static int keyK() { return InputCompatLegacy.keyK(); }
 }

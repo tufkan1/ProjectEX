@@ -66,6 +66,10 @@ jobs:
         if: github.ref_name != '26.3'
         run: ./gradlew --no-daemon -PcompatJade verifyJadeCompatClient --rerun-tasks
 
+      - name: Verify Mod Menu settings profile
+        if: github.ref_name != '26.3'
+        run: ./gradlew --no-daemon -PcompatModMenu verifyModMenuCompatClient --rerun-tasks
+
       - name: Rebuild jars and prove reproducibility
         shell: bash
         run: |

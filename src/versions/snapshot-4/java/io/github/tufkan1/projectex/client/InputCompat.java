@@ -9,7 +9,8 @@ final class InputCompatLegacy {
 
     static InputConstants.Type keyboardType() { return InputConstants.Type.KEYBOARD; }
     static int keyV() { return InputConstants.KEY_V; }
-    static int keyB() { return InputConstants.KEY_B; }
+    static int keyG() { return InputConstants.KEY_G; }
+    static int keyK() { return InputConstants.KEY_K; }
     static int keyLeft() { return InputConstants.KEY_LEFT; }
     static int keyRight() { return InputConstants.KEY_RIGHT; }
     static int keyUp() { return InputConstants.KEY_UP; }

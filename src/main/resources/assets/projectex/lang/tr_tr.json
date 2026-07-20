@@ -413,5 +413,14 @@
   "item.projectex.soul_stone": "Ruh Taşı",
   "item.projectex.life_stone": "Yaşam Taşı",
   "item.projectex.vitality_stone.result": "%s EMC karşılığında canlılık yenilendi",
-  "tooltip.projectex.emc_value": "EMC: %s"
+  "tooltip.projectex.emc_value": "EMC: %s",
+  "key.categories.projectex.utilities": "ProjectEX",
+  "key.category.projectex.utilities": "ProjectEX",
+  "key.projectex.open_arcane_tablet": "Gizemli Tableti Aç",
+  "screen.projectex.config.title": "ProjectEX İstemci Ayarları",
+  "screen.projectex.config.remember_favorites": "Dönüşüm favorilerini hatırla: %s",
+  "screen.projectex.config.show_emc_tooltips": "EMC araç ipuçlarını göster: %s",
+  "screen.projectex.config.compact_emc": "Büyük EMC değerlerini kısalt: %s",
+  "screen.projectex.config.focus_search": "Açılışta dönüşüm aramasına odaklan: %s",
+  "screen.projectex.config.reset": "Varsayılanlara Dön"
 }

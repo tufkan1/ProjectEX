@@ -35,10 +35,28 @@ public final class ArcaneTabletItem extends Item {
             ));
             return InteractionResult.SUCCESS_SERVER;
         }
+        open(serverPlayer, tablet, () -> serverPlayer.getItemInHand(hand) == tablet
+            && !serverPlayer.hasDisconnected());
+        return InteractionResult.SUCCESS_SERVER;
+    }
+
+    public static boolean openFromInventory(ServerPlayer player) {
+        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
+            ItemStack tablet = player.getInventory().getItem(slot);
+            if (tablet.getItem() instanceof ArcaneTabletItem) {
+                int lockedSlot = slot;
+                open(player, tablet, () -> player.getInventory().getItem(lockedSlot) == tablet
+                    && !player.hasDisconnected());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static void open(ServerPlayer serverPlayer, ItemStack tablet,
+                             java.util.function.BooleanSupplier authorized) {
         ArcaneTabletState state = tablet.getOrDefault(
             ProjectEXComponents.ARCANE_TABLET_STATE, ArcaneTabletState.DEFAULT);
-        java.util.function.BooleanSupplier authorized = () ->
-            serverPlayer.getItemInHand(hand) == tablet && !serverPlayer.hasDisconnected();
         if (state.mode() == ArcaneTabletState.Mode.CRAFTING) {
             serverPlayer.openMenu(new SimpleMenuProvider(
                 (id, inventory, ignored) -> new ArcaneCraftingMenu(id, inventory, authorized),
@@ -50,6 +68,5 @@ public final class ArcaneTabletItem extends Item {
                 Component.translatable("menu.projectex.arcane_tablet.transmutation")
             ));
         }
-        return InteractionResult.SUCCESS_SERVER;
     }
 }

@@ -49,12 +49,21 @@ class ProjectEXConfigTest {
     @Test
     void clientSchemaIsSeparateAndControlsOnlyLocalPreferencePersistence() throws Exception {
         var report = ProjectEXConfig.loadClientForTest(directory);
-        assertEquals(1, report.settingCount());
+        assertEquals(4, report.settingCount());
         assertTrue(ProjectEXConfig.rememberFavorites());
         Path client = directory.resolve("client.properties");
         Files.writeString(client, Files.readString(client).replace(
             "projectex.client.rememberFavorites=true", "projectex.client.rememberFavorites=false"));
         ProjectEXConfig.loadClientForTest(directory);
         assertTrue(!ProjectEXConfig.rememberFavorites());
+
+        ProjectEXConfig.saveClientOptions(new ProjectEXConfig.ClientOptions(
+            true, false, false, false));
+        assertTrue(ProjectEXConfig.rememberFavorites());
+        assertTrue(!ProjectEXConfig.showEmcTooltips());
+        assertTrue(!ProjectEXConfig.compactEmcNumbers());
+        assertTrue(!ProjectEXConfig.focusTransmutationSearch());
+        String saved = Files.readString(client);
+        assertTrue(saved.contains("projectex.client.showEmcTooltips=false"));
     }
 }

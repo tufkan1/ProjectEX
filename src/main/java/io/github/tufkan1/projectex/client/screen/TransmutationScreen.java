@@ -71,7 +71,9 @@ public final class TransmutationScreen extends AbstractContainerScreen<Transmuta
             Component.translatable("screen.projectex.learn"), ignored -> actOnHeld(0)));
         addRenderableWidget(new ActionSlotButton(leftPos + 107, topPos + 97,
             Component.translatable("screen.projectex.burn"), ignored -> actOnHeld(1)));
-        setInitialFocus(search);
+        if (io.github.tufkan1.projectex.config.ProjectEXConfig.focusTransmutationSearch()) {
+            setInitialFocus(search);
+        }
         requestPage(0);
         refreshButtons();
     }

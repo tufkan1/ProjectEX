@@ -41,6 +41,7 @@ import io.github.tufkan1.projectex.network.AlchemicalBookActionPayload;
 import io.github.tufkan1.projectex.network.AlchemicalBookViewPayload;
 import io.github.tufkan1.projectex.config.ProjectEXConfig;
 import io.github.tufkan1.projectex.network.EmcTooltipSyncPayload;
+import io.github.tufkan1.projectex.network.OpenArcaneTabletPayload;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.minecraft.core.registries.BuiltInRegistries;
 
@@ -56,7 +57,10 @@ public final class ProjectEXClient implements ClientModInitializer {
         "key.projectex.utility_charge", InputCompat.keyboardType(), InputCompat.keyV(), UTILITY_CATEGORY
     ));
     private static final KeyMapping MODE_KEY = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-        "key.projectex.utility_mode", InputCompat.keyboardType(), InputCompat.keyB(), UTILITY_CATEGORY
+        "key.projectex.utility_mode", InputCompat.keyboardType(), InputCompat.keyG(), UTILITY_CATEGORY
+    ));
+    private static final KeyMapping OPEN_ARCANE_TABLET_KEY = KeyMappingHelper.registerKeyMapping(new KeyMapping(
+        "key.projectex.open_arcane_tablet", InputCompat.keyboardType(), InputCompat.keyK(), UTILITY_CATEGORY
     ));
     private static UUID pendingKnowledgeConfirmation;
     private static final ClientAlchemicalBookState ALCHEMICAL_BOOK = new ClientAlchemicalBookState();
@@ -99,7 +103,7 @@ public final class ProjectEXClient implements ClientModInitializer {
             }
         });
         ItemTooltipCallback.EVENT.register((stack, context, flag, lines) -> {
-            if (stack.isEmpty()) return;
+            if (stack.isEmpty() || !ProjectEXConfig.showEmcTooltips()) return;
             BuiltInRegistries.ITEM.getResourceKey(stack.getItem()).ifPresent(key ->
                 EMC_TOOLTIPS.find(key.identifier().toString()).ifPresent(value ->
                     lines.add(Component.translatable("tooltip.projectex.emc_value",
@@ -142,6 +146,7 @@ public final class ProjectEXClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (CHARGE_KEY.consumeClick()) sendUtilityState(client, UtilityStateAction.CHARGE);
             while (MODE_KEY.consumeClick()) sendUtilityState(client, UtilityStateAction.MODE);
+            while (OPEN_ARCANE_TABLET_KEY.consumeClick()) openArcaneTablet(client);
         });
     }
 
@@ -270,6 +275,17 @@ public final class ProjectEXClient implements ClientModInitializer {
             } catch (IllegalStateException exception) {
                 ProjectEX.LOGGER.debug("Could not send utility state keybinding", exception);
             }
+        }
+    }
+
+    private static void openArcaneTablet(Minecraft client) {
+        if (client.player == null) return;
+        try {
+            if (ClientPlayNetworking.canSend(OpenArcaneTabletPayload.TYPE)) {
+                ClientPlayNetworking.send(OpenArcaneTabletPayload.INSTANCE);
+            }
+        } catch (IllegalStateException exception) {
+            ProjectEX.LOGGER.debug("Could not send Arcane Tablet keybinding", exception);
         }
     }
 }
