@@ -106,7 +106,8 @@ public final class ProjectEXClient implements ClientModInitializer {
             if (stack.isEmpty()) return;
             BuiltInRegistries.ITEM.getResourceKey(stack.getItem()).ifPresent(key ->
                 EMC_TOOLTIPS.find(key.identifier().toString()).ifPresent(value ->
-                    lines.add(Component.translatable("tooltip.projectex.emc_value", value)
+                    lines.add(Component.translatable("tooltip.projectex.emc_value",
+                            EmcNumberFormatter.format(value))
                         .withStyle(net.minecraft.ChatFormatting.YELLOW))));
         });
         ClientPlayNetworking.registerGlobalReceiver(KnowledgeSharePreviewPayload.TYPE, (payload, context) ->

@@ -6,6 +6,21 @@ the Minecraft version.
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-07-20
+
+### Added
+
+- A runtime coverage gate now fails whenever any registered `projectex:*` item lacks
+  a componentless EMC value after data and recipe mapping.
+- ProjectE-compatible vanilla seed values needed by the complete ProjectEX recipe graph.
+
+### Changed
+
+- Item tooltips compact values of one million or more with readable suffixes, so
+  `74488428` is displayed as `74.4M`; smaller values keep grouped exact digits.
+- Dynamic Klein Star upgrades now participate in EMC recipe mapping across every
+  ProjectE and ProjectExpansion star tier.
+
 ## [1.1.1] - 2026-07-19
 
 ### Fixed

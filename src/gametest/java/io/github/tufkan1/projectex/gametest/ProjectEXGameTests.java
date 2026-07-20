@@ -1808,6 +1808,31 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
     }
 
     @GameTest
+    public void everyRegisteredProjectExItemHasEmc(GameTestHelper helper) {
+        java.util.List<String> missing = BuiltInRegistries.ITEM.entrySet().stream()
+            .filter(entry -> entry.getKey().identifier().getNamespace().equals(ProjectEX.MOD_ID))
+            .map(entry -> entry.getKey().identifier().toString())
+            .filter(id -> ProjectEX.emc().find(EmcKey.parse(id)).isEmpty())
+            .sorted()
+            .toList();
+        helper.assertTrue(missing.isEmpty(), "ProjectEX items missing EMC: " + String.join(", ", missing));
+        EmcValue catalyst = ProjectEX.emc().find(EmcKey.parse("projectex:aeternalis_fuel"))
+            .orElseThrow();
+        EmcValue previous = ProjectEX.emc().find(EmcKey.parse("projectex:klein_star_ein"))
+            .orElseThrow();
+        for (io.github.tufkan1.projectex.content.KleinStarTier tier
+             : io.github.tufkan1.projectex.content.KleinStarTier.values()) {
+            if (tier == io.github.tufkan1.projectex.content.KleinStarTier.EIN) continue;
+            EmcValue value = ProjectEX.emc().find(EmcKey.parse("projectex:" + tier.serializedName()))
+                .orElseThrow();
+            helper.assertValueEqual(value, previous.multiply(4).add(catalyst),
+                tier.serializedName() + " dynamic recipe EMC");
+            previous = value;
+        }
+        helper.succeed();
+    }
+
+    @GameTest
     public void infiniteSteakUsesAtomicEmcOrFinalStarLeaseWithoutShrinking(GameTestHelper helper) {
         for (String recipe : List.of("final_star_shard", "final_star", "infinite_steak")) {
             var key = net.minecraft.resources.ResourceKey.create(

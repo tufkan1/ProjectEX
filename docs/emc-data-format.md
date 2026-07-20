@@ -46,5 +46,17 @@ cycles are fatal.
 If parsing, registry validation, conflict resolution, or alias resolution fails, the
 entire reload fails and the last valid immutable EMC snapshot remains active.
 
+## Bundled coverage
+
+The priority-0 `vanilla_base.json` catalog contains the ProjectE-compatible primitive
+values required to seed Minecraft's recipe graph. ProjectEX then derives the remaining
+values from the recipes loaded by the current 26.2 server, including the dynamic Klein,
+Magnum, Colossal, and Gargantuan Star upgrade chain. Data packs can still replace any
+result through the normal priority rules above.
+
+The dedicated-server suite enumerates every registered `projectex:*` item after mapping
+and fails the build if even one lacks a componentless EMC value. This keeps future items
+from silently shipping without a tooltip or transmutation value.
+
 For a copy-ready pack layout, overrides, removals, safe deployment, and operator conflict
 diagnostics, see the [pack author guide](pack-author-guide.md).

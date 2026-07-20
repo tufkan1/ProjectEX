@@ -1,6 +1,8 @@
 package io.github.tufkan1.projectex.emc.mapping.minecraft;
 
 import io.github.tufkan1.projectex.api.emc.EmcKey;
+import io.github.tufkan1.projectex.content.KleinStarTier;
+import io.github.tufkan1.projectex.content.recipe.KleinStarUpgradeRecipe;
 import io.github.tufkan1.projectex.emc.mapping.EmcIngredient;
 import io.github.tufkan1.projectex.emc.mapping.EmcRecipe;
 import java.util.ArrayList;
@@ -31,11 +33,36 @@ public final class MinecraftRecipeAdapter {
         Map<EmcKey, String> exclusions = new LinkedHashMap<>();
         holders.stream()
             .sorted(java.util.Comparator.comparing(holder -> holder.id().identifier()))
-            .forEach(holder -> adaptOne(holder).ifPresentOrElse(
-                recipes::add,
-                () -> exclusions.put(key(holder.id().identifier()), exclusionReason(holder.value()))
-            ));
+            .forEach(holder -> {
+                if (holder.value() instanceof KleinStarUpgradeRecipe) {
+                    recipes.addAll(kleinStarUpgrades(holder));
+                    return;
+                }
+                adaptOne(holder).ifPresentOrElse(
+                    recipes::add,
+                    () -> exclusions.put(key(holder.id().identifier()), exclusionReason(holder.value()))
+                );
+            });
         return new AdaptationResult(recipes, exclusions);
+    }
+
+    /** The dynamic recipe preserves stored EMC, but its empty-container cost is static. */
+    private static List<EmcRecipe> kleinStarUpgrades(RecipeHolder<?> holder) {
+        ArrayList<EmcRecipe> recipes = new ArrayList<>();
+        for (KleinStarTier source : KleinStarTier.values()) {
+            KleinStarTier target = source.next();
+            if (target == null) continue;
+            recipes.add(new EmcRecipe(
+                new EmcKey(holder.id().identifier().getNamespace(),
+                    holder.id().identifier().getPath() + "/" + target.serializedName()),
+                List.of(
+                    EmcIngredient.of(new EmcKey("projectex", source.serializedName()), 4),
+                    EmcIngredient.of(new EmcKey("projectex", "aeternalis_fuel"), 1)
+                ),
+                new EmcKey("projectex", target.serializedName()), 1, List.of(), false
+            ));
+        }
+        return List.copyOf(recipes);
     }
 
     static Optional<EmcRecipe> adaptOne(RecipeHolder<?> holder) {

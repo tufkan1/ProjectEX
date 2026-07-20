@@ -58,7 +58,7 @@ class EmcDataParserTest {
             }
             EmcDataFile file = EmcDataParser.parse(
                 new InputStreamReader(stream, StandardCharsets.UTF_8));
-            assertEquals(20, file.values().size());
+            assertEquals(67, file.values().size());
             assertEquals(EmcValue.of(8192), file.values().stream()
                 .filter(value -> value.item().toString().equals("minecraft:diamond"))
                 .findFirst().orElseThrow().value());
