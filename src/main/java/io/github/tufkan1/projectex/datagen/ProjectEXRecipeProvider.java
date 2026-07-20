@@ -200,21 +200,19 @@ public final class ProjectEXRecipeProvider extends FabricRecipeProvider {
                     .unlockedBy("has_diamond", has(Items.DIAMOND))
                     .save(output, id("high_covalence_dust"));
 
-                shapeless(RecipeCategory.MISC, ProjectEXItems.ALCHEMICAL_COAL.item())
-                    .requires(Items.COAL, 4)
-                    .requires(Items.REDSTONE)
-                    .unlockedBy("has_redstone", has(Items.REDSTONE))
-                    .save(output, id("alchemical_coal"));
-                shapeless(RecipeCategory.MISC, ProjectEXItems.MOBIUS_FUEL.item())
-                    .requires(ProjectEXItems.ALCHEMICAL_COAL.item(), 4)
-                    .requires(Items.GLOWSTONE_DUST)
-                    .unlockedBy("has_alchemical_coal", has(ProjectEXItems.ALCHEMICAL_COAL.item()))
-                    .save(output, id("mobius_fuel"));
-                shapeless(RecipeCategory.MISC, ProjectEXItems.AETERNALIS_FUEL.item())
-                    .requires(ProjectEXItems.MOBIUS_FUEL.item(), 4)
-                    .requires(Items.DIAMOND)
-                    .unlockedBy("has_mobius_fuel", has(ProjectEXItems.MOBIUS_FUEL.item()))
-                    .save(output, id("aeternalis_fuel"));
+                fuelUpgradeRecipes(Items.COAL, ProjectEXItems.ALCHEMICAL_COAL.item(),
+                    "coal", "alchemical_coal");
+                fuelUpgradeRecipes(ProjectEXItems.ALCHEMICAL_COAL.item(), ProjectEXItems.MOBIUS_FUEL.item(),
+                    "alchemical_coal", "mobius_fuel");
+                fuelUpgradeRecipes(ProjectEXItems.MOBIUS_FUEL.item(), ProjectEXItems.AETERNALIS_FUEL.item(),
+                    "mobius_fuel", "aeternalis_fuel");
+
+                fuelBlockRecipes(ProjectEXItems.ALCHEMICAL_COAL.item(),
+                    ProjectEXBlocks.ALCHEMICAL_COAL_BLOCK, "alchemical_coal");
+                fuelBlockRecipes(ProjectEXItems.MOBIUS_FUEL.item(),
+                    ProjectEXBlocks.MOBIUS_FUEL_BLOCK, "mobius_fuel");
+                fuelBlockRecipes(ProjectEXItems.AETERNALIS_FUEL.item(),
+                    ProjectEXBlocks.AETERNALIS_FUEL_BLOCK, "aeternalis_fuel");
 
                 shaped(RecipeCategory.MISC, ProjectEXItems.DARK_MATTER.item())
                     .define('A', ProjectEXItems.AETERNALIS_FUEL.item())
@@ -491,6 +489,28 @@ public final class ProjectEXRecipeProvider extends FabricRecipeProvider {
                     .unlockedBy("has_matter", has(matter)).save(output, id(name + "_block"));
                 shapeless(RecipeCategory.MISC, matter, 9).requires(block)
                     .unlockedBy("has_block", has(block)).save(output, id(name + "_from_block"));
+            }
+
+            private void fuelBlockRecipes(
+                net.minecraft.world.level.ItemLike fuel, net.minecraft.world.level.ItemLike block, String name
+            ) {
+                shapeless(RecipeCategory.BUILDING_BLOCKS, block).requires(fuel, 9)
+                    .unlockedBy("has_fuel", has(fuel)).save(output, id(name + "_block"));
+                shapeless(RecipeCategory.MISC, fuel, 9).requires(block)
+                    .unlockedBy("has_block", has(block)).save(output, id(name + "_from_block"));
+            }
+
+            private void fuelUpgradeRecipes(
+                net.minecraft.world.level.ItemLike input, net.minecraft.world.level.ItemLike upgraded,
+                String inputName, String upgradedName
+            ) {
+                shapeless(RecipeCategory.MISC, upgraded)
+                    .requires(input, 4)
+                    .unlockedBy("has_" + inputName, has(input)).save(output, id(upgradedName));
+                shapeless(RecipeCategory.MISC, input, 4)
+                    .requires(upgraded)
+                    .unlockedBy("has_" + upgradedName, has(upgraded))
+                    .save(output, id(upgradedName + "_to_" + inputName));
             }
 
             private void matterToolRecipe(

@@ -86,11 +86,11 @@ public final class AlchemyStorageBlock extends BaseEntityBlock {
         ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
         InteractionHand hand, BlockHitResult hit
     ) {
-        if (kind != StorageKind.ADVANCED_ALCHEMICAL_CHEST || !player.isSecondaryUseActive()) {
-            return InteractionResult.PASS;
-        }
         if (!(level.getBlockEntity(pos) instanceof AlchemyStorageBlockEntity storage)) {
             return InteractionResult.PASS;
+        }
+        if (kind != StorageKind.ADVANCED_ALCHEMICAL_CHEST || !player.isSecondaryUseActive()) {
+            return openStorage(level, player, storage);
         }
         if (level.isClientSide()) return InteractionResult.SUCCESS;
         if (!(player instanceof ServerPlayer serverPlayer)) return InteractionResult.FAIL;
@@ -109,11 +109,11 @@ public final class AlchemyStorageBlock extends BaseEntityBlock {
         if (!(level.getBlockEntity(pos) instanceof AlchemyStorageBlockEntity storage)) {
             return InteractionResult.PASS;
         }
-        if (level.isClientSide()) return InteractionResult.SUCCESS;
-        if (!(player instanceof ServerPlayer serverPlayer) || !storage.canUse(player)) {
-            return InteractionResult.FAIL;
-        }
         if (kind == StorageKind.ADVANCED_ALCHEMICAL_CHEST && player.isSecondaryUseActive()) {
+            if (level.isClientSide()) return InteractionResult.SUCCESS;
+            if (!(player instanceof ServerPlayer serverPlayer) || !storage.canUse(player)) {
+                return InteractionResult.FAIL;
+            }
             if (!storage.cycleAdvancedFilter(player)) return InteractionResult.FAIL;
             serverPlayer.sendOverlayMessage(Component.translatable(
                 "block.projectex.advanced_alchemical_chest.filter_mode",
@@ -121,6 +121,16 @@ public final class AlchemyStorageBlock extends BaseEntityBlock {
                     + storage.storageState().advancedConfig().filterMode().name().toLowerCase(java.util.Locale.ROOT))
             ));
             return InteractionResult.SUCCESS_SERVER;
+        }
+        return openStorage(level, player, storage);
+    }
+
+    private static InteractionResult openStorage(
+        Level level, Player player, AlchemyStorageBlockEntity storage
+    ) {
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
+        if (!(player instanceof ServerPlayer serverPlayer) || !storage.canUse(player)) {
+            return InteractionResult.FAIL;
         }
         storage.sortAdvanced();
         serverPlayer.openMenu(storage);

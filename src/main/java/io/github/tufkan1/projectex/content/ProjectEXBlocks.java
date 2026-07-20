@@ -73,6 +73,15 @@ public final class ProjectEXBlocks {
         matterBlock("red_matter_block", SoundType.NETHERITE_BLOCK);
     public static final Block DARK_MATTER_BLOCK = DARK_MATTER_BLOCK_FAMILY.block();
     public static final Block RED_MATTER_BLOCK = RED_MATTER_BLOCK_FAMILY.block();
+    public static final ProjectEXContentRegistry.RegisteredBlock ALCHEMICAL_COAL_BLOCK_FAMILY =
+        fuelBlock("alchemical_coal_block");
+    public static final ProjectEXContentRegistry.RegisteredBlock MOBIUS_FUEL_BLOCK_FAMILY =
+        fuelBlock("mobius_fuel_block");
+    public static final ProjectEXContentRegistry.RegisteredBlock AETERNALIS_FUEL_BLOCK_FAMILY =
+        fuelBlock("aeternalis_fuel_block");
+    public static final Block ALCHEMICAL_COAL_BLOCK = ALCHEMICAL_COAL_BLOCK_FAMILY.block();
+    public static final Block MOBIUS_FUEL_BLOCK = MOBIUS_FUEL_BLOCK_FAMILY.block();
+    public static final Block AETERNALIS_FUEL_BLOCK = AETERNALIS_FUEL_BLOCK_FAMILY.block();
     public static final ProjectEXContentRegistry.RegisteredBlock DARK_MATTER_FURNACE_FAMILY =
         matterFurnace("dark_matter_furnace", io.github.tufkan1.projectex.matter.MatterTier.DARK);
     public static final ProjectEXContentRegistry.RegisteredBlock RED_MATTER_FURNACE_FAMILY =
@@ -121,6 +130,9 @@ public final class ProjectEXBlocks {
                 entries.accept(ADVANCED_ALCHEMICAL_CHEST.asItem());
                 entries.accept(DARK_MATTER_BLOCK.asItem());
                 entries.accept(RED_MATTER_BLOCK.asItem());
+                entries.accept(ALCHEMICAL_COAL_BLOCK.asItem());
+                entries.accept(MOBIUS_FUEL_BLOCK.asItem());
+                entries.accept(AETERNALIS_FUEL_BLOCK.asItem());
                 entries.accept(DARK_MATTER_FURNACE.asItem());
                 entries.accept(RED_MATTER_FURNACE.asItem());
                 EMC_LINKS.values().forEach(entry -> entries.accept(entry.item()));
@@ -175,6 +187,14 @@ public final class ProjectEXBlocks {
             id, Block::new,
             BlockBehaviour.Properties.of().strength(20.0F, 1_200.0F)
                 .requiresCorrectToolForDrops().sound(sound)
+        );
+    }
+
+    private static ProjectEXContentRegistry.RegisteredBlock fuelBlock(String id) {
+        return ProjectEXContentRegistry.registerBlockWithItem(
+            id, Block::new,
+            BlockBehaviour.Properties.of().strength(5.0F, 10.0F)
+                .requiresCorrectToolForDrops().sound(SoundType.STONE)
         );
     }
 

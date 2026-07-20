@@ -8,6 +8,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.world.entity.player.Inventory;
 
 /** Native ProjectE matter-furnace screen and progress artwork. */
@@ -25,6 +26,13 @@ public final class MatterFurnaceScreen extends AbstractContainerScreen<MatterFur
         boolean red = menu.tier() == MatterTier.RED;
         Identifier texture = red ? ProjectEXGuiTextures.RED_FURNACE : ProjectEXGuiTextures.DARK_FURNACE;
         ProjectEXGuiTextures.draw(graphics, texture, leftPos, topPos, imageWidth, imageHeight);
+        int lit = menu.litPixels(14);
+        if (lit > 0) {
+            int hidden = 14 - lit;
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED,
+                Identifier.withDefaultNamespace("container/furnace/lit_progress"),
+                14, 14, 0, hidden, leftPos + (red ? 66 : 49), topPos + 36 + hidden, 14, lit);
+        }
         int progress = menu.cookPixels(24);
         if (progress > 0) ProjectEXGuiTextures.region(graphics, texture,
             leftPos + (red ? 88 : 73), topPos + 34, red ? 210 : 179, 14,

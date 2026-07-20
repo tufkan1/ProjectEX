@@ -25,7 +25,7 @@ public record MatterTier(
     );
     public static final MatterTier RED = new MatterTier(
         "red_matter", 4, 16.0, 4.0, 5, 343, 6, EmcValue.of(32),
-        5, 18, 1, 1, 0.90
+        3, 13, 1, 1, 0.90
     );
     public static final Map<String, MatterTier> DEFAULTS = Map.of(DARK.id, DARK, RED.id, RED);
 

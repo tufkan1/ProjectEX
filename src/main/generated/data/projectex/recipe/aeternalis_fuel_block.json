@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    "projectex:aeternalis_fuel",
+    "projectex:aeternalis_fuel",
+    "projectex:aeternalis_fuel",
+    "projectex:aeternalis_fuel",
+    "projectex:aeternalis_fuel",
+    "projectex:aeternalis_fuel",
+    "projectex:aeternalis_fuel",
+    "projectex:aeternalis_fuel",
+    "projectex:aeternalis_fuel"
+  ],
+  "result": {
+    "id": "projectex:aeternalis_fuel_block"
+  }
+}

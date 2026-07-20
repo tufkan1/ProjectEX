@@ -40,9 +40,10 @@ import net.minecraft.world.level.storage.ValueOutput;
 public final class MatterFurnaceBlockEntity extends BlockEntity implements WorldlyContainer, MenuProvider,
     net.fabricmc.fabric.api.menu.v1.ExtendedMenuProvider<Integer> {
     public static final int INPUT_SLOT = 0;
-    public static final int FUEL_SLOT = 1;
-    public static final int OUTPUT_START = 2;
-    private static final int FORMAT_VERSION = 1;
+    public static final int MAX_INPUT_SLOTS = 13;
+    public static final int FUEL_SLOT = 13;
+    public static final int OUTPUT_START = 14;
+    private static final int FORMAT_VERSION = 2;
 
     private final MatterTier tier;
     private final NonNullList<ItemStack> items;
@@ -67,6 +68,7 @@ public final class MatterFurnaceBlockEntity extends BlockEntity implements World
     public int burnRemaining() { return burnRemaining; }
     public int burnTotal() { return burnTotal; }
     public int cookProgress() { return cookProgress; }
+    public int inputSlotCount() { return tier().furnaceOutputSlots(); }
 
     public static void tickServer(
         net.minecraft.world.level.Level level, BlockPos pos, BlockState state,
@@ -77,6 +79,8 @@ public final class MatterFurnaceBlockEntity extends BlockEntity implements World
 
     private void tick(ServerLevel level) {
         boolean changed = false;
+        changed |= compactRange(0, inputSlotCount());
+        changed |= compactRange(OUTPUT_START, tier().furnaceOutputSlots());
         if (burnRemaining > 0) {
             burnRemaining--;
             changed = true;
@@ -107,6 +111,36 @@ public final class MatterFurnaceBlockEntity extends BlockEntity implements World
             changed = true;
         }
         if (changed) changed();
+    }
+
+    private boolean compactRange(int start, int count) {
+        boolean changed = false;
+        for (int target = start; target < start + count; target++) {
+            ItemStack targetStack = items.get(target);
+            if (!targetStack.isEmpty()) {
+                for (int source = target + 1; source < start + count
+                    && targetStack.getCount() < targetStack.getMaxStackSize(); source++) {
+                    ItemStack sourceStack = items.get(source);
+                    if (!sourceStack.isEmpty() && ItemStack.isSameItemSameComponents(targetStack, sourceStack)) {
+                        int moved = Math.min(sourceStack.getCount(), targetStack.getMaxStackSize() - targetStack.getCount());
+                        targetStack.grow(moved);
+                        sourceStack.shrink(moved);
+                        changed = true;
+                    }
+                }
+            }
+            if (items.get(target).isEmpty()) {
+                for (int source = target + 1; source < start + count; source++) {
+                    if (!items.get(source).isEmpty()) {
+                        items.set(target, items.get(source));
+                        items.set(source, ItemStack.EMPTY);
+                        changed = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return changed;
     }
 
     private boolean ignite(ServerLevel level) {
@@ -179,13 +213,38 @@ public final class MatterFurnaceBlockEntity extends BlockEntity implements World
     }
     @Override protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
-        int version = input.getIntOr("matter_furnace_version", FORMAT_VERSION);
-        if (version == FORMAT_VERSION) {
+        int version = input.getIntOr("matter_furnace_version", 1);
+        if (version >= 1 && version <= FORMAT_VERSION) {
             burnRemaining = Math.max(0, input.getIntOr("burn_remaining", 0));
             burnTotal = Math.max(0, input.getIntOr("burn_total", 0));
             cookProgress = Math.max(0, Math.min(tier().furnaceCookTicks(), input.getIntOr("cook_progress", 0)));
         }
-        ContainerHelper.loadAllItems(input, items);
+        if (version < FORMAT_VERSION) {
+            NonNullList<ItemStack> legacy = NonNullList.withSize(27, ItemStack.EMPTY);
+            ContainerHelper.loadAllItems(input, legacy);
+            items.clear();
+            items.set(INPUT_SLOT, legacy.get(0));
+            items.set(FUEL_SLOT, legacy.get(1));
+            int oldOutputs = tier().id().equals(MatterTier.RED.id()) ? 18 : 9;
+            for (int index = 0; index < oldOutputs; index++) {
+                placeMigrated(legacy.get(2 + index), index < tier().furnaceOutputSlots()
+                    ? OUTPUT_START + index : 1);
+            }
+        } else ContainerHelper.loadAllItems(input, items);
+    }
+
+    private void placeMigrated(ItemStack stack, int preferredSlot) {
+        if (stack.isEmpty()) return;
+        if (items.get(preferredSlot).isEmpty()) {
+            items.set(preferredSlot, stack);
+            return;
+        }
+        for (int slot = 1; slot < MAX_INPUT_SLOTS; slot++) {
+            if (items.get(slot).isEmpty()) {
+                items.set(slot, stack);
+                return;
+            }
+        }
     }
     @Override protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
@@ -221,13 +280,16 @@ public final class MatterFurnaceBlockEntity extends BlockEntity implements World
     @Override public boolean stillValid(Player player) { return Container.stillValidBlockEntity(this, player); }
     @Override public void clearContent() { items.clear(); changed(); }
     @Override public boolean canPlaceItem(int slot, ItemStack stack) {
-        if (slot == INPUT_SLOT) return true;
+        if (slot >= INPUT_SLOT && slot < inputSlotCount()) return level instanceof ServerLevel serverLevel
+            && serverLevel.recipeAccess().getRecipeFor(
+                RecipeType.SMELTING, new SingleRecipeInput(stack), serverLevel
+            ).isPresent();
         if (slot == FUEL_SLOT) return level instanceof ServerLevel serverLevel
             && io.github.tufkan1.projectex.content.FuelCompat.isFuel(serverLevel, stack, this);
         return false;
     }
     @Override public int[] getSlotsForFace(Direction side) {
-        if (side == Direction.UP) return new int[] { INPUT_SLOT };
+        if (side == Direction.UP) return java.util.stream.IntStream.range(INPUT_SLOT, inputSlotCount()).toArray();
         if (side == Direction.DOWN) return java.util.stream.IntStream.concat(
             java.util.stream.IntStream.of(FUEL_SLOT),
             java.util.stream.IntStream.range(OUTPUT_START, OUTPUT_START + tier().furnaceOutputSlots())

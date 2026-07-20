@@ -34,8 +34,11 @@ public final class ProjectEXBlockTagProvider extends FabricTagsProvider.BlockTag
             key(ProjectEXBlocks.COLLECTOR_MK3), key(ProjectEXBlocks.RELAY_MK1),
             key(ProjectEXBlocks.RELAY_MK2), key(ProjectEXBlocks.RELAY_MK3)
             , key(ProjectEXBlocks.CONDENSER_MK1), key(ProjectEXBlocks.CONDENSER_MK2),
-            key(ProjectEXBlocks.ALCHEMICAL_CHEST)
+            key(ProjectEXBlocks.CONDENSER_MK3), key(ProjectEXBlocks.ALCHEMICAL_CHEST),
+            key(ProjectEXBlocks.ADVANCED_ALCHEMICAL_CHEST)
             , key(ProjectEXBlocks.DARK_MATTER_BLOCK), key(ProjectEXBlocks.RED_MATTER_BLOCK),
+            key(ProjectEXBlocks.ALCHEMICAL_COAL_BLOCK), key(ProjectEXBlocks.MOBIUS_FUEL_BLOCK),
+            key(ProjectEXBlocks.AETERNALIS_FUEL_BLOCK),
             key(ProjectEXBlocks.DARK_MATTER_FURNACE), key(ProjectEXBlocks.RED_MATTER_FURNACE)
             , key(ProjectEXBlocks.DARK_MATTER_PEDESTAL)
         );
@@ -47,8 +50,11 @@ public final class ProjectEXBlockTagProvider extends FabricTagsProvider.BlockTag
             key(ProjectEXBlocks.COLLECTOR_MK3), key(ProjectEXBlocks.RELAY_MK1),
             key(ProjectEXBlocks.RELAY_MK2), key(ProjectEXBlocks.RELAY_MK3)
             , key(ProjectEXBlocks.CONDENSER_MK1), key(ProjectEXBlocks.CONDENSER_MK2),
-            key(ProjectEXBlocks.ALCHEMICAL_CHEST)
+            key(ProjectEXBlocks.CONDENSER_MK3), key(ProjectEXBlocks.ALCHEMICAL_CHEST),
+            key(ProjectEXBlocks.ADVANCED_ALCHEMICAL_CHEST)
             , key(ProjectEXBlocks.DARK_MATTER_BLOCK), key(ProjectEXBlocks.RED_MATTER_BLOCK),
+            key(ProjectEXBlocks.ALCHEMICAL_COAL_BLOCK), key(ProjectEXBlocks.MOBIUS_FUEL_BLOCK),
+            key(ProjectEXBlocks.AETERNALIS_FUEL_BLOCK),
             key(ProjectEXBlocks.DARK_MATTER_FURNACE), key(ProjectEXBlocks.RED_MATTER_FURNACE)
             , key(ProjectEXBlocks.DARK_MATTER_PEDESTAL)
         );

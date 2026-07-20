@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 
 /** Accessible furnace menu using each source tier's native output layout and synced progress. */
 public final class MatterFurnaceMenu extends AbstractContainerMenu {
-    private static final int FURNACE_SLOTS = 20;
+    private static final int FURNACE_SLOTS = 27;
     private final Container furnace;
     private final ContainerData data;
     private final int machineSlotCount;
@@ -58,12 +58,17 @@ public final class MatterFurnaceMenu extends AbstractContainerMenu {
         checkContainerDataCount(data, 4);
         furnace.startOpen(inventory.player);
         boolean red = data.get(0) == 1;
-        machineSlotCount = 2 + (red ? 13 : 9);
+        int inputCount = red ? 13 : 9;
+        machineSlotCount = inputCount * 2 + 1;
         int inputX = red ? 65 : 49;
         addSlot(inputSlot(furnace, MatterFurnaceBlockEntity.INPUT_SLOT, inputX, 17));
+        int columns = red ? 3 : 2;
+        for (int column = 0; column < columns; column++) for (int row = 0; row < 4; row++) {
+            int slot = MatterFurnaceBlockEntity.INPUT_SLOT + 1 + column * 4 + row;
+            addSlot(inputSlot(furnace, slot, (red ? 11 : 13) + column * 18, 8 + row * 18));
+        }
         addSlot(inputSlot(furnace, MatterFurnaceBlockEntity.FUEL_SLOT, inputX, 53));
         addOutput(furnace, MatterFurnaceBlockEntity.OUTPUT_START, red ? 125 : 109, 35);
-        int columns = red ? 3 : 2;
         for (int column = 0; column < columns; column++) for (int row = 0; row < 4; row++) {
             int slot = MatterFurnaceBlockEntity.OUTPUT_START + 1 + column * 4 + row;
             addOutput(furnace, slot, (red ? 147 : 131) + column * 18, 8 + row * 18);
@@ -101,11 +106,13 @@ public final class MatterFurnaceMenu extends AbstractContainerMenu {
         ItemStack original = stack.copy();
         if (slotIndex < machineSlotCount) {
             if (!moveItemStackTo(stack, machineSlotCount, slots.size(), true)) return ItemStack.EMPTY;
-        } else if (slots.get(MatterFurnaceBlockEntity.FUEL_SLOT).mayPlace(stack)) {
-            if (!moveItemStackTo(stack, MatterFurnaceBlockEntity.FUEL_SLOT,
-                    MatterFurnaceBlockEntity.FUEL_SLOT + 1, false)) return ItemStack.EMPTY;
-        } else if (!moveItemStackTo(stack, MatterFurnaceBlockEntity.INPUT_SLOT,
-                MatterFurnaceBlockEntity.INPUT_SLOT + 1, false)) return ItemStack.EMPTY;
+        } else {
+            int inputCount = tier() == MatterTier.RED ? 13 : 9;
+            int fuelMenuSlot = inputCount;
+            if (slots.get(fuelMenuSlot).mayPlace(stack)) {
+                if (!moveItemStackTo(stack, fuelMenuSlot, fuelMenuSlot + 1, false)) return ItemStack.EMPTY;
+            } else if (!moveItemStackTo(stack, 0, inputCount, false)) return ItemStack.EMPTY;
+        }
         if (stack.isEmpty()) slot.setByPlayer(ItemStack.EMPTY); else slot.setChanged();
         return original;
     }

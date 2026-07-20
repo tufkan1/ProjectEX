@@ -33,10 +33,13 @@ final class FuelCompatLegacy {
     private FuelCompatLegacy() {
     }
 
-    static void register(Item alchemical, Item mobius, Item aeternalis, List<Item> expansion) {
+    static void register(Item alchemical, Item mobius, Item aeternalis, List<Item> blocks, List<Item> expansion) {
         CUSTOM_DURATIONS.put(alchemical, 1_600);
         CUSTOM_DURATIONS.put(mobius, 6_400);
         CUSTOM_DURATIONS.put(aeternalis, 25_600);
+        CUSTOM_DURATIONS.put(blocks.get(0), 14_400);
+        CUSTOM_DURATIONS.put(blocks.get(1), 57_600);
+        CUSTOM_DURATIONS.put(blocks.get(2), 230_400);
         expansion.forEach(item -> CUSTOM_DURATIONS.put(item, 25_600));
         DefaultItemComponentEvents.MODIFY.register(context -> {
             context.modify(alchemical, builder -> builder.set(DataComponents.COOKING_FUEL,
@@ -44,6 +47,8 @@ final class FuelCompatLegacy {
             context.modify(mobius, builder -> builder.set(DataComponents.COOKING_FUEL,
                 new CookingFuel(MOBIUS, NumberProviders.COOKING_DEFAULT_SPEED_MULTIPLIER)));
             context.modify(aeternalis, builder -> builder.set(DataComponents.COOKING_FUEL,
+                new CookingFuel(AETERNALIS, NumberProviders.COOKING_DEFAULT_SPEED_MULTIPLIER)));
+            context.modify(blocks, (builder, item) -> builder.set(DataComponents.COOKING_FUEL,
                 new CookingFuel(AETERNALIS, NumberProviders.COOKING_DEFAULT_SPEED_MULTIPLIER)));
             context.modify(expansion, (builder, item) -> builder.set(DataComponents.COOKING_FUEL,
                 new CookingFuel(AETERNALIS, NumberProviders.COOKING_DEFAULT_SPEED_MULTIPLIER)));

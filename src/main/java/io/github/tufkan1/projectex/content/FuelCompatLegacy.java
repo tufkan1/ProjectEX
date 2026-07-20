@@ -12,11 +12,14 @@ final class FuelCompatLegacy {
     private FuelCompatLegacy() {
     }
 
-    static void register(Item alchemical, Item mobius, Item aeternalis, List<Item> expansion) {
+    static void register(Item alchemical, Item mobius, Item aeternalis, List<Item> blocks, List<Item> expansion) {
         FuelValueEvents.BUILD.register((builder, context) -> {
             builder.add(alchemical, 1_600);
             builder.add(mobius, 6_400);
             builder.add(aeternalis, 25_600);
+            builder.add(blocks.get(0), 14_400);
+            builder.add(blocks.get(1), 57_600);
+            builder.add(blocks.get(2), 230_400);
             expansion.forEach(item -> builder.add(item, 25_600));
         });
     }

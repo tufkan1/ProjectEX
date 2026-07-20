@@ -4,8 +4,7 @@
     "minecraft:coal",
     "minecraft:coal",
     "minecraft:coal",
-    "minecraft:coal",
-    "minecraft:redstone"
+    "minecraft:coal"
   ],
   "result": {
     "id": "projectex:alchemical_coal"

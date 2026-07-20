@@ -3,6 +3,7 @@ package io.github.tufkan1.projectex.datagen;
 import io.github.tufkan1.projectex.content.ProjectEXContentRegistry;
 import io.github.tufkan1.projectex.content.ProjectEXItems;
 import io.github.tufkan1.projectex.content.ProjectEXTags;
+import io.github.tufkan1.projectex.content.ProjectEXBlocks;
 import java.util.concurrent.CompletableFuture;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;
@@ -32,7 +33,8 @@ public final class ProjectEXItemTagProvider extends FabricTagsProvider.ItemTagsP
         );
         builder(ProjectEXTags.FUELS).add(
             key(ProjectEXItems.ALCHEMICAL_COAL), key(ProjectEXItems.MOBIUS_FUEL),
-            key(ProjectEXItems.AETERNALIS_FUEL)
+            key(ProjectEXItems.AETERNALIS_FUEL), key(ProjectEXBlocks.ALCHEMICAL_COAL_BLOCK.asItem()),
+            key(ProjectEXBlocks.MOBIUS_FUEL_BLOCK.asItem()), key(ProjectEXBlocks.AETERNALIS_FUEL_BLOCK.asItem())
         ).addAll(ProjectEXItems.EXPANSION_FUELS.stream().map(ProjectEXItemTagProvider::key).toList());
         builder(ProjectEXTags.MATTERS).add(
             key(ProjectEXItems.DARK_MATTER), key(ProjectEXItems.RED_MATTER),
@@ -40,6 +42,10 @@ public final class ProjectEXItemTagProvider extends FabricTagsProvider.ItemTagsP
         ).addAll(ProjectEXItems.EXPANSION_MATTERS.stream().map(ProjectEXItemTagProvider::key).toList());
         builder(ProjectEXTags.DARK_MATTER_REPAIR).add(key(ProjectEXItems.DARK_MATTER));
         builder(ProjectEXTags.RED_MATTER_REPAIR).add(key(ProjectEXItems.RED_MATTER));
+    }
+
+    private static ResourceKey<Item> key(Item item) {
+        return net.minecraft.core.registries.BuiltInRegistries.ITEM.getResourceKey(item).orElseThrow();
     }
 
     private static ResourceKey<Item> key(

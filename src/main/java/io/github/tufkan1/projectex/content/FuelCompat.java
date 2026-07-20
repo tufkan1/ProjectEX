@@ -11,8 +11,8 @@ public final class FuelCompat {
     private FuelCompat() {
     }
 
-    static void register(Item alchemical, Item mobius, Item aeternalis, List<Item> expansion) {
-        FuelCompatLegacy.register(alchemical, mobius, aeternalis, expansion);
+    static void register(Item alchemical, Item mobius, Item aeternalis, List<Item> blocks, List<Item> expansion) {
+        FuelCompatLegacy.register(alchemical, mobius, aeternalis, blocks, expansion);
     }
 
     public static int burnDuration(ServerLevel level, ItemStack stack, Container container) {

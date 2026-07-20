@@ -35,9 +35,14 @@ public final class ProjectEXBlockLootProvider extends FabricBlockLootSubProvider
         dropSelf(ProjectEXBlocks.COMPACT_SUN);
         storage(ProjectEXBlocks.CONDENSER_MK1);
         storage(ProjectEXBlocks.CONDENSER_MK2);
+        storage(ProjectEXBlocks.CONDENSER_MK3);
         storage(ProjectEXBlocks.ALCHEMICAL_CHEST);
+        storage(ProjectEXBlocks.ADVANCED_ALCHEMICAL_CHEST);
         dropSelf(ProjectEXBlocks.DARK_MATTER_BLOCK);
         dropSelf(ProjectEXBlocks.RED_MATTER_BLOCK);
+        dropSelf(ProjectEXBlocks.ALCHEMICAL_COAL_BLOCK);
+        dropSelf(ProjectEXBlocks.MOBIUS_FUEL_BLOCK);
+        dropSelf(ProjectEXBlocks.AETERNALIS_FUEL_BLOCK);
         container(ProjectEXBlocks.DARK_MATTER_FURNACE);
         container(ProjectEXBlocks.RED_MATTER_FURNACE);
         ProjectEXBlocks.EMC_LINKS.values().forEach(entry -> automation(entry.block()));

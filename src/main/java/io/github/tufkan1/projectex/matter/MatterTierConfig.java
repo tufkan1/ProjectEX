@@ -22,7 +22,7 @@ public final class MatterTierConfig {
             throw new IllegalArgumentException("Matter tier snapshot must define dark_matter and red_matter");
         }
         copy.forEach((id, tier) -> {
-            if (!id.equals(tier.id()) || tier.furnaceOutputSlots() > 18) {
+            if (!id.equals(tier.id()) || tier.furnaceOutputSlots() > 13) {
                 throw new IllegalArgumentException("Unsafe runtime matter tier: " + id);
             }
         });

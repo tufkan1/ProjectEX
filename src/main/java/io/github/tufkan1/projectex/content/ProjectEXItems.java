@@ -255,6 +255,8 @@ public final class ProjectEXItems {
 
     public static void register() {
         FuelCompat.register(ALCHEMICAL_COAL.item(), MOBIUS_FUEL.item(), AETERNALIS_FUEL.item(),
+            List.of(ProjectEXBlocks.ALCHEMICAL_COAL_BLOCK.asItem(),
+                ProjectEXBlocks.MOBIUS_FUEL_BLOCK.asItem(), ProjectEXBlocks.AETERNALIS_FUEL_BLOCK.asItem()),
             EXPANSION_FUELS.stream().map(ProjectEXContentRegistry.RegisteredItem::item).toList());
         CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.INGREDIENTS)
             .register(entries -> MATERIALS.forEach(entry -> entries.accept(entry.item())));

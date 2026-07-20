@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "priority": 20,
+  "values": [
+    { "item": "projectex:alchemical_coal", "emc": "512" },
+    { "item": "projectex:mobius_fuel", "emc": "2048" },
+    { "item": "projectex:aeternalis_fuel", "emc": "8192" },
+    { "item": "projectex:alchemical_coal_block", "emc": "4608" },
+    { "item": "projectex:mobius_fuel_block", "emc": "18432" },
+    { "item": "projectex:aeternalis_fuel_block", "emc": "73728" }
+  ]
+}

@@ -29,7 +29,7 @@ public final class MatterTierReloadListener extends SimpleReloadListener<Map<Str
                 if (!seen.add(tier.id())) {
                     throw new IllegalArgumentException("Duplicate winning definition for tier: " + tier.id());
                 }
-                if (tier.furnaceOutputSlots() > 18) {
+                if (tier.furnaceOutputSlots() > 13) {
                     throw new IllegalArgumentException("furnace_output_slots exceeds runtime inventory bound");
                 }
                 tiers.put(tier.id(), tier);

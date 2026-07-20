@@ -788,7 +788,7 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
             "Bundled EMC snapshot is incomplete");
         helper.assertValueEqual(MatterTierConfig.snapshot().size(), 2,
             "Bundled matter tier definition count");
-        helper.assertValueEqual(MatterTierConfig.snapshot().get("red_matter").furnaceCookTicks(), 5,
+        helper.assertValueEqual(MatterTierConfig.snapshot().get("red_matter").furnaceCookTicks(), 3,
             "Bundled red matter cook time");
         helper.succeed();
     }
@@ -1259,27 +1259,27 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
     }
 
     @GameTest
-    public void collectorFuelUpgradeSpendsExactEmcDifference(GameTestHelper helper) {
+    public void collectorCoalUpgradeSpendsExactEmcDifference(GameTestHelper helper) {
         BlockPos relative = new BlockPos(15, 1, 0);
         helper.setBlock(relative, ProjectEXBlocks.COLLECTOR_MK3);
         EmcMachineBlockEntity collector = machine(helper, relative);
         collector.setItem(
             EmcMachineBlockEntity.INPUT_SLOT,
-            new ItemStack(ProjectEXItems.ALCHEMICAL_COAL.item())
+            new ItemStack(Items.COAL)
         );
         for (int tick = 0; tick < 100; tick++) {
             EmcMachineBlockEntity.tickServer(
                 helper.getLevel(), helper.absolutePos(relative), collector.getBlockState(), collector
             );
         }
-        EmcValue inputValue = ProjectEX.emc().find(EmcKey.parse("projectex:alchemical_coal"))
+        EmcValue inputValue = ProjectEX.emc().find(EmcKey.parse("minecraft:coal"))
             .orElseThrow();
-        EmcValue outputValue = ProjectEX.emc().find(EmcKey.parse("projectex:mobius_fuel"))
+        EmcValue outputValue = ProjectEX.emc().find(EmcKey.parse("projectex:alchemical_coal"))
             .orElseThrow();
         EmcValue expectedStored = EmcValue.of(4_000).subtract(outputValue.subtract(inputValue));
         helper.assertTrue(collector.getItem(EmcMachineBlockEntity.OUTPUT_SLOT)
-                .is(ProjectEXItems.MOBIUS_FUEL.item()),
-            "Collector did not produce the next fuel tier");
+                .is(ProjectEXItems.ALCHEMICAL_COAL.item()),
+            "Collector did not upgrade coal to alchemical coal");
         helper.assertTrue(collector.machineState().stored().equals(expectedStored),
             "Collector fuel upgrade did not spend the exact EMC difference");
         helper.succeed();
@@ -1725,9 +1725,18 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
             helper.getLevel(), player,
             new BlockHitResult(Vec3.atCenterOf(absolute), Direction.UP, absolute, false)
         );
-        helper.assertTrue(player.containerMenu instanceof MatterFurnaceMenu menu
-                && menu.tier().id().equals(io.github.tufkan1.projectex.matter.MatterTier.RED.id()),
+        helper.assertTrue(player.containerMenu instanceof MatterFurnaceMenu,
             "Red matter furnace did not open its synchronized accessible menu");
+        MatterFurnaceMenu menu = (MatterFurnaceMenu) player.containerMenu;
+        helper.assertTrue(menu.tier().id().equals(io.github.tufkan1.projectex.matter.MatterTier.RED.id()),
+            "Red matter furnace opened with the wrong synchronized tier");
+        helper.assertValueEqual(menu.slots.size(), 63, "Red matter furnace visible menu slot count");
+        for (int slot = 0; slot < 13; slot++) {
+            helper.assertTrue(furnace.canPlaceItem(slot, new ItemStack(Items.RAW_IRON)),
+                "Red matter furnace input slot " + slot + " rejected a smeltable item");
+        }
+        helper.assertTrue(menu.litPixels(14) > 0,
+            "Matter furnace menu did not synchronize its remaining fuel indicator");
         player.closeContainer();
 
         ItemStack drop = net.minecraft.world.level.block.Block.getDrops(
@@ -1755,6 +1764,31 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
     }
 
     @GameTest
+    public void alchemyStorageOpensWhilePlayerHoldsAnItem(GameTestHelper helper) {
+        java.util.List<net.minecraft.world.level.block.Block> blocks = java.util.List.of(
+            ProjectEXBlocks.ALCHEMICAL_CHEST, ProjectEXBlocks.CONDENSER_MK1,
+            ProjectEXBlocks.CONDENSER_MK2, ProjectEXBlocks.CONDENSER_MK3
+        );
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.COAL));
+        for (int index = 0; index < blocks.size(); index++) {
+            BlockPos relative = new BlockPos(20 + index, 1, 6);
+            helper.setBlock(relative, blocks.get(index));
+            AlchemyStorageBlockEntity storage = helper.getBlockEntity(relative, AlchemyStorageBlockEntity.class);
+            storage.claim(player.getUUID());
+            BlockPos absolute = helper.absolutePos(relative);
+            player.setPos(absolute.getX() + 0.5, absolute.getY() + 1.0, absolute.getZ() + 0.5);
+            player.gameMode.useItemOn(player, helper.getLevel(), player.getItemInHand(InteractionHand.MAIN_HAND),
+                InteractionHand.MAIN_HAND,
+                new BlockHitResult(Vec3.atCenterOf(absolute), Direction.UP, absolute, false));
+            helper.assertTrue(player.containerMenu instanceof AlchemyStorageMenu,
+                blocks.get(index).getName().getString() + " did not open while an item was held");
+            player.closeContainer();
+        }
+        helper.succeed();
+    }
+
+    @GameTest
     public void fullMatterFurnaceOutputConsumesNoFuelOrInput(GameTestHelper helper) {
         BlockPos relative = new BlockPos(18, 1, 6);
         helper.setBlock(relative, ProjectEXBlocks.RED_MATTER_FURNACE);
@@ -1762,7 +1796,7 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
         furnace.setItem(MatterFurnaceBlockEntity.INPUT_SLOT, new ItemStack(Items.RAW_IRON, 3));
         furnace.setItem(MatterFurnaceBlockEntity.FUEL_SLOT, new ItemStack(Items.COAL, 2));
         for (int slot = MatterFurnaceBlockEntity.OUTPUT_START;
-             slot < MatterFurnaceBlockEntity.OUTPUT_START + 18; slot++) {
+             slot < MatterFurnaceBlockEntity.OUTPUT_START + 13; slot++) {
             furnace.setItem(slot, new ItemStack(Items.DIAMOND, 64));
         }
 

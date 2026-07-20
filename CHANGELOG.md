@@ -21,6 +21,26 @@ the Minecraft version.
 - Snapshot 4 uses its new cooking-fuel components, input constants, recipe holder sets,
   and loot modifiers while retaining exact machine inventories and ownership on break/place.
 
+## [1.1.3] - 2026-07-20
+
+### Added
+
+- ProjectE Alchemical Coal, Mobius Fuel, and Aeternalis Fuel blocks with original
+  models/textures, reversible compression recipes, exact EMC, loot, tags, and fuel times.
+- Regression coverage for held-item storage opening, the complete red matter furnace
+  slot layout, visible fuel progress, blocked outputs, and coal collector upgrades.
+
+### Fixed
+
+- Red Matter Furnace now exposes all 13 inputs and exactly 13 outputs; legacy 18-output
+  inventories migrate without deleting their five formerly invisible stacks.
+- Matter furnaces stop before consuming fuel or input when every visible output is full,
+  and display the remaining burn flame from synchronized server state.
+- Alchemical Chests and all three Energy Condensers open while the player holds an item.
+- Energy Collectors accept coal and upgrade it through Alchemical Coal, Mobius Fuel,
+  Aeternalis Fuel, and the ProjectExpansion fuel sequence.
+- Condenser MK3 and Advanced Alchemical Chest now have their missing loot and mining data.
+
 ## [1.1.2] - 2026-07-20
 
 ### Added

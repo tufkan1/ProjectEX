@@ -128,6 +128,9 @@ public final class ProjectEXModelProvider implements DataProvider {
         Map.entry("advanced_alchemical_chest", "projectexpansion:item/purple_advanced_alchemical_chest"),
         Map.entry("dark_matter_block", "projecte:block/dark_matter_block"),
         Map.entry("red_matter_block", "projecte:block/red_matter_block"),
+        Map.entry("alchemical_coal_block", "projecte:block/alchemical_coal_block"),
+        Map.entry("mobius_fuel_block", "projecte:block/mobius_fuel_block"),
+        Map.entry("aeternalis_fuel_block", "projecte:block/aeternalis_fuel_block"),
         Map.entry("dark_matter_furnace", "projecte:block/dm_furnace"),
         Map.entry("red_matter_furnace", "projecte:block/rm_furnace"),
         Map.entry("dark_matter_pedestal", "projecte:block/dm_pedestal")

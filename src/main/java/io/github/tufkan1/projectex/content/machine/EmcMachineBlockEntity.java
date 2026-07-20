@@ -60,13 +60,19 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
     private static final int[] INPUT = {INPUT_SLOT};
     private static final int[] OUTPUT = {OUTPUT_SLOT};
     private static final java.util.List<net.minecraft.world.item.Item> FUEL_PROGRESSION =
-        java.util.stream.Stream.concat(
-            java.util.stream.Stream.of(
-                ProjectEXItems.ALCHEMICAL_COAL.item(), ProjectEXItems.MOBIUS_FUEL.item(),
+        java.util.stream.Stream.concat(java.util.stream.Stream.of(
+                net.minecraft.world.item.Items.COAL,
+                ProjectEXItems.ALCHEMICAL_COAL.item(),
+                ProjectEXItems.MOBIUS_FUEL.item(),
                 ProjectEXItems.AETERNALIS_FUEL.item()
-            ),
-            ProjectEXItems.EXPANSION_FUELS.stream().map(ProjectEXContentRegistry.RegisteredItem::item)
-        ).toList();
+            ), ProjectEXItems.EXPANSION_FUELS.stream()
+                .map(ProjectEXContentRegistry.RegisteredItem::item)).toList();
+    private static final java.util.List<net.minecraft.world.item.Item> BLOCK_FUEL_PROGRESSION = java.util.List.of(
+        net.minecraft.world.item.Items.COAL_BLOCK,
+        ProjectEXBlocks.ALCHEMICAL_COAL_BLOCK.asItem(),
+        ProjectEXBlocks.MOBIUS_FUEL_BLOCK.asItem(),
+        ProjectEXBlocks.AETERNALIS_FUEL_BLOCK.asItem()
+    );
 
     private final MachineTier tier;
     private final NonNullList<ItemStack> items = NonNullList.withSize(2, ItemStack.EMPTY);
@@ -441,10 +447,18 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
     }
 
     private static net.minecraft.world.item.Item fuelUpgradeResult(ItemStack input) {
-        for (int index = 0; index < FUEL_PROGRESSION.size() - 1; index++) {
-            if (input.is(FUEL_PROGRESSION.get(index))) {
-                return FUEL_PROGRESSION.get(index + 1);
-            }
+        net.minecraft.world.item.Item result = nextFuel(input, FUEL_PROGRESSION);
+        if (result != null) return result;
+        result = nextFuel(input, BLOCK_FUEL_PROGRESSION);
+        if (result != null) return result;
+        return null;
+    }
+
+    private static net.minecraft.world.item.Item nextFuel(
+        ItemStack input, java.util.List<net.minecraft.world.item.Item> progression
+    ) {
+        for (int index = 0; index < progression.size() - 1; index++) {
+            if (input.is(progression.get(index))) return progression.get(index + 1);
         }
         return null;
     }
