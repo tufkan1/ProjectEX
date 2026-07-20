@@ -93,6 +93,10 @@ public final class EmcMachineBlock extends BaseEntityBlock {
         if (!(level.getBlockEntity(pos) instanceof EmcMachineBlockEntity machine)) {
             return InteractionResult.PASS;
         }
+        if (tier.type() == MachineTier.MachineType.POWER_FLOWER
+            || (tier.type() == MachineTier.MachineType.RELAY && tier.expansionTier().isPresent())) {
+            return InteractionResult.PASS;
+        }
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }

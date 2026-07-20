@@ -70,7 +70,9 @@ public final class AlchemyStorageBlockEntity extends BlockEntity
 
     public StorageKind kind() { return kind; }
 
-    @Override public Integer getScreenOpeningData(ServerPlayer player) { return kind.ordinal(); }
+    @Override public Integer getScreenOpeningData(ServerPlayer player) {
+        return AlchemyStorageMenu.openingData(kind, false);
+    }
     public AlchemyStorageState storageState() { return state; }
 
     public void claim(UUID owner) {
@@ -105,9 +107,12 @@ public final class AlchemyStorageBlockEntity extends BlockEntity
 
         CondenserVariant targetVariant = variant(target);
         List<CondenserTransaction.Input> inputs = new ArrayList<>(kind.inputSlots());
-        for (int slot = kind.inputStart(); slot < kind.outputStart(); slot++) {
+        for (int slot = kind.inputStart(); slot < kind.inputEnd(); slot++) {
             ItemStack stack = items.get(slot);
             EmcValue value = valueOf(stack);
+            if (kind.sharedOutput() && ItemStack.isSameItemSameComponents(stack, target)) {
+                value = EmcValue.ZERO;
+            }
             inputs.add(new CondenserTransaction.Input(
                 variant(stack), value == null ? EmcValue.ZERO : value, stack.getCount()
             ));
@@ -166,7 +171,7 @@ public final class AlchemyStorageBlockEntity extends BlockEntity
 
     private int outputRoom(ItemStack target) {
         int room = 0;
-        for (int slot = kind.outputStart(); slot < items.size(); slot++) {
+        for (int slot = kind.outputStart(); slot < kind.outputEnd(); slot++) {
             ItemStack output = items.get(slot);
             if (output.isEmpty()) room += target.getMaxStackSize();
             else if (ItemStack.isSameItemSameComponents(output, target)) {
@@ -178,7 +183,7 @@ public final class AlchemyStorageBlockEntity extends BlockEntity
 
     private void insertOutput(ItemStack target, int count) {
         int remaining = count;
-        for (int slot = kind.outputStart(); slot < items.size() && remaining > 0; slot++) {
+        for (int slot = kind.outputStart(); slot < kind.outputEnd() && remaining > 0; slot++) {
             ItemStack output = items.get(slot);
             if (!output.isEmpty() && ItemStack.isSameItemSameComponents(output, target)) {
                 int moved = Math.min(remaining, output.getMaxStackSize() - output.getCount());
@@ -186,7 +191,7 @@ public final class AlchemyStorageBlockEntity extends BlockEntity
                 remaining -= moved;
             }
         }
-        for (int slot = kind.outputStart(); slot < items.size() && remaining > 0; slot++) {
+        for (int slot = kind.outputStart(); slot < kind.outputEnd() && remaining > 0; slot++) {
             if (!items.get(slot).isEmpty()) continue;
             int moved = Math.min(remaining, target.getMaxStackSize());
             ItemStack created = target.copy();
@@ -290,14 +295,14 @@ public final class AlchemyStorageBlockEntity extends BlockEntity
         }
         if (!kind.condenser()) return true;
         if (slot == TARGET_SLOT) return valueOf(stack) != null;
-        return slot < kind.outputStart() && valueOf(stack) != null;
+        return slot < kind.inputEnd() && valueOf(stack) != null;
     }
 
     @Override public int[] getSlotsForFace(Direction side) {
         if (!kind.condenser()) return java.util.stream.IntStream.range(0, items.size()).toArray();
         return side.getAxis().isVertical()
-            ? java.util.stream.IntStream.range(kind.outputStart(), items.size()).toArray()
-            : java.util.stream.IntStream.range(kind.inputStart(), kind.outputStart()).toArray();
+            ? java.util.stream.IntStream.range(kind.outputStart(), kind.outputEnd()).toArray()
+            : java.util.stream.IntStream.range(kind.inputStart(), kind.inputEnd()).toArray();
     }
 
     @Override public boolean canPlaceItemThroughFace(int slot, ItemStack stack, Direction side) {

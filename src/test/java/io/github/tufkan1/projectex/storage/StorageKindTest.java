@@ -8,37 +8,27 @@ import org.junit.jupiter.api.Test;
 
 final class StorageKindTest {
     @Test
-    void condenserMk3PagesCoverEverySlotExactlyWithoutExposingTarget() {
-        StorageKind kind = StorageKind.CONDENSER_MK3;
-        boolean[] visited = new boolean[kind.inventorySlots()];
-
-        for (int page = 0; page < kind.pageCount(); page++) {
-            for (int visible = 0; visible < kind.pageSize(); visible++) {
-                int slot = kind.storageSlot(page, visible);
-                if (slot < 0) continue;
-                assertFalse(visited[slot], "physical slot mapped more than once: " + slot);
-                visited[slot] = true;
-            }
-        }
-
-        assertFalse(visited[0], "target template was exposed in a paged inventory");
-        for (int slot = kind.inputStart(); slot < kind.inventorySlots(); slot++) {
-            assertTrue(visited[slot], "physical slot was not reachable: " + slot);
-        }
-        assertEquals(6, kind.pageCount());
-        assertEquals(512, kind.inputBudget());
+    void sourceLayoutsHaveExactCapacitiesWithoutPagination() {
+        assertEquals(92, StorageKind.CONDENSER_MK1.inventorySlots());
+        assertEquals(85, StorageKind.CONDENSER_MK2.inventorySlots());
+        assertEquals(272, StorageKind.CONDENSER_MK3.inventorySlots());
+        assertEquals(104, StorageKind.ALCHEMICAL_CHEST.inventorySlots());
+        assertEquals(104, StorageKind.ADVANCED_ALCHEMICAL_CHEST.inventorySlots());
+        assertEquals(104, StorageKind.ALCHEMICAL_BAG.inventorySlots());
     }
 
     @Test
-    void partialFinalPagesNeverMapBeyondTheInventory() {
+    void condenserRangesAreBoundedAndMk1SharesItsStorageForOutput() {
         for (StorageKind kind : StorageKind.values()) {
-            for (int page = 0; page < kind.pageCount(); page++) {
-                for (int visible = 0; visible < kind.pageSize(); visible++) {
-                    int slot = kind.storageSlot(page, visible);
-                    assertTrue(slot == -1 || slot < kind.inventorySlots());
-                }
-            }
-            assertEquals(-1, kind.storageSlot(kind.pageCount(), 0));
+            assertTrue(kind.inputStart() >= 0);
+            assertTrue(kind.inputEnd() <= kind.inventorySlots());
+            assertTrue(kind.outputStart() >= 0);
+            assertTrue(kind.outputEnd() <= kind.inventorySlots());
         }
+        assertTrue(StorageKind.CONDENSER_MK1.sharedOutput());
+        assertEquals(StorageKind.CONDENSER_MK1.inputStart(),
+            StorageKind.CONDENSER_MK1.outputStart());
+        assertFalse(StorageKind.CONDENSER_MK2.sharedOutput());
+        assertEquals(512, StorageKind.CONDENSER_MK3.inputBudget());
     }
 }

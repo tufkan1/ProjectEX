@@ -5,7 +5,6 @@ import io.github.tufkan1.projectex.client.screen.TransmutationScreen;
 import io.github.tufkan1.projectex.client.screen.EmcMachineScreen;
 import io.github.tufkan1.projectex.client.screen.MatterFurnaceScreen;
 import io.github.tufkan1.projectex.client.screen.AlchemyStorageScreen;
-import io.github.tufkan1.projectex.client.screen.AutomationScreen;
 import io.github.tufkan1.projectex.content.ProjectEXMenus;
 import io.github.tufkan1.projectex.content.ProjectEXBlockEntities;
 import io.github.tufkan1.projectex.client.render.DarkMatterPedestalRenderer;
@@ -74,7 +73,6 @@ public final class ProjectEXClient implements ClientModInitializer {
         MenuScreens.register(ProjectEXMenus.EMC_MACHINE, EmcMachineScreen::new);
         MenuScreens.register(ProjectEXMenus.ALCHEMY_STORAGE, AlchemyStorageScreen::new);
         MenuScreens.register(ProjectEXMenus.MATTER_FURNACE, MatterFurnaceScreen::new);
-        MenuScreens.register(ProjectEXMenus.AUTOMATION, AutomationScreen::new);
         BlockEntityRendererRegistry.register(
             ProjectEXBlockEntities.DARK_MATTER_PEDESTAL, DarkMatterPedestalRenderer::new);
         ClientPlayNetworking.registerGlobalReceiver(AlchemySessionPayload.TYPE, (payload, context) -> {

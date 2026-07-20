@@ -4,7 +4,9 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.tufkan1.projectex.content.storage.AlchemyStorageBlockEntity;
+import io.github.tufkan1.projectex.menu.AlchemyStorageMenu;
 import io.github.tufkan1.projectex.storage.StorageKind;
+import net.fabricmc.fabric.api.menu.v1.ExtendedMenuProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -90,7 +92,7 @@ public final class AlchemyStorageBlock extends BaseEntityBlock {
             return InteractionResult.PASS;
         }
         if (kind != StorageKind.ADVANCED_ALCHEMICAL_CHEST || !player.isSecondaryUseActive()) {
-            return openStorage(level, player, storage);
+            return openStorage(level, player, storage, hit.getDirection());
         }
         if (level.isClientSide()) return InteractionResult.SUCCESS;
         if (!(player instanceof ServerPlayer serverPlayer)) return InteractionResult.FAIL;
@@ -122,18 +124,30 @@ public final class AlchemyStorageBlock extends BaseEntityBlock {
             ));
             return InteractionResult.SUCCESS_SERVER;
         }
-        return openStorage(level, player, storage);
+        return openStorage(level, player, storage, hit.getDirection());
     }
 
     private static InteractionResult openStorage(
-        Level level, Player player, AlchemyStorageBlockEntity storage
+        Level level, Player player, AlchemyStorageBlockEntity storage, Direction hitFace
     ) {
         if (level.isClientSide()) return InteractionResult.SUCCESS;
         if (!(player instanceof ServerPlayer serverPlayer) || !storage.canUse(player)) {
             return InteractionResult.FAIL;
         }
         storage.sortAdvanced();
-        serverPlayer.openMenu(storage);
+        boolean outputView = storage.kind() == StorageKind.CONDENSER_MK3
+            && hitFace == Direction.DOWN;
+        serverPlayer.openMenu(new ExtendedMenuProvider<Integer>() {
+            @Override public Integer getScreenOpeningData(ServerPlayer opener) {
+                return AlchemyStorageMenu.openingData(storage.kind(), outputView);
+            }
+            @Override public Component getDisplayName() { return storage.getDisplayName(); }
+            @Override public net.minecraft.world.inventory.AbstractContainerMenu createMenu(
+                int id, net.minecraft.world.entity.player.Inventory inventory, Player opener
+            ) {
+                return new AlchemyStorageMenu(id, inventory, storage, outputView);
+            }
+        });
         return InteractionResult.SUCCESS_SERVER;
     }
 

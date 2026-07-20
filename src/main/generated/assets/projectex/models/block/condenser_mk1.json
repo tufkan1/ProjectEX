@@ -1,5 +1,5 @@
 {
-  "parent": "projecte:item/condenser_mk1",
+  "parent": "projecte:block/condenser_mk1",
   "textures": {
     "particle": "projecte:block/condenser_mk1"
   }

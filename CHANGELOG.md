@@ -6,8 +6,12 @@ the Minecraft version.
 
 ## [Unreleased]
 
+## [1.1.4] - 2026-07-20
+
 ### Added
 
+- Runtime coverage for every registered block placement, native menu slot counts, and
+  resolvable blockstate/model/texture dependency chains.
 - Dedicated Minecraft 26.3 Snapshot 1-4 build profiles, compatibility shims, runtime
   test coverage, and separately named release artifacts under the `26.3` prerelease.
 - A substantially expanded vanilla EMC seed catalog based on Tekkit Classic and modern
@@ -15,11 +19,26 @@ the Minecraft version.
 
 ### Changed
 
+- Alchemical storage, condensers, collectors, relays, and transmutation now use the
+  original ProjectE/ProjectExpansion panel sizes and slot coordinates without custom
+  access strips or storage pagination.
+- Condenser MK3 opens its 13x7 input panel from five faces and its 20x9 output panel
+  from the bottom face, matching ProjectExpansion.
+- Collector and baseline relay inventories now expose their complete tier-specific
+  source layouts; expansion relays, power flowers, EMC Links, and the Transmutation
+  Interface no longer open management containers that do not exist upstream.
 - Crafted vanilla items continue to derive EMC from loaded recipe ingredients; explicit
   catalog entries are reserved for primitives, uncraftable content, and authoritative
   compatibility overrides.
 - Snapshot 4 uses its new cooking-fuel components, input constants, recipe holder sets,
   and loot modifiers while retaining exact machine inventories and ownership on break/place.
+
+### Fixed
+
+- Placed condenser and alchemical chest models now inherit block models directly instead
+  of traversing item-model parents, preventing broken in-world geometry or missing faces.
+- Condenser and collector target slots behave as non-consuming templates, and machine
+  output slots reject insertion as in the source mods.
 
 ## [1.1.3] - 2026-07-20
 

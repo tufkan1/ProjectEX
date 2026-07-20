@@ -44,7 +44,6 @@ public final class ProjectEXClientGameTests implements FabricClientGameTest {
 
             context.runOnClient(client -> pressButtonContaining(
                 client.gui.screen(), "minecraft:diamond"));
-            context.clickScreenButton("Create");
             context.waitFor(client -> ProjectEXClient.alchemy().snapshot().lastResponseId() >= 2);
             assertSuccessfulBalance(BigInteger.ZERO, "create");
             context.waitFor(ProjectEXClientGameTests::clientHasDiamond);

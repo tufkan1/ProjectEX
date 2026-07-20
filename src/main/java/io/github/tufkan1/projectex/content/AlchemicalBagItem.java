@@ -65,7 +65,7 @@ public final class AlchemicalBagItem extends Item {
         BagContainer contents = new BagContainer(identity, player, savedData, shared);
         serverPlayer.openMenu(new ExtendedMenuProvider<Integer>() {
             @Override public Integer getScreenOpeningData(ServerPlayer player) {
-                return StorageKind.ALCHEMICAL_BAG.ordinal();
+                return AlchemyStorageMenu.openingData(StorageKind.ALCHEMICAL_BAG, false);
             }
             @Override public Component getDisplayName() { return stack.getHoverName(); }
             @Override public AbstractContainerMenu createMenu(int id, Inventory inventory, Player opener) {

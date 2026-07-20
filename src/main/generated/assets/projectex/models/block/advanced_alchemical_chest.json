@@ -1,5 +1,5 @@
 {
-  "parent": "projectexpansion:item/purple_advanced_alchemical_chest",
+  "parent": "projectexpansion:block/advanced_alchemical_chest/purple",
   "textures": {
     "particle": "projectexpansion:block/advanced_alchemical_chest/purple"
   }

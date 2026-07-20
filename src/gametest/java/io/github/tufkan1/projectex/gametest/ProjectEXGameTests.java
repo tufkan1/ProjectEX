@@ -334,11 +334,10 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
         owner.setPos(absolute.getX() + 0.5, absolute.getY() + 1.0, absolute.getZ() + 0.5);
         helper.getBlockState(relative).useWithoutItem(helper.getLevel(), owner,
             new BlockHitResult(Vec3.atCenterOf(absolute), Direction.UP, absolute, false));
-        helper.assertTrue(owner.containerMenu instanceof AutomationMenu,
-            "Transmutation Interface did not open its authorized management menu");
-        helper.assertTrue(owner.containerMenu.clickMenuButton(owner, 0),
-            "Owner could not update public-insert access setting");
-        owner.closeContainer();
+        helper.assertTrue(!(owner.containerMenu instanceof AutomationMenu),
+            "Transmutation Interface opened a non-source management menu");
+        helper.assertTrue(automation.togglePublicInsert(owner),
+            "Owner could not update public-insert access setting through server policy");
         PlayerAlchemySavedData data = PlayerAlchemySavedData.get(helper.getLevel().getServer());
         EmcKey diamond = EmcKey.parse("minecraft:diamond");
         data.update(owner.getUUID(), ignored ->
@@ -1185,12 +1184,12 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
         helper.assertTrue(machine.machineState().access().owner().orElseThrow().equals(owner.getUUID()),
             "Machine did not persist its owner identity");
         EmcMachineMenu menu = (EmcMachineMenu) owner.containerMenu;
-        helper.assertTrue(menu.clickMenuButton(owner, 0)
-                && machine.machineState().redstoneMode() == MachineRedstoneMode.REQUIRE_SIGNAL,
-            "Server menu did not apply the owner redstone control");
-        helper.assertTrue(menu.clickMenuButton(owner, 1)
-                && machine.machineState().access().publicAccess(),
-            "Server menu did not apply the owner access control");
+        helper.assertTrue(!menu.clickMenuButton(owner, 0) && !menu.clickMenuButton(owner, 1),
+            "Source machine menu exposed non-source redstone or public-access controls");
+        helper.assertTrue(machine.setRedstoneMode(MachineRedstoneMode.REQUIRE_SIGNAL,
+                owner.getUUID(), false)
+                && machine.setPublicAccess(true, owner.getUUID(), false),
+            "Owner policy configuration failed outside the source menu");
         owner.closeContainer();
         helper.succeed();
     }
@@ -1225,9 +1224,9 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
         EmcMachineBlockEntity.tickServer(
             helper.getLevel(), helper.absolutePos(relative), relay.getBlockState(), relay
         );
-        helper.assertTrue(stored(relay.getItem(EmcMachineBlockEntity.INPUT_SLOT)).equals(EmcValue.of(936)),
+        helper.assertTrue(stored(relay.getItem(relay.relayBurnStart())).equals(EmcValue.of(936)),
             "Relay input extraction was not exact");
-        helper.assertTrue(stored(relay.getItem(EmcMachineBlockEntity.OUTPUT_SLOT)).equals(EmcValue.of(64)),
+        helper.assertTrue(stored(relay.getItem(EmcMachineBlockEntity.CHARGE_SLOT)).equals(EmcValue.of(64)),
             "Relay output charge was not exact");
         helper.assertTrue(relay.machineState().stored().equals(EmcValue.ZERO),
             "Relay retained duplicated EMC after charging");
@@ -1264,7 +1263,7 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
         helper.setBlock(relative, ProjectEXBlocks.COLLECTOR_MK3);
         EmcMachineBlockEntity collector = machine(helper, relative);
         collector.setItem(
-            EmcMachineBlockEntity.INPUT_SLOT,
+            collector.collectorMainStart(),
             new ItemStack(Items.COAL)
         );
         for (int tick = 0; tick < 100; tick++) {
@@ -1277,7 +1276,7 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
         EmcValue outputValue = ProjectEX.emc().find(EmcKey.parse("projectex:alchemical_coal"))
             .orElseThrow();
         EmcValue expectedStored = EmcValue.of(4_000).subtract(outputValue.subtract(inputValue));
-        helper.assertTrue(collector.getItem(EmcMachineBlockEntity.OUTPUT_SLOT)
+        helper.assertTrue(collector.getItem(collector.collectorResultSlot())
                 .is(ProjectEXItems.ALCHEMICAL_COAL.item()),
             "Collector did not upgrade coal to alchemical coal");
         helper.assertTrue(collector.machineState().stored().equals(expectedStored),
@@ -1316,12 +1315,12 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
                     before.deferredGeneration(), 1,
                     collector.tier().capacity().subtract(before.stored())
                 );
-            collector.setItem(EmcMachineBlockEntity.INPUT_SLOT, new ItemStack(input));
+            collector.setItem(collector.collectorMainStart(), new ItemStack(input));
             EmcMachineBlockEntity.tickServer(
                 helper.getLevel(), helper.absolutePos(relative), collector.getBlockState(), collector
             );
 
-            helper.assertTrue(collector.getItem(EmcMachineBlockEntity.OUTPUT_SLOT).is(expectedOutput),
+            helper.assertTrue(collector.getItem(collector.collectorResultSlot()).is(expectedOutput),
                 "Collector missed expansion fuel boundary " + index);
             EmcValue expectedStored = before.stored().add(generation.produced())
                 .subtract(outputValue.subtract(inputValue));
@@ -1330,7 +1329,7 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
             helper.assertTrue(collector.machineState().deferredGeneration()
                     .equals(generation.deferredNumerator()),
                 "Expansion fuel upgrade changed the fixed-point remainder: " + index);
-            collector.removeItemNoUpdate(EmcMachineBlockEntity.OUTPUT_SLOT);
+            collector.removeItemNoUpdate(collector.collectorResultSlot());
         }
         helper.succeed();
     }
@@ -1340,7 +1339,7 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
         BlockPos relative = new BlockPos(6, 1, 0);
         helper.setBlock(relative, ProjectEXBlocks.COLLECTOR_MK3);
         EmcMachineBlockEntity original = machine(helper, relative);
-        original.setItem(EmcMachineBlockEntity.INPUT_SLOT,
+        original.setItem(original.collectorMainStart(),
             new ItemStack(ProjectEXItems.ALCHEMICAL_COAL.item(), 3));
         EmcMachineBlockEntity.tickServer(
             helper.getLevel(), helper.absolutePos(relative), original.getBlockState(), original
@@ -1360,8 +1359,8 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
             "Machine tier changed across persistence");
         helper.assertTrue(restored.machineState().equals(original.machineState()),
             "Versioned machine state changed across persistence");
-        helper.assertTrue(restored.getItem(EmcMachineBlockEntity.INPUT_SLOT).getCount()
-                == original.getItem(EmcMachineBlockEntity.INPUT_SLOT).getCount(),
+        helper.assertTrue(restored.getItem(restored.collectorMainStart()).getCount()
+                == original.getItem(original.collectorMainStart()).getCount(),
             "Machine inventory changed across persistence");
 
         ItemStack machineDrop = net.minecraft.world.level.block.Block.getDrops(
@@ -1377,8 +1376,8 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
         replaced.applyComponentsFromItemStack(machineDrop);
         helper.assertTrue(replaced.machineState().equals(original.machineState()),
             "Placed machine did not restore exact carried state");
-        helper.assertTrue(replaced.getItem(EmcMachineBlockEntity.INPUT_SLOT).getCount()
-                == original.getItem(EmcMachineBlockEntity.INPUT_SLOT).getCount(),
+        helper.assertTrue(replaced.getItem(replaced.collectorMainStart()).getCount()
+                == original.getItem(original.collectorMainStart()).getCount(),
             "Placed machine did not restore its carried inventory");
         helper.succeed();
     }
@@ -1448,7 +1447,7 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
     @GameTest
     public void fullCondenserOutputConsumesNothing(GameTestHelper helper) {
         BlockPos relative = new BlockPos(21, 1, 0);
-        helper.setBlock(relative, ProjectEXBlocks.CONDENSER_MK1);
+        helper.setBlock(relative, ProjectEXBlocks.CONDENSER_MK2);
         AlchemyStorageBlockEntity condenser = helper.getBlockEntity(relative, AlchemyStorageBlockEntity.class);
         condenser.setItem(0, new ItemStack(Items.DIAMOND));
         condenser.setItem(1, new ItemStack(Items.COAL, 4));
@@ -1489,7 +1488,7 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
     }
 
     @GameTest
-    public void alchemicalChestBreakPlacePreservesOwnerAndAllPages(GameTestHelper helper) {
+    public void alchemicalChestBreakPlacePreservesOwnerAndNativeInventory(GameTestHelper helper) {
         BlockPos relative = new BlockPos(24, 1, 0);
         helper.setBlock(relative, ProjectEXBlocks.ALCHEMICAL_CHEST);
         AlchemyStorageBlockEntity chest = helper.getBlockEntity(relative, AlchemyStorageBlockEntity.class);
@@ -1504,10 +1503,11 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
             new BlockHitResult(Vec3.atCenterOf(absolute), Direction.UP, absolute, false)
         );
         helper.assertTrue(owner.containerMenu instanceof AlchemyStorageMenu,
-            "Alchemical Chest did not open its server-owned paged menu");
+            "Alchemical Chest did not open its server-owned native menu");
         AlchemyStorageMenu chestMenu = (AlchemyStorageMenu) owner.containerMenu;
-        helper.assertTrue(chestMenu.clickMenuButton(owner, 1) && chestMenu.page() == 1,
-            "Alchemical Chest page change was not applied by the server menu");
+        helper.assertTrue(chestMenu.slots.size() == 140
+                && chestMenu.getSlot(103).getItem().is(Items.COAL),
+            "Alchemical Chest did not expose all 104 source slots on one screen");
         owner.closeContainer();
 
         ItemStack drop = net.minecraft.world.level.block.Block.getDrops(
@@ -1519,7 +1519,7 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
         AlchemyStorageBlockEntity restored = helper.getBlockEntity(replacement, AlchemyStorageBlockEntity.class);
         restored.applyComponentsFromItemStack(drop);
         helper.assertTrue(restored.getItem(0).getCount() == 3 && restored.getItem(103).getCount() == 7,
-            "Alchemical Chest lost a paged inventory entry during break/place");
+            "Alchemical Chest lost an inventory entry during break/place");
         helper.assertTrue(restored.storageState().access().owner().orElseThrow().equals(owner.getUUID()),
             "Alchemical Chest lost ownership during break/place");
         helper.succeed();
@@ -1546,8 +1546,8 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
         // component-to-block migration boundary without a client crafting screen.
         upgraded.applyComponentsFromItemStack(carried);
 
-        helper.assertTrue(upgraded.getContainerSize() == 243,
-            "Advanced Alchemical Chest did not expose its bounded 243-slot capacity");
+        helper.assertTrue(upgraded.getContainerSize() == 104,
+            "Advanced Alchemical Chest did not expose its source-compatible 104-slot capacity");
         helper.assertTrue(upgraded.getItem(0).getCount() == 3 && upgraded.getItem(103).getCount() == 7,
             "Advanced Alchemical Chest migration lost a legacy inventory entry");
         helper.assertTrue(upgraded.storageState().access().owner().orElseThrow().equals(owner.getUUID()),
@@ -1578,8 +1578,8 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
             transaction.commit();
         }
         AlchemyStorageMenu menu = new AlchemyStorageMenu(0, owner.getInventory(), upgraded);
-        helper.assertTrue(menu.clickMenuButton(owner, 4) && menu.page() == 4,
-            "Advanced Alchemical Chest fifth server-owned page was unreachable");
+        helper.assertTrue(menu.slots.size() == 140 && menu.getSlot(1).getItem().is(Items.DIAMOND),
+            "Advanced Alchemical Chest did not expose its complete native layout");
         helper.assertTrue(helper.getLevel().getServer().getRecipeManager().byKey(
             net.minecraft.resources.ResourceKey.create(
                 net.minecraft.core.registries.Registries.RECIPE,
@@ -1600,9 +1600,7 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
             "Alchemical Bag did not open its server-owned menu");
         AlchemyStorageMenu first = (AlchemyStorageMenu) player.containerMenu;
         first.getSlot(1).set(new ItemStack(Items.DIAMOND, 5));
-        helper.assertTrue(first.clickMenuButton(player, 1) && first.page() == 1,
-            "Alchemical Bag page change was not server-owned");
-        first.getSlot(1).set(new ItemStack(Items.COAL, 9));
+        first.getSlot(103).set(new ItemStack(Items.COAL, 9));
         BagItemState identity = original.get(ProjectEXComponents.BAG_IDENTITY);
         helper.assertTrue(identity != null, "Bag did not acquire a persistent UUID");
         ItemStack copiedIdentity = original.copy();
@@ -1614,10 +1612,9 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
         helper.assertTrue(mirrored.getSlot(1).getItem().is(Items.DIAMOND)
                 && mirrored.getSlot(1).getItem().getCount() == 5,
             "Copied bag identity created a duplicating second inventory instead of a mirror");
-        helper.assertTrue(mirrored.clickMenuButton(player, 1)
-                && mirrored.getSlot(1).getItem().is(Items.COAL)
-                && mirrored.getSlot(1).getItem().getCount() == 9,
-            "Copied bag identity did not mirror its second inventory page");
+        helper.assertTrue(mirrored.getSlot(103).getItem().is(Items.COAL)
+                && mirrored.getSlot(103).getItem().getCount() == 9,
+            "Copied bag identity did not mirror its last native inventory slot");
         helper.assertTrue(!mirrored.getSlot(2).mayPlace(new ItemStack(bagItem)),
             "Portable bag nesting was accepted");
         player.closeContainer();
@@ -1937,6 +1934,68 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
         var capability = FinalStarAccess.find(player).orElseThrow();
         helper.assertTrue(capability.slot() == FinalStarSlot.INVENTORY && !capability.ready(),
             "Final Star inventory lease did not expose or claim its shared cooldown");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void everyRegisteredBlockPlacesWithAValidWorldStateAndBlockEntity(GameTestHelper helper) {
+        BlockPos position = new BlockPos(1, 1, 1);
+        BuiltInRegistries.BLOCK.entrySet().stream()
+            .filter(entry -> entry.getKey().identifier().getNamespace().equals(ProjectEX.MOD_ID))
+            .forEach(entry -> {
+                net.minecraft.world.level.block.Block block = entry.getValue();
+                helper.setBlock(position, block);
+                helper.assertTrue(helper.getBlockState(position).is(block),
+                    "Placed block state changed for " + entry.getKey().identifier());
+                if (block instanceof net.minecraft.world.level.block.EntityBlock) {
+                    helper.assertTrue(helper.getLevel().getBlockEntity(helper.absolutePos(position)) != null,
+                        "Placed block entity is missing for " + entry.getKey().identifier());
+                }
+                helper.setBlock(position, Blocks.AIR);
+            });
+        helper.succeed();
+    }
+
+    @GameTest
+    public void sourceMenusExposeEveryNativeSlotWithoutSyntheticPages(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        java.util.Map<net.minecraft.world.level.block.Block, Integer> storageSlots = java.util.Map.of(
+            ProjectEXBlocks.ALCHEMICAL_CHEST, 140,
+            ProjectEXBlocks.ADVANCED_ALCHEMICAL_CHEST, 140,
+            ProjectEXBlocks.CONDENSER_MK1, 128,
+            ProjectEXBlocks.CONDENSER_MK2, 121
+        );
+        int offset = 0;
+        for (var entry : storageSlots.entrySet()) {
+            BlockPos position = new BlockPos(2 + offset++, 1, 1);
+            helper.setBlock(position, entry.getKey());
+            AlchemyStorageBlockEntity storage = helper.getBlockEntity(position, AlchemyStorageBlockEntity.class);
+            AlchemyStorageMenu menu = new AlchemyStorageMenu(0, player.getInventory(), storage);
+            helper.assertValueEqual(menu.slots.size(), entry.getValue(),
+                entry.getKey().getName().getString() + " native menu slot count");
+        }
+
+        BlockPos mk3Position = new BlockPos(7, 1, 1);
+        helper.setBlock(mk3Position, ProjectEXBlocks.CONDENSER_MK3);
+        AlchemyStorageBlockEntity mk3 = helper.getBlockEntity(mk3Position, AlchemyStorageBlockEntity.class);
+        helper.assertValueEqual(new AlchemyStorageMenu(0, player.getInventory(), mk3, false).slots.size(),
+            128, "Condenser MK3 input menu slot count");
+        helper.assertValueEqual(new AlchemyStorageMenu(0, player.getInventory(), mk3, true).slots.size(),
+            216, "Condenser MK3 output menu slot count");
+
+        java.util.Map<net.minecraft.world.level.block.Block, Integer> machineSlots = java.util.Map.of(
+            ProjectEXBlocks.COLLECTOR_MK1, 47, ProjectEXBlocks.COLLECTOR_MK2, 51,
+            ProjectEXBlocks.COLLECTOR_MK3, 55, ProjectEXBlocks.RELAY_MK1, 44,
+            ProjectEXBlocks.RELAY_MK2, 50, ProjectEXBlocks.RELAY_MK3, 58
+        );
+        for (var entry : machineSlots.entrySet()) {
+            BlockPos position = new BlockPos(8 + offset++, 1, 1);
+            helper.setBlock(position, entry.getKey());
+            EmcMachineBlockEntity machine = helper.getBlockEntity(position, EmcMachineBlockEntity.class);
+            EmcMachineMenu menu = new EmcMachineMenu(0, player.getInventory(), machine);
+            helper.assertValueEqual(menu.slots.size(), entry.getValue(),
+                entry.getKey().getName().getString() + " native menu slot count");
+        }
         helper.succeed();
     }
 

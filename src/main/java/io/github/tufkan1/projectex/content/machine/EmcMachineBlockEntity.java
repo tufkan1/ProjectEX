@@ -55,10 +55,7 @@ import net.minecraft.world.item.component.ItemContainerContents;
 /** Versioned, sided and server-authoritative collector/relay block entity. */
 public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyContainer, MenuProvider,
     net.fabricmc.fabric.api.menu.v1.ExtendedMenuProvider<Integer> {
-    public static final int INPUT_SLOT = 0;
-    public static final int OUTPUT_SLOT = 1;
-    private static final int[] INPUT = {INPUT_SLOT};
-    private static final int[] OUTPUT = {OUTPUT_SLOT};
+    public static final int CHARGE_SLOT = 0;
     private static final java.util.List<net.minecraft.world.item.Item> FUEL_PROGRESSION =
         java.util.stream.Stream.concat(java.util.stream.Stream.of(
                 net.minecraft.world.item.Items.COAL,
@@ -75,7 +72,7 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
     );
 
     private final MachineTier tier;
-    private final NonNullList<ItemStack> items = NonNullList.withSize(2, ItemStack.EMPTY);
+    private final NonNullList<ItemStack> items;
     private MachineState state;
 
     public EmcMachineBlockEntity(BlockPos pos, BlockState blockState) {
@@ -84,6 +81,7 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
             throw new IllegalArgumentException("EMC machine block entity requires an EMC machine block");
         }
         tier = machineBlock.tier();
+        items = NonNullList.withSize(machineSlots(tier), ItemStack.EMPTY);
         state = MachineState.empty(tier);
     }
 
@@ -102,11 +100,16 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
             machine.generate();
             machine.upgradeFuel();
         } else if (machine.tier.type() == MachineTier.MachineType.RELAY) {
-            machine.consumeRelayInput(serverLevel);
+            if (machine.tier.expansionTier().isPresent()) machine.generate();
+            else machine.consumeRelayInput(serverLevel);
         } else {
             machine.generate();
         }
-        machine.chargeOutput(serverLevel);
+        if (machine.tier.type() != MachineTier.MachineType.POWER_FLOWER
+            && !(machine.tier.type() == MachineTier.MachineType.RELAY
+                && machine.tier.expansionTier().isPresent())) {
+            machine.chargeOutput(serverLevel);
+        }
         machine.transferToNeighbors(serverLevel);
         if (!machine.state.stored().equals(before)) {
             machine.setChangedAndNotify();
@@ -115,6 +118,24 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
 
     public MachineTier tier() {
         return tier;
+    }
+
+    public int collectorMainStart() { return 1; }
+    public int collectorMainCount() { return 4 * (Math.min(3, tier.level()) + 1); }
+    public int collectorResultSlot() { return collectorMainStart() + collectorMainCount(); }
+    public int collectorLockSlot() { return collectorResultSlot() + 1; }
+    public int relayBurnStart() { return 1; }
+    public int relayBurnCount() {
+        return switch (Math.min(3, tier.level())) { case 1 -> 7; case 2 -> 13; default -> 21; };
+    }
+
+    public static int machineSlots(MachineTier tier) {
+        int level = Math.min(3, tier.level());
+        return switch (tier.type()) {
+            case COLLECTOR -> 3 + 4 * (level + 1);
+            case RELAY -> 2 + switch (level) { case 1 -> 6; case 2 -> 12; default -> 20; };
+            case POWER_FLOWER -> 2;
+        };
     }
 
     @Override public Integer getScreenOpeningData(net.minecraft.server.level.ServerPlayer player) {
@@ -200,11 +221,13 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
     }
 
     private void upgradeFuel() {
-        ItemStack input = items.get(INPUT_SLOT);
-        if (input.isEmpty()) {
-            return;
+        int inputSlot = -1;
+        for (int slot = collectorMainStart(); slot < collectorResultSlot(); slot++) {
+            if (fuelUpgradeResult(items.get(slot)) != null) { inputSlot = slot; break; }
         }
-        ItemStack output = items.get(OUTPUT_SLOT);
+        if (inputSlot < 0) return;
+        ItemStack input = items.get(inputSlot);
+        ItemStack output = items.get(collectorResultSlot());
         net.minecraft.world.item.Item resultItem = fuelUpgradeResult(input);
         if (resultItem == null) {
             return;
@@ -229,7 +252,7 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
         }
         input.shrink(1);
         if (output.isEmpty()) {
-            items.set(OUTPUT_SLOT, new ItemStack(resultItem));
+            items.set(collectorResultSlot(), new ItemStack(resultItem));
         } else {
             output.grow(1);
         }
@@ -237,30 +260,32 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
     }
 
     private void consumeRelayInput(ServerLevel level) {
-        ItemStack input = items.get(INPUT_SLOT);
-        if (input.isEmpty()) {
-            return;
+        ItemStack input = ItemStack.EMPTY;
+        for (int slot = relayBurnStart(); slot < relayBurnStart() + relayBurnCount(); slot++) {
+            if (!items.get(slot).isEmpty()) { input = items.get(slot); break; }
         }
+        if (input.isEmpty()) return;
+        final ItemStack burnInput = input;
         MachineBuffer buffer = buffer();
         EmcValue room = buffer.capacity().subtract(buffer.stored())
             .min(MachineRuntimeConfig.transferLimit(tier));
         if (room.equals(EmcValue.ZERO)) {
             return;
         }
-        EmcStorageApi.find(input, EmcStorageContext.automation(level)).ifPresentOrElse(storage -> {
+        EmcStorageApi.find(burnInput, EmcStorageContext.automation(level)).ifPresentOrElse(storage -> {
             var extracted = storage.extract(room, EmcTransferMode.EXECUTE);
             buffer.insert(extracted.transferred());
-        }, () -> valueOf(input).ifPresent(value -> {
+        }, () -> valueOf(burnInput).ifPresent(value -> {
             if (value.compareTo(room) <= 0) {
                 buffer.insert(value);
-                input.shrink(1);
+                burnInput.shrink(1);
             }
         }));
         replaceStored(buffer.stored(), state.deferredGeneration());
     }
 
     private void chargeOutput(ServerLevel level) {
-        ItemStack output = items.get(OUTPUT_SLOT);
+        ItemStack output = items.get(CHARGE_SLOT);
         if (output.isEmpty() || state.stored().equals(EmcValue.ZERO)) {
             return;
         }
@@ -431,12 +456,14 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
 
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
-        if (slot == OUTPUT_SLOT) {
-            return exposesEmcStorage(stack);
-        }
         return switch (tier.type()) {
-            case COLLECTOR -> fuelUpgradeResult(stack) != null;
-            case RELAY -> exposesEmcStorage(stack) || valueOf(stack).isPresent();
+            case COLLECTOR -> slot == CHARGE_SLOT ? exposesEmcStorage(stack)
+                : slot >= collectorMainStart() && slot < collectorResultSlot()
+                    && fuelUpgradeResult(stack) != null;
+            case RELAY -> tier.expansionTier().isPresent() ? false
+                : slot == CHARGE_SLOT ? exposesEmcStorage(stack)
+                : slot >= relayBurnStart() && slot < relayBurnStart() + relayBurnCount()
+                    && (exposesEmcStorage(stack) || valueOf(stack).isPresent());
             case POWER_FLOWER -> false;
         };
     }
@@ -454,6 +481,12 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
         return null;
     }
 
+    public boolean canSetCollectorTarget(ItemStack stack) {
+        return tier.type() == MachineTier.MachineType.COLLECTOR && (
+            FUEL_PROGRESSION.stream().anyMatch(stack::is)
+                || BLOCK_FUEL_PROGRESSION.stream().anyMatch(stack::is));
+    }
+
     private static net.minecraft.world.item.Item nextFuel(
         ItemStack input, java.util.List<net.minecraft.world.item.Item> progression
     ) {
@@ -465,7 +498,16 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
 
     @Override
     public int[] getSlotsForFace(Direction side) {
-        return side.getAxis().isVertical() ? OUTPUT : INPUT;
+        if (tier.type() == MachineTier.MachineType.POWER_FLOWER
+            || (tier.type() == MachineTier.MachineType.RELAY && tier.expansionTier().isPresent())) {
+            return new int[0];
+        }
+        if (side.getAxis().isVertical()) return new int[] {CHARGE_SLOT};
+        int start = tier.type() == MachineTier.MachineType.COLLECTOR
+            ? collectorMainStart() : relayBurnStart();
+        int end = tier.type() == MachineTier.MachineType.COLLECTOR
+            ? collectorResultSlot() : relayBurnStart() + relayBurnCount();
+        return java.util.stream.IntStream.range(start, end).toArray();
     }
 
     @Override
@@ -476,6 +518,6 @@ public final class EmcMachineBlockEntity extends BlockEntity implements WorldlyC
 
     @Override
     public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction side) {
-        return slot == OUTPUT_SLOT && side.getAxis().isVertical();
+        return slot == CHARGE_SLOT && side.getAxis().isVertical();
     }
 }

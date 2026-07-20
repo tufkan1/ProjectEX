@@ -4,41 +4,19 @@ import io.github.tufkan1.projectex.machine.MachineTier;
 import io.github.tufkan1.projectex.menu.EmcMachineMenu;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
-/** Native-sized ProjectE collector/relay UI with ProjectEX controls outside the source panel. */
+/** Native-sized ProjectE collector/relay UI without non-source overlays. */
 @Environment(EnvType.CLIENT)
 public final class EmcMachineScreen extends AbstractContainerScreen<EmcMachineMenu> {
-    private static final int CONTROL_HEIGHT = 22;
-    private Button redstone;
-    private Button access;
-
     public EmcMachineScreen(EmcMachineMenu menu, Inventory inventory, Component title) {
-        super(menu, inventory, title, sourceWidth(menu.tier()), sourceHeight(menu.tier()) + CONTROL_HEIGHT);
+        super(menu, inventory, title, sourceWidth(menu.tier()), sourceHeight(menu.tier()));
         titleLabelX = -10_000;
         inventoryLabelY = -10_000;
-    }
-
-    @Override protected void init() {
-        super.init();
-        int y = topPos + sourceHeight(menu.tier()) + 3;
-        int half = (imageWidth - 18) / 2;
-        redstone = addRenderableWidget(Button.builder(redstoneLabel(), ignored -> sendButton(0))
-            .bounds(leftPos + 6, y, half, 16).build());
-        access = addRenderableWidget(Button.builder(accessLabel(), ignored -> sendButton(1))
-            .bounds(leftPos + 12 + half, y, half, 16).build());
-    }
-
-    @Override protected void containerTick() {
-        super.containerTick();
-        redstone.setMessage(redstoneLabel());
-        access.setMessage(accessLabel());
     }
 
     @Override public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY,
@@ -51,9 +29,6 @@ public final class EmcMachineScreen extends AbstractContainerScreen<EmcMachineMe
         int height = sourceHeight(tier);
         ProjectEXGuiTextures.draw(graphics, texture, leftPos, topPos, width, height);
         drawEmc(graphics, texture, tier);
-        graphics.fill(leftPos, topPos + height, leftPos + imageWidth,
-            topPos + height + CONTROL_HEIGHT, 0xE0181B20);
-        graphics.outline(leftPos, topPos + height, imageWidth, CONTROL_HEIGHT, 0xFF777777);
     }
 
     private void drawEmc(GuiGraphicsExtractor graphics, Identifier texture, MachineTier tier) {
@@ -88,22 +63,6 @@ public final class EmcMachineScreen extends AbstractContainerScreen<EmcMachineMe
     @Override public Component getNarrationMessage() {
         return Component.translatable("screen.projectex.machine_narration", title,
             menu.storedEmc(), menu.capacity());
-    }
-
-    private void sendButton(int id) {
-        if (Minecraft.getInstance().gameMode != null) {
-            Minecraft.getInstance().gameMode.handleInventoryButtonClick(menu.containerId, id);
-        }
-    }
-
-    private Component redstoneLabel() {
-        return Component.translatable("screen.projectex.machine_redstone."
-            + menu.redstoneMode().name().toLowerCase(java.util.Locale.ROOT));
-    }
-
-    private Component accessLabel() {
-        return Component.translatable(menu.publicAccess()
-            ? "screen.projectex.machine_access.public" : "screen.projectex.machine_access.private");
     }
 
     private static boolean relay(MachineTier tier) { return tier.type() == MachineTier.MachineType.RELAY; }

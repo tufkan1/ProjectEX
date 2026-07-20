@@ -71,7 +71,7 @@ public final class AutomationBlock extends BaseEntityBlock {
         if (!(player instanceof ServerPlayer serverPlayer) || !automation.canUse(player)) {
             return InteractionResult.FAIL;
         }
-        serverPlayer.openMenu(automation);
+        serverPlayer.sendOverlayMessage(automation.getDisplayName());
         return InteractionResult.SUCCESS_SERVER;
     }
 }
