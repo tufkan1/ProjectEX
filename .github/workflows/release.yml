@@ -103,10 +103,39 @@ jobs:
           subject-path: dist/*.jar
 
       - name: Attest runtime SBOM
+        if: github.ref_name != '26.3'
         uses: actions/attest@v4
         with:
           subject-path: dist/*.jar
           sbom-path: dist/projectex-fabric.cdx.json
+
+      - name: Attest Snapshot 1 runtime SBOM
+        if: github.ref_name == '26.3'
+        uses: actions/attest@v4
+        with:
+          subject-path: dist/projectex-fabric-26.3-snapshot-1-*.jar
+          sbom-path: dist/projectex-fabric-26.3-snapshot-1.cdx.json
+
+      - name: Attest Snapshot 2 runtime SBOM
+        if: github.ref_name == '26.3'
+        uses: actions/attest@v4
+        with:
+          subject-path: dist/projectex-fabric-26.3-snapshot-2-*.jar
+          sbom-path: dist/projectex-fabric-26.3-snapshot-2.cdx.json
+
+      - name: Attest Snapshot 3 runtime SBOM
+        if: github.ref_name == '26.3'
+        uses: actions/attest@v4
+        with:
+          subject-path: dist/projectex-fabric-26.3-snapshot-3-*.jar
+          sbom-path: dist/projectex-fabric-26.3-snapshot-3.cdx.json
+
+      - name: Attest Snapshot 4 runtime SBOM
+        if: github.ref_name == '26.3'
+        uses: actions/attest@v4
+        with:
+          subject-path: dist/projectex-fabric-26.3-snapshot-4-*.jar
+          sbom-path: dist/projectex-fabric-26.3-snapshot-4.cdx.json
 
       - name: Publish immutable GitHub release assets
         env:
