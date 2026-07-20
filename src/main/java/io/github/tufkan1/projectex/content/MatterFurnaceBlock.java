@@ -22,7 +22,7 @@ import net.minecraft.world.phys.BlockHitResult;
 public final class MatterFurnaceBlock extends BaseEntityBlock {
     public static final MapCodec<MatterFurnaceBlock> CODEC = RecordCodecBuilder.mapCodec(instance ->
         instance.group(
-            propertiesCodec(),
+            BlockCodecCompat.compatPropertiesCodec(),
             Codec.STRING.xmap(MatterFurnaceBlock::tier, MatterTier::id)
                 .fieldOf("tier").forGetter(MatterFurnaceBlock::tier)
         ).apply(instance, MatterFurnaceBlock::new)
@@ -43,7 +43,7 @@ public final class MatterFurnaceBlock extends BaseEntityBlock {
         return tier;
     }
 
-    @Override protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
+    protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
 
     @Override public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new MatterFurnaceBlockEntity(pos, state);

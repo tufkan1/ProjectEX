@@ -2,7 +2,7 @@ name: Release
 
 on:
   push:
-    tags: ["v*"]
+    tags: ["v*", "26.3"]
 
 permissions:
   contents: write
@@ -30,6 +30,7 @@ jobs:
         shell: bash
         run: |
           expected="v$(sed -n 's/^mod_version=//p' gradle.properties)"
+          [[ "${GITHUB_REF_NAME}" == "26.3" ]] && expected="26.3"
           test "${GITHUB_REF_NAME}" = "${expected}" || {
             echo "Tag ${GITHUB_REF_NAME} does not match ${expected}" >&2
             exit 1
@@ -44,31 +45,53 @@ jobs:
           git verify-tag "${GITHUB_REF_NAME}"
 
       - name: Build and run release audits
-        run: ./gradlew --no-daemon clean releaseAudit verifyNoCompatClient
-
-      - name: Verify Jade compatibility profile
-        run: ./gradlew --no-daemon -PcompatJade verifyJadeCompatClient --rerun-tasks
-
-      - name: Stage release artifacts
         shell: bash
         run: |
           mkdir -p dist first-build
-          cp build/libs/*.jar first-build/
-          cp build/libs/*.jar dist/
-          cp build/reports/cyclonedx-direct/bom.json dist/projectex-fabric.cdx.json
+          if [[ "${GITHUB_REF_NAME}" == "26.3" ]]; then
+            for profile in 26.3-snapshot-{1..4}; do
+              ./gradlew --no-daemon -PtargetProfile="${profile}" clean releaseAudit runGameTest verifyNoCompatClient
+              cp build/libs/*.jar dist/
+              cp build/libs/*.jar first-build/
+              cp build/reports/cyclonedx-direct/bom.json "dist/projectex-fabric-${profile}.cdx.json"
+            done
+          else
+            ./gradlew --no-daemon clean releaseAudit runGameTest verifyNoCompatClient
+            cp build/libs/*.jar dist/
+            cp build/libs/*.jar first-build/
+            cp build/reports/cyclonedx-direct/bom.json dist/projectex-fabric.cdx.json
+          fi
+
+      - name: Verify Jade compatibility profile
+        if: github.ref_name != '26.3'
+        run: ./gradlew --no-daemon -PcompatJade verifyJadeCompatClient --rerun-tasks
 
       - name: Rebuild jars and prove reproducibility
         shell: bash
         run: |
-          ./gradlew --no-daemon clean jar sourcesJar javadocJar
-          for original in first-build/*.jar; do
-            rebuilt="build/libs/$(basename "${original}")"
-            cmp --silent "${original}" "${rebuilt}" || {
-              echo "Non-reproducible artifact: $(basename "${original}")" >&2
-              sha256sum "${original}" "${rebuilt}" >&2
-              exit 1
-            }
-          done
+          if [[ "${GITHUB_REF_NAME}" == "26.3" ]]; then
+            for profile in 26.3-snapshot-{1..4}; do
+              ./gradlew --no-daemon -PtargetProfile="${profile}" clean jar sourcesJar javadocJar
+              for rebuilt in build/libs/*.jar; do
+                original="first-build/$(basename "${rebuilt}")"
+                cmp --silent "${original}" "${rebuilt}" || {
+                  echo "Non-reproducible artifact: $(basename "${rebuilt}")" >&2
+                  sha256sum "${original}" "${rebuilt}" >&2
+                  exit 1
+                }
+              done
+            done
+          else
+            ./gradlew --no-daemon clean jar sourcesJar javadocJar
+            for rebuilt in build/libs/*.jar; do
+              original="first-build/$(basename "${rebuilt}")"
+              cmp --silent "${original}" "${rebuilt}" || {
+                echo "Non-reproducible artifact: $(basename "${rebuilt}")" >&2
+                sha256sum "${original}" "${rebuilt}" >&2
+                exit 1
+              }
+            done
+          fi
 
       - name: Create checksums
         shell: bash
@@ -94,7 +117,9 @@ jobs:
           [[ "${GITHUB_REF_NAME}" == *-* ]] && prerelease="--prerelease"
           notes="docs/release-notes/${GITHUB_REF_NAME#v}.md"
           test -f "${notes}"
+          title="ProjectEX ${GITHUB_REF_NAME} for Minecraft 26.2"
+          [[ "${GITHUB_REF_NAME}" == "26.3" ]] && title="ProjectEX 26.3 Snapshot 1-4"
           gh release create "${GITHUB_REF_NAME}" dist/* \
             --verify-tag \
-            --title "ProjectEX ${GITHUB_REF_NAME} for Minecraft 26.2" \
+            --title "${title}" \
             --notes-file "${notes}" ${prerelease}

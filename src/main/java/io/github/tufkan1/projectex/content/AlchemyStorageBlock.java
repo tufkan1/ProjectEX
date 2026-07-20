@@ -33,7 +33,7 @@ public final class AlchemyStorageBlock extends BaseEntityBlock {
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final MapCodec<AlchemyStorageBlock> CODEC = RecordCodecBuilder.mapCodec(instance ->
         instance.group(
-            propertiesCodec(),
+            BlockCodecCompat.compatPropertiesCodec(),
             Codec.STRING.xmap(StorageKind::valueOf, StorageKind::name).fieldOf("kind")
                 .forGetter(AlchemyStorageBlock::kind)
         ).apply(instance, AlchemyStorageBlock::new)
@@ -57,7 +57,7 @@ public final class AlchemyStorageBlock extends BaseEntityBlock {
         builder.add(FACING);
     }
 
-    @Override protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
+    protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
 
     @Override public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new AlchemyStorageBlockEntity(pos, state);

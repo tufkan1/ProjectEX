@@ -160,9 +160,7 @@ public final class MinecraftRecipeAdapter {
             return ingredientItems(withRemainder.input());
         }
         if (display instanceof SlotDisplay.TagSlotDisplay tagDisplay) {
-            List<Holder<Item>> items = new ArrayList<>();
-            BuiltInRegistries.ITEM.getTagOrEmpty(tagDisplay.tag()).forEach(items::add);
-            return List.copyOf(items);
+            return RecipeTagCompat.items(tagDisplay);
         }
         if (display instanceof SlotDisplay.Composite composite) {
             return composite.contents().stream()

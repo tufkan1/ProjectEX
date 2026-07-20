@@ -1,7 +1,7 @@
 ProjectEX is an independent, community-maintained Fabric project.
 
 It is not an official port, and is not endorsed by or affiliated with Mojang,
-Microsoft, ProjectE, or ProjectExpansion. Do not request support for ProjectEX
+Microsoft, Equivalent Exchange 2, ProjectE, or ProjectExpansion. Do not request support for ProjectEX
 from those projects.
 
 Design/compatibility references and bundled visual assets:
@@ -10,6 +10,11 @@ Design/compatibility references and bundled visual assets:
   https://github.com/sinkillerj/ProjectE
 - ProjectExpansion, Copyright (c) 2025 Donovan_DMC, MIT License
   https://github.com/DonovanDMC/ProjectExpansion
+
+Historical system and visual lineage is credited to Equivalent Exchange 2, created
+by x3n0ph0b3:
+  https://tekkitclassic.fandom.com/wiki/Equivalent_Exchange_2
+No Equivalent Exchange 2 code, binary, or asset is redistributed by ProjectEX.
 
 ProjectEX bundles original item, block-model, texture, animation metadata, and GUI
 assets from the immutable upstream commits recorded in docs/provenance.md. They are

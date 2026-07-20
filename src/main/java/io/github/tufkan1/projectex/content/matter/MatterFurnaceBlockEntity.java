@@ -111,7 +111,7 @@ public final class MatterFurnaceBlockEntity extends BlockEntity implements World
 
     private boolean ignite(ServerLevel level) {
         ItemStack fuel = items.get(FUEL_SLOT);
-        int burnTicks = level.fuelValues().burnDuration(fuel);
+        int burnTicks = io.github.tufkan1.projectex.content.FuelCompat.burnDuration(level, fuel, this);
         net.minecraft.world.item.ItemStackTemplate remainder = fuel.getItem().getCraftingRemainder();
         Optional<CondenserVariant> remainderVariant = remainder == null
             ? Optional.empty() : Optional.of(variant(remainder.create()));
@@ -222,7 +222,8 @@ public final class MatterFurnaceBlockEntity extends BlockEntity implements World
     @Override public void clearContent() { items.clear(); changed(); }
     @Override public boolean canPlaceItem(int slot, ItemStack stack) {
         if (slot == INPUT_SLOT) return true;
-        if (slot == FUEL_SLOT) return level != null && level.fuelValues().isFuel(stack);
+        if (slot == FUEL_SLOT) return level instanceof ServerLevel serverLevel
+            && io.github.tufkan1.projectex.content.FuelCompat.isFuel(serverLevel, stack, this);
         return false;
     }
     @Override public int[] getSlotsForFace(Direction side) {

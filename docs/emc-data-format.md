@@ -48,11 +48,19 @@ entire reload fails and the last valid immutable EMC snapshot remains active.
 
 ## Bundled coverage
 
-The priority-0 `vanilla_base.json` catalog contains the ProjectE-compatible primitive
-values required to seed Minecraft's recipe graph. ProjectEX then derives the remaining
-values from the recipes loaded by the current 26.2 server, including the dynamic Klein,
+The priority-0 `vanilla_base.json` catalog contains ProjectE-compatible primitive and
+otherwise uncraftable values, cross-checked against the
+[Tekkit Classic EMC catalog](https://tekkitclassic.fandom.com/wiki/EMC) and modern
+ProjectE defaults. ProjectEX then derives the remaining crafted-item values from the
+recipes loaded by the current server, including the dynamic Klein,
 Magnum, Colossal, and Gargantuan Star upgrade chain. Data packs can still replace any
 result through the normal priority rules above.
+
+Minecraft 1.21-and-newer content without a usable recipe receives an explicit seed.
+Items with recipes do not duplicate a fixed value unless compatibility requires an
+authoritative override: their EMC is the lowest valid ingredient cost divided by recipe
+output. A version resource adds 26.3-only seeds such as poplar materials without exposing
+unknown identifiers to the stable 26.2 jar.
 
 The dedicated-server suite enumerates every registered `projectex:*` item after mapping
 and fails the build if even one lacks a componentless EMC value. This keeps future items

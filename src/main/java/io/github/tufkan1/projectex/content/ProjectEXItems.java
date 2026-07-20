@@ -13,7 +13,6 @@ import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.equipment.ArmorMaterial;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.item.equipment.EquipmentAssets;
-import net.fabricmc.fabric.api.registry.FuelValueEvents;
 
 /** First survival progression materials and active items. */
 public final class ProjectEXItems {
@@ -255,12 +254,8 @@ public final class ProjectEXItems {
     }
 
     public static void register() {
-        FuelValueEvents.BUILD.register((builder, context) -> {
-            builder.add(ALCHEMICAL_COAL.item(), 1_600);
-            builder.add(MOBIUS_FUEL.item(), 6_400);
-            builder.add(AETERNALIS_FUEL.item(), 25_600);
-            EXPANSION_FUELS.forEach(fuel -> builder.add(fuel.item(), 25_600));
-        });
+        FuelCompat.register(ALCHEMICAL_COAL.item(), MOBIUS_FUEL.item(), AETERNALIS_FUEL.item(),
+            EXPANSION_FUELS.stream().map(ProjectEXContentRegistry.RegisteredItem::item).toList());
         CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.INGREDIENTS)
             .register(entries -> MATERIALS.forEach(entry -> entries.accept(entry.item())));
         CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.TOOLS_AND_UTILITIES)

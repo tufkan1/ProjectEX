@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "priority": 0,
+  "values": [
+    { "item": "minecraft:orange_poplar_leaves", "emc": "1" },
+    { "item": "minecraft:poplar_log", "emc": "32" },
+    { "item": "minecraft:poplar_wood", "emc": "32" },
+    { "item": "minecraft:red_poplar_leaves", "emc": "1" },
+    { "item": "minecraft:red_shrub", "emc": "1" },
+    { "item": "minecraft:shelf_mushroom", "emc": "32" },
+    { "item": "minecraft:stripped_poplar_log", "emc": "32" },
+    { "item": "minecraft:stripped_poplar_wood", "emc": "32" },
+    { "item": "minecraft:yellow_poplar_leaves", "emc": "1" }
+  ]
+}

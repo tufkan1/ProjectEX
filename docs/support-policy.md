@@ -6,6 +6,10 @@ The first supported line is Minecraft Java Edition 26.2 with Fabric. Minecraft
 feature releases are not assumed binary compatible. The project ports forward to
 26.3 and later through an explicit compatibility issue and test cycle.
 
+The `26.3` prerelease tag covers four isolated targets: `26.3-snapshot-1` through
+`26.3-snapshot-4`. Each target has its own Fabric API profile, metadata constraint,
+runtime test pass, and game-version-bearing artifact name.
+
 - `main`: next ProjectEX release for the currently documented Minecraft target.
 - `x.y`: optional maintenance branch only when a supported line needs fixes.
 - Release jar names and GitHub releases include both mod and Minecraft versions.

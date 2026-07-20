@@ -25,8 +25,6 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.minecraft.client.KeyMapping;
-import com.mojang.blaze3d.platform.InputConstants;
-import org.lwjgl.glfw.GLFW;
 import io.github.tufkan1.projectex.content.ChargeableUtilityItem;
 import io.github.tufkan1.projectex.network.UtilityStateAction;
 import io.github.tufkan1.projectex.network.UtilityStatePayload;
@@ -56,10 +54,10 @@ public final class ProjectEXClient implements ClientModInitializer {
     private static final KeyMapping.Category UTILITY_CATEGORY =
         KeyMapping.Category.register(ProjectEX.id("utilities"));
     private static final KeyMapping CHARGE_KEY = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-        "key.projectex.utility_charge", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, UTILITY_CATEGORY
+        "key.projectex.utility_charge", InputCompat.keyboardType(), InputCompat.keyV(), UTILITY_CATEGORY
     ));
     private static final KeyMapping MODE_KEY = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-        "key.projectex.utility_mode", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, UTILITY_CATEGORY
+        "key.projectex.utility_mode", InputCompat.keyboardType(), InputCompat.keyB(), UTILITY_CATEGORY
     ));
     private static UUID pendingKnowledgeConfirmation;
     private static final ClientAlchemicalBookState ALCHEMICAL_BOOK = new ClientAlchemicalBookState();

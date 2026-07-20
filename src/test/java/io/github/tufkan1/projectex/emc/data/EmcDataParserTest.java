@@ -58,9 +58,15 @@ class EmcDataParserTest {
             }
             EmcDataFile file = EmcDataParser.parse(
                 new InputStreamReader(stream, StandardCharsets.UTF_8));
-            assertEquals(67, file.values().size());
+            assertEquals(350, file.values().size());
             assertEquals(EmcValue.of(8192), file.values().stream()
                 .filter(value -> value.item().toString().equals("minecraft:diamond"))
+                .findFirst().orElseThrow().value());
+            assertEquals(EmcValue.of(769), file.values().stream()
+                .filter(value -> value.item().toString().equals("minecraft:water_bucket"))
+                .findFirst().orElseThrow().value());
+            assertEquals(EmcValue.of(139264), file.values().stream()
+                .filter(value -> value.item().toString().equals("minecraft:dragon_egg"))
                 .findFirst().orElseThrow().value());
         }
     }

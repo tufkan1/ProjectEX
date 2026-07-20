@@ -6,6 +6,21 @@ the Minecraft version.
 
 ## [Unreleased]
 
+### Added
+
+- Dedicated Minecraft 26.3 Snapshot 1-4 build profiles, compatibility shims, runtime
+  test coverage, and separately named release artifacts under the `26.3` prerelease.
+- A substantially expanded vanilla EMC seed catalog based on Tekkit Classic and modern
+  ProjectE data, including explicit values for uncraftable post-1.21 content.
+
+### Changed
+
+- Crafted vanilla items continue to derive EMC from loaded recipe ingredients; explicit
+  catalog entries are reserved for primitives, uncraftable content, and authoritative
+  compatibility overrides.
+- Snapshot 4 uses its new cooking-fuel components, input constants, recipe holder sets,
+  and loot modifiers while retaining exact machine inventories and ownership on break/place.
+
 ## [1.1.2] - 2026-07-20
 
 ### Added

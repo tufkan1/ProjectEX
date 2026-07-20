@@ -25,7 +25,7 @@ import net.minecraft.world.phys.BlockHitResult;
 public final class EmcMachineBlock extends BaseEntityBlock {
     public static final MapCodec<EmcMachineBlock> CODEC = RecordCodecBuilder.mapCodec(instance ->
         instance.group(
-            propertiesCodec(),
+            BlockCodecCompat.compatPropertiesCodec(),
             Codec.STRING.fieldOf("tier")
                 .xmap(MachineTier::valueOf, MachineTier::name)
                 .forGetter(EmcMachineBlock::tier)
@@ -43,7 +43,6 @@ public final class EmcMachineBlock extends BaseEntityBlock {
         return tier;
     }
 
-    @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }

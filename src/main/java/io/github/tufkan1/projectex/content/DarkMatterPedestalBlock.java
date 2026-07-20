@@ -23,10 +23,11 @@ import net.minecraft.world.phys.BlockHitResult;
 
 /** Owner-controlled Dark Matter Pedestal; attack extracts, use toggles, sneak-use configures. */
 public final class DarkMatterPedestalBlock extends BaseEntityBlock {
-    public static final MapCodec<DarkMatterPedestalBlock> CODEC = simpleCodec(DarkMatterPedestalBlock::new);
+    public static final MapCodec<DarkMatterPedestalBlock> CODEC =
+        BlockCodecCompat.compatSimpleCodec(DarkMatterPedestalBlock::new);
 
     public DarkMatterPedestalBlock(BlockBehaviour.Properties properties) { super(properties); }
-    @Override protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
+    protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
     @Override public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new DarkMatterPedestalBlockEntity(pos, state);
     }

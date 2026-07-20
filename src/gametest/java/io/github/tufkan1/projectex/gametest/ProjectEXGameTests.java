@@ -39,6 +39,7 @@ import io.github.tufkan1.projectex.menu.MatterFurnaceMenu;
 import io.github.tufkan1.projectex.menu.AutomationMenu;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import net.fabricmc.fabric.api.gametest.v1.CustomTestMethodInvoker;
@@ -1794,7 +1795,8 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
                 tier.fuelId() + " did not resolve to exactly four previous fuels");
             helper.assertTrue(matter.equals(fuel.multiply(6).add(previousMatter.multiply(3))),
                 tier.matterId() + " did not resolve to its exact forward-only recipe cost");
-            helper.assertValueEqual(helper.getLevel().fuelValues().burnDuration(new ItemStack(fuelItem)),
+            helper.assertValueEqual(io.github.tufkan1.projectex.content.FuelCompat.burnDuration(
+                    helper.getLevel(), new ItemStack(fuelItem), null),
                 25_600, tier.fuelId() + " burn duration");
             helper.assertTrue(matter.compareTo(previousMatter) > 0,
                 tier.matterId() + " was not strictly more valuable than its predecessor");
@@ -1828,6 +1830,40 @@ public final class ProjectEXGameTests implements CustomTestMethodInvoker {
             helper.assertValueEqual(value, previous.multiply(4).add(catalyst),
                 tier.serializedName() + " dynamic recipe EMC");
             previous = value;
+        }
+        helper.succeed();
+    }
+
+    @GameTest
+    public void post121UncraftableSeedsAndCraftedValuesAreCovered(GameTestHelper helper) {
+        Map<String, Long> expectedSeeds = Map.ofEntries(
+            Map.entry("minecraft:armadillo_scute", 48L),
+            Map.entry("minecraft:heavy_core", 40_960L),
+            Map.entry("minecraft:resin_clump", 8L),
+            Map.entry("minecraft:cactus_flower", 16L),
+            Map.entry("minecraft:firefly_bush", 16L),
+            Map.entry("minecraft:wildflowers", 16L),
+            Map.entry("minecraft:sulfur", 4L),
+            Map.entry("minecraft:potent_sulfur", 64L),
+            Map.entry("minecraft:cinnabar", 16L),
+            Map.entry("minecraft:music_disc_tears", 8_192L)
+        );
+        expectedSeeds.forEach((id, value) -> helper.assertValueEqual(
+            ProjectEX.emc().find(EmcKey.parse(id)).orElseThrow(),
+            EmcValue.of(value),
+            id + " explicit no-recipe EMC"
+        ));
+        helper.assertValueEqual(
+            ProjectEX.emc().find(EmcKey.parse("minecraft:copper_block")).orElseThrow(),
+            EmcValue.of(765),
+            "Copper block must be calculated from nine 85-EMC ingots"
+        );
+        if (BuiltInRegistries.ITEM.containsKey(net.minecraft.resources.Identifier.parse("minecraft:poplar_log"))) {
+            helper.assertValueEqual(
+                ProjectEX.emc().find(EmcKey.parse("minecraft:poplar_planks")).orElseThrow(),
+                EmcValue.of(8),
+                "Poplar planks must be calculated from the 32-EMC natural log"
+            );
         }
         helper.succeed();
     }

@@ -1,6 +1,7 @@
 package io.github.tufkan1.projectex.gametest;
 
 import io.github.tufkan1.projectex.client.ProjectEXClient;
+import io.github.tufkan1.projectex.client.InputCompat;
 import io.github.tufkan1.projectex.client.screen.TransmutationScreen;
 import java.math.BigInteger;
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
@@ -9,7 +10,6 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContex
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
-import org.lwjgl.glfw.GLFW;
 import io.github.tufkan1.projectex.network.KnowledgeSharePreviewPayload;
 import java.util.UUID;
 import net.minecraft.client.gui.screens.ConfirmScreen;
@@ -94,7 +94,7 @@ public final class ProjectEXClientGameTests implements FabricClientGameTest {
             .filter(button -> button.visible && button.getMessage().getString().contains(text))
             .findFirst()
             .orElseThrow(() -> new AssertionError("No visible button contains: " + text))
-            .onPress(new KeyEvent(GLFW.GLFW_KEY_ENTER, 0, 0));
+            .onPress(new KeyEvent(InputCompat.KEY_ENTER, 0, 0));
     }
 
     private static void assertButtonContaining(Screen screen, String text) {

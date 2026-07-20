@@ -4,11 +4,43 @@ plugins {
 	id "maven-publish"
 }
 
+def targetProfile = providers.gradleProperty("targetProfile").orNull
+if (targetProfile != null) {
+	def profileFile = file("gradle/versions/${targetProfile}.properties")
+	if (!profileFile.isFile()) throw new GradleException("Unknown target profile: ${targetProfile}")
+	def profile = new Properties()
+	profileFile.withInputStream { profile.load(it) }
+	profile.each { key, value -> project.ext.set(key.toString(), value.toString()) }
+}
+
 version = project.mod_version
 group = project.maven_group
 
 base {
 	archivesName = "${project.archives_base_name}-${project.minecraft_version}"
+}
+
+sourceSets.main.resources.srcDir("src/versions/${project.version_resource_set}/resources")
+if (project.findProperty("blockCodecApi") == "removed") {
+	sourceSets.main.java.exclude("**/BlockCodecCompatLegacy.java")
+	sourceSets.main.java.srcDir("src/versions/block-codec-removed/java/io/github/tufkan1/projectex/content")
+	tasks.named("compileJava").configure { exclude("**/BlockCodecCompatLegacy.java") }
+}
+if (project.findProperty("datagenApi") == "bootstrap") {
+	sourceSets.main.java.exclude("io/github/tufkan1/projectex/datagen/**")
+	tasks.named("compileJava").configure { exclude("**/datagen/**") }
+}
+if (project.findProperty("snapshot4Api") == "true") {
+	sourceSets.main.java.exclude("**/InputCompatLegacy.java")
+	sourceSets.main.java.exclude("**/FuelCompatLegacy.java")
+	sourceSets.main.java.exclude("**/RecipeTagCompatLegacy.java")
+	sourceSets.main.java.srcDir("src/versions/snapshot-4/java/io/github/tufkan1/projectex/client")
+	sourceSets.main.java.srcDir("src/versions/snapshot-4/java/io/github/tufkan1/projectex/content")
+	sourceSets.main.java.srcDir("src/versions/snapshot-4/java/io/github/tufkan1/projectex/emc/mapping/minecraft")
+	sourceSets.main.resources.srcDir("src/versions/26.3-snapshot-4/resources")
+	tasks.named("compileJava").configure {
+		exclude("**/InputCompatLegacy.java", "**/FuelCompatLegacy.java", "**/RecipeTagCompatLegacy.java")
+	}
 }
 
 repositories {
@@ -105,16 +137,68 @@ tasks.register("verifyJadeCompatClient") {
 
 def modVersion = project.version
 def targetMinecraftVersion = project.minecraft_version
+def minecraftDependency = project.minecraft_dependency
+def fabricApiDependency = project.fabric_api_dependency
+def jadeDependency = project.jade_dependency
 
 processResources {
 	inputs.property "version", modVersion
 	inputs.property "minecraft_version", targetMinecraftVersion
+	inputs.property "minecraft_dependency", minecraftDependency
+	inputs.property "fabric_api_dependency", fabricApiDependency
+	inputs.property "jade_dependency", jadeDependency
 
 	filesMatching("fabric.mod.json") {
-		expand(
+			expand(
 			version: modVersion,
-			minecraft_version: targetMinecraftVersion
+			minecraft_version: targetMinecraftVersion,
+			minecraft_dependency: minecraftDependency,
+			fabric_api_dependency: fabricApiDependency,
+			jade_dependency: jadeDependency
 		)
+	}
+	doLast {
+		if (project.findProperty("datagenApi") == "bootstrap") {
+			def metadata = destinationDir.toPath().resolve("fabric.mod.json").toFile()
+			def parsed = new groovy.json.JsonSlurper().parse(metadata)
+			parsed.entrypoints.remove("fabric-datagen")
+			metadata.setText(groovy.json.JsonOutput.prettyPrint(
+				groovy.json.JsonOutput.toJson(parsed)) + System.lineSeparator(), "UTF-8")
+			def legacyRecipeAdvancements = destinationDir.toPath()
+				.resolve("data/projectex/advancement/recipes").toFile()
+			if (legacyRecipeAdvancements.exists()) legacyRecipeAdvancements.deleteDir()
+		}
+		if (project.findProperty("snapshot4Api") == "true") {
+			fileTree(destinationDir) {
+				include "data/projectex/loot_table/**/*.json"
+			}.each { lootFile ->
+				def parsed = new groovy.json.JsonSlurper().parse(lootFile)
+				def legacyFunctions = parsed.remove("functions")
+				if (legacyFunctions) {
+					def modifiers = legacyFunctions.collect { legacy ->
+						def modifier = new LinkedHashMap(legacy)
+						modifier.type = modifier.remove("function")
+						modifier
+					}
+					parsed.pools.each { pool ->
+						pool.entries.each { entry ->
+							entry.modifier = modifiers.size() == 1
+								? modifiers[0]
+								: [type: "minecraft:sequence", terms: modifiers]
+						}
+					}
+					lootFile.setText(groovy.json.JsonOutput.prettyPrint(
+						groovy.json.JsonOutput.toJson(parsed)) + System.lineSeparator(), "UTF-8")
+				}
+			}
+		}
+	}
+}
+
+processGametestResources {
+	inputs.property "minecraft_dependency", minecraftDependency
+	filesMatching("fabric.mod.json") {
+		expand(minecraft_dependency: minecraftDependency)
 	}
 }
 

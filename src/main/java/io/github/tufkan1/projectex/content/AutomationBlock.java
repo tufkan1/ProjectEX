@@ -23,7 +23,7 @@ import net.minecraft.world.phys.BlockHitResult;
 public final class AutomationBlock extends BaseEntityBlock {
     public static final MapCodec<AutomationBlock> CODEC = RecordCodecBuilder.mapCodec(instance ->
         instance.group(
-            propertiesCodec(),
+            BlockCodecCompat.compatPropertiesCodec(),
             Codec.STRING.xmap(AutomationBlockKind::valueOf, AutomationBlockKind::name)
                 .fieldOf("kind").forGetter(AutomationBlock::kind),
             Codec.STRING.xmap(ExpansionMachineTier::valueOf, ExpansionMachineTier::name)
@@ -44,7 +44,7 @@ public final class AutomationBlock extends BaseEntityBlock {
     public AutomationBlockKind kind() { return kind; }
     public ExpansionMachineTier tier() { return tier; }
 
-    @Override protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
+    protected MapCodec<? extends BaseEntityBlock> codec() { return CODEC; }
 
     @Override public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new AutomationBlockEntity(pos, state);

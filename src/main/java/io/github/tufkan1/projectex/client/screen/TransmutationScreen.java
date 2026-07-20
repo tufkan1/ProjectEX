@@ -20,7 +20,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import org.lwjgl.glfw.GLFW;
+import io.github.tufkan1.projectex.client.InputCompat;
 
 /** Accessible transmutation screen using the original ProjectE panel and authoritative caches. */
 @Environment(EnvType.CLIENT)
@@ -227,13 +227,12 @@ public final class TransmutationScreen extends AbstractContainerScreen<Transmuta
             return false;
         }
         int visible = ProjectEXClient.knowledge().snapshot().entries().size();
-        int target = switch (key) {
-            case GLFW.GLFW_KEY_LEFT -> current % 3 > 0 ? current - 1 : -1;
-            case GLFW.GLFW_KEY_RIGHT -> current % 3 < 2 && current + 1 < visible ? current + 1 : -1;
-            case GLFW.GLFW_KEY_UP -> current >= 3 ? current - 3 : -1;
-            case GLFW.GLFW_KEY_DOWN -> current + 3 < visible ? current + 3 : -1;
-            default -> -1;
-        };
+        int target = -1;
+        if (key == InputCompat.KEY_LEFT) target = current % 3 > 0 ? current - 1 : -1;
+        else if (key == InputCompat.KEY_RIGHT)
+            target = current % 3 < 2 && current + 1 < visible ? current + 1 : -1;
+        else if (key == InputCompat.KEY_UP) target = current >= 3 ? current - 3 : -1;
+        else if (key == InputCompat.KEY_DOWN) target = current + 3 < visible ? current + 3 : -1;
         if (target < 0) {
             return false;
         }

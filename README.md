@@ -2,7 +2,7 @@
 
 ProjectEX is a community-driven alchemy and EMC mod being built for Fabric,
 starting with Minecraft Java Edition 26.2. It is a clean, maintainable
-implementation informed by the behavior of ProjectE and ProjectExpansion.
+implementation informed by Equivalent Exchange 2, ProjectE, and ProjectExpansion.
 
 > **Status: stable 1.x support line.** ProjectEX 1.x keeps its public API,
 > configuration schema 1, and persisted-data format 1 for Minecraft 26.2. Back up
@@ -30,6 +30,10 @@ bounded filters, server pricing, and owner-controlled access.
 | Fabric API | 0.155.2+26.2 |
 | Java | 25 |
 | Gradle | Wrapper 9.6.1 |
+
+The `26.3` prerelease contains separately built and tested jars for Snapshot 1,
+Snapshot 2, Snapshot 3, and Snapshot 4. Select the jar whose Minecraft snapshot
+name exactly matches the game; snapshot jars are intentionally not interchangeable.
 
 Each Minecraft feature release receives an explicit compatibility decision and
 CI validation. “26.2+” means the project will actively port forward; it does not
@@ -100,10 +104,18 @@ Additional release documentation:
 
 ## Independence and attribution
 
-ProjectEX is not supported or endorsed by ProjectE or ProjectExpansion. Please
-report ProjectEX problems only in this repository. Both reference projects are
-MIT-licensed; provenance rules are documented in [NOTICE](NOTICE) and
+ProjectEX is not supported or endorsed by Equivalent Exchange 2, ProjectE, or
+ProjectExpansion. Please
+report ProjectEX problems only in this repository. The bundled ProjectE and
+ProjectExpansion sources are MIT-licensed; provenance rules are documented in [NOTICE](NOTICE) and
 [docs/provenance.md](docs/provenance.md).
+
+System and visual lineage: [Equivalent Exchange 2](https://tekkitclassic.fandom.com/wiki/Equivalent_Exchange_2)
+was created by **x3n0ph0b3**; [ProjectE](https://github.com/sinkillerj/ProjectE)
+is its modern rewrite, and [ProjectExpansion](https://github.com/DonovanDMC/ProjectExpansion)
+extends that ecosystem. Exact bundled texture/model bytes come only from the pinned,
+MIT-licensed ProjectE and ProjectExpansion commits listed in the provenance ledger;
+no EE2 binary or asset is redistributed.
 
 ## AI development and risk notice
 
