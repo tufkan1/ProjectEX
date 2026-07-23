@@ -6,6 +6,21 @@ the Minecraft version.
 
 ## [Unreleased]
 
+## [26.3.4] - 2026-07-24
+
+### Added
+
+- Rebuilt Minecraft 26.3 Snapshot 1-4 artifacts from the ProjectEX 1.1.6 source,
+  including the optional JEI recipe-transfer bridge and its Fabric plugin entrypoint.
+- A paired-release checklist requirement so compatible stable changes are not published
+  without refreshed 26.3 snapshot artifacts.
+
+### Notes
+
+- JEI has not published a Minecraft 26.3 Fabric runtime at release time. The bridge is
+  included for forward compatibility, but JEI-present runtime verification remains limited
+  to Minecraft 26.2 until an official 26.3 artifact exists.
+
 ## [1.1.6] - 2026-07-23
 
 ### Added
