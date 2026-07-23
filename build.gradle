@@ -49,6 +49,11 @@ repositories {
 		url = "https://api.modrinth.com/maven"
 		content { includeGroup "maven.modrinth" }
 	}
+	maven {
+		name = "BlameJared"
+		url = "https://maven.blamejared.com"
+		content { includeGroup "mezz.jei" }
+	}
 }
 
 loom {
@@ -82,11 +87,16 @@ dependencies {
 	productionRuntimeMods fabricApi.module("fabric-client-gametest-api-v1", project.fabric_api_version)
 	compileOnly "maven.modrinth:jade:${project.jade_version}"
 	compileOnly "maven.modrinth:modmenu:${project.modmenu_version}"
+	compileOnly "mezz.jei:jei-26.2-fabric-api:${project.jei_version}"
 	if (providers.gradleProperty("compatJade").isPresent()) {
 		productionRuntimeMods "maven.modrinth:jade:${project.jade_version}"
 	}
 	if (providers.gradleProperty("compatModMenu").isPresent()) {
 		productionRuntimeMods "maven.modrinth:modmenu:${project.modmenu_version}"
+	}
+	if (providers.gradleProperty("compatJei").isPresent()) {
+		productionRuntimeMods "mezz.jei:jei-26.2-fabric:${project.jei_version}"
+		gametestRuntimeOnly "mezz.jei:jei-26.2-fabric:${project.jei_version}"
 	}
 
 	testImplementation platform("org.junit:junit-bom:6.1.2")
@@ -161,12 +171,35 @@ tasks.register("verifyModMenuCompatClient") {
 	}
 }
 
+tasks.register("verifyJeiCompatClient") {
+	group = "verification"
+	description = "Proves JEI discovers ProjectEX's Arcane Crafting transfer plugin."
+	dependsOn tasks.named("runClientGameTest")
+	doFirst {
+		if (!providers.gradleProperty("compatJei").isPresent()) {
+			throw new GradleException("Run verifyJeiCompatClient with -PcompatJei")
+		}
+	}
+	doLast {
+		def log = layout.buildDirectory.file("run/clientGameTest/logs/debug.log").get().asFile
+		if (!log.isFile()) throw new GradleException("JEI client GameTest log is missing")
+		def text = log.getText("UTF-8")
+		if (!text.contains("jei") || !text.contains("ProjectEX JEI recipe transfer ready")) {
+			throw new GradleException("JEI did not discover ProjectEX's recipe transfer plugin")
+		}
+		if (text.contains("Failed to load plugin") || text.contains("Error loading plugin")) {
+			throw new GradleException("JEI rejected a plugin; inspect the production client log")
+		}
+	}
+}
+
 def modVersion = project.version
 def targetMinecraftVersion = project.minecraft_version
 def minecraftDependency = project.minecraft_dependency
 def fabricApiDependency = project.fabric_api_dependency
 def jadeDependency = project.jade_dependency
 def modmenuDependency = project.modmenu_dependency
+def jeiDependency = project.jei_dependency
 
 processResources {
 	inputs.property "version", modVersion
@@ -175,6 +208,7 @@ processResources {
 	inputs.property "fabric_api_dependency", fabricApiDependency
 	inputs.property "jade_dependency", jadeDependency
 	inputs.property "modmenu_dependency", modmenuDependency
+	inputs.property "jei_dependency", jeiDependency
 
 	filesMatching("fabric.mod.json") {
 			expand(
@@ -183,7 +217,8 @@ processResources {
 			minecraft_dependency: minecraftDependency,
 			fabric_api_dependency: fabricApiDependency,
 			jade_dependency: jadeDependency,
-			modmenu_dependency: modmenuDependency
+			modmenu_dependency: modmenuDependency,
+			jei_dependency: jeiDependency
 		)
 	}
 	doLast {

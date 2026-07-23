@@ -30,6 +30,9 @@
     ],
     "modmenu": [
       "io.github.tufkan1.projectex.compat.modmenu.ProjectEXModMenu"
+    ],
+    "jei_mod_plugin": [
+      "io.github.tufkan1.projectex.compat.jei.ProjectEXJeiPlugin"
     ]
   },
   "depends": {
@@ -40,6 +43,7 @@
   },
   "suggests": {
     "jade": "${jade_dependency}",
-    "modmenu": "${modmenu_dependency}"
+    "modmenu": "${modmenu_dependency}",
+    "jei": "${jei_dependency}"
   }
 }

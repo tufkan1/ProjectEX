@@ -6,6 +6,20 @@ the Minecraft version.
 
 ## [Unreleased]
 
+## [1.1.6] - 2026-07-23
+
+### Added
+
+- Native JEI 30.13 Fabric integration for Minecraft 26.2, including a registered
+  `jei_mod_plugin` entrypoint and Arcane Crafting recipe-transfer handler.
+- A JEI-present client GameTest that resolves the live transfer handler for the portable
+  3x3 grid, plus absent/present integration gates in CI and the release workflow.
+
+### Fixed
+
+- JEI crafting recipes now show the transfer `+` button while Arcane Crafting is open and
+  can move ingredients between player inventory slots 10-45 and recipe slots 1-9.
+
 ## [1.1.5] - 2026-07-20
 
 ### Added

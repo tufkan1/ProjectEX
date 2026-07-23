@@ -27,6 +27,14 @@ import io.github.tufkan1.projectex.menu.AlchemyStorageMenu;
 import io.github.tufkan1.projectex.menu.EmcMachineMenu;
 import io.github.tufkan1.projectex.menu.MatterFurnaceMenu;
 import io.github.tufkan1.projectex.storage.StorageKind;
+import io.github.tufkan1.projectex.compat.jei.ProjectEXJeiPlugin;
+import net.fabricmc.loader.api.FabricLoader;
+import io.github.tufkan1.projectex.content.ProjectEXComponents;
+import io.github.tufkan1.projectex.content.ProjectEXItems;
+import io.github.tufkan1.projectex.content.component.ArcaneTabletState;
+import io.github.tufkan1.projectex.network.OpenArcaneTabletPayload;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.gui.screens.inventory.CraftingScreen;
 
 /** End-to-end client/server smoke test for the learn, burn, and create journey. */
 @SuppressWarnings("UnstableApiUsage")
@@ -37,6 +45,7 @@ public final class ProjectEXClientGameTests implements FabricClientGameTest {
             singleplayer.getClientLevel().waitForChunksDownload();
             singleplayer.getServer().runCommand("give @a minecraft:diamond");
             context.waitFor(ProjectEXClientGameTests::clientHasDiamond);
+            verifyJeiArcaneTransferWhenPresent(context, singleplayer);
             context.waitFor(client -> ProjectEXClient.emcTooltips().find("minecraft:diamond")
                 .filter("8192"::equals).isPresent());
             singleplayer.getServer().runCommand(
@@ -79,6 +88,26 @@ public final class ProjectEXClientGameTests implements FabricClientGameTest {
 
             verifyEverySourcePanelRenders(context);
         }
+    }
+
+    private static void verifyJeiArcaneTransferWhenPresent(
+        ClientGameTestContext context, TestSingleplayerContext singleplayer
+    ) {
+        if (!FabricLoader.getInstance().isModLoaded("jei")) return;
+        singleplayer.getServer().runCommand(
+            "give @a projectex:arcane_tablet[projectex:arcane_tablet_state=crafting]");
+        context.waitFor(client -> client.player != null
+            && client.player.getInventory().getNonEquipmentItems().stream().anyMatch(stack ->
+                stack.is(ProjectEXItems.ARCANE_TABLET.item())
+                    && stack.getOrDefault(ProjectEXComponents.ARCANE_TABLET_STATE,
+                        ArcaneTabletState.DEFAULT).mode() == ArcaneTabletState.Mode.CRAFTING));
+        context.runOnClient(client -> ClientPlayNetworking.send(OpenArcaneTabletPayload.INSTANCE));
+        context.waitForScreen(CraftingScreen.class);
+        context.waitFor(client -> {
+            if (client.player == null) return false;
+            return ProjectEXJeiPlugin.hasCraftingTransfer(client.player.containerMenu);
+        });
+        context.runOnClient(client -> client.setScreenAndShow(null));
     }
 
     private static void verifyEverySourcePanelRenders(ClientGameTestContext context) {
